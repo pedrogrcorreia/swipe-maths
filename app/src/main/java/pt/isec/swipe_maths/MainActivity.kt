@@ -1,5 +1,6 @@
 package pt.isec.swipe_maths
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -15,7 +16,10 @@ class MainActivity : AppCompatActivity() {
         var buttonMulti : Button = findViewById(R.id.multiPlayer)
         var buttonProfile : Button = findViewById(R.id.userProfile)
 
-        buttonSingle.setOnClickListener(makeSnackbar)
+        buttonSingle.setOnClickListener {
+            intent = Intent(this, GameScreenActivity::class.java)
+            startActivity(intent)
+        }
         buttonMulti.setOnClickListener(makeSnackbar)
         buttonProfile.setOnClickListener(makeSnackbar)
     }

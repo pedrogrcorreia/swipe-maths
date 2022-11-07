@@ -3,6 +3,7 @@
     <string name="single">Single Player</string>
     <string name="multi">Multiplayer</string>
     <string name="profile">User Profile</string>
-
+    <string name="level">Level: </string>
+    <string name="timer">Timer: </string>
     <string name="todo">Not implemented yet...</string>
 </resources>
