@@ -1,11 +1,14 @@
 package pt.isec.swipe_maths
 
 import android.content.Context
+import android.text.Layout
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
+import com.google.android.material.navigation.NavigationView
 
 class GameScreen @JvmOverloads constructor(
     context: Context,
@@ -24,7 +27,13 @@ class GameScreen @JvmOverloads constructor(
         }
     }
 
-    private var selectedPlay : Boolean = false
+    private lateinit var gameBoard : GameBoard
+
+    constructor(context : Context, gameBoard: GameBoard) : this(context){
+        this.gameBoard = gameBoard
+    }
+
+    var selectedPlay : Boolean = false
 
     private val gestureDetector : GestureDetector by lazy {
         GestureDetector(context, this)
@@ -38,7 +47,7 @@ class GameScreen @JvmOverloads constructor(
     }
 
     override fun onDown(e: MotionEvent?): Boolean {
-        Log.i("Debug", "width: $colWidth height: $rowHeight")
+        Log.i("Debug", "${e?.x}")
         return true
     }
 
@@ -56,9 +65,10 @@ class GameScreen @JvmOverloads constructor(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if(e1!!.y + e2!!.y > rowHeight * 6 && !selectedPlay) {
+        if(e1!!.y + e2!!.y > rowHeight * 4 /*&& !selectedPlay*/) {
             Log.i("Debug", "${getColumnScrolled(e1!!.x.toInt())}")
-            selectedPlay = true
+            Log.i("Debug", "${e1.x}")
+            selectedPlay = !selectedPlay
             return true
         }
         return false
@@ -85,11 +95,10 @@ class GameScreen @JvmOverloads constructor(
 
         when(x){
             in 1 until colWidth -> return 0
-            in colWidth until colWidth * 2 -> return 1
-            in colWidth * 2 until colWidth * 3 -> return 2
-            in colWidth * 3 until colWidth * 4 -> return 3
-            in colWidth * 4 until colWidth * 5 -> return 4
-            in colWidth * 5 until colWidth * 6 -> return 5
+            in colWidth + 1 until colWidth * 2 -> return 1
+            in (colWidth * 2) + 1 until colWidth * 3 -> return 2
+            in (colWidth * 3) + 1 until colWidth * 4 -> return 3
+            in (colWidth * 4) + 1 until colWidth * 5 -> return 4
         }
         return 100
     }

@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="number_square">#EDC983</color>
+    <color name="operation_square">#9A9999</color>
 </resources>
