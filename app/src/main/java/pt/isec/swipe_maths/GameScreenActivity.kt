@@ -27,7 +27,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         for(i in 0 .. 4){
             for(j in 0 .. 4){
                 val text = findViewById<TextView>(gameBoard.textArray[i][j])
-                text.text = gameBoard.numbersArray[i][j].toString() + "  "
+                text.text = gameBoard.numbersArray[i][j].toString()
             }
         }
 //        binding.lblLevel
