@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import pt.isec.swipe_maths.databinding.FragmentGameBoardBinding
+import pt.isec.swipe_maths.model.Game
 
 interface IGameBoardFragment{
     fun test() : Boolean
@@ -32,10 +33,10 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_game_board, container, false)
         binding = FragmentGameBoardBinding.inflate(inflater)
-        binding.root.setOnTouchListener(object : View.OnTouchListener {
+        val rootView : View = binding.frBoard.rootView
+
+        rootView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     gestureDetector.onTouchEvent(event)
@@ -43,6 +44,7 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
                 if(event.action == MotionEvent.ACTION_MOVE){
                     gestureDetector.onTouchEvent(event)
                 }
+                v?.performClick()
                 return true
             }
         })

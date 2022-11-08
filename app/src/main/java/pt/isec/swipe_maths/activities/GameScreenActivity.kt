@@ -15,8 +15,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
     lateinit var binding: ActivityGameScreenBinding
 
-    lateinit var gameScreen : GameScreen
-
     private val game : Game = Game()
 
     private val gameBoard = game.gameBoard
@@ -25,30 +23,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
         for(i in 0 .. 4){
             for(j in 0 .. 4){
                 val text = findViewById<TextView>(gameBoard.textArray[i][j])
                 text.text = gameBoard.numbers[i][j].toString()
             }
         }
-//        binding.lblLevel
-//        binding.sq00.measure(0, 0)
-//        val width = binding.sq00.measuredWidth
-//        val height = binding.sq00.measuredHeight
-//
-//        binding.sq22.measure(0, 0)
-//        Log.i("Debug", "${binding.sq22.measuredWidth}")
-//
-//        GameScreen.setValues(width, height)
-//        gameScreen = GameScreen(this)
-//
-//        binding.frBoard.addView(gameScreen)
-//        binding.frBoard.setOnClickListener{
-//            Log.i("Debug", "user touch!!!")
-//        }
     }
 
     override fun test(): Boolean {
