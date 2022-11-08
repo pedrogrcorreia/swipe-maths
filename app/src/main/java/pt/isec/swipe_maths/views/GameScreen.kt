@@ -1,14 +1,12 @@
-package pt.isec.swipe_maths
+package pt.isec.swipe_maths.views
 
 import android.content.Context
-import android.text.Layout
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
-import com.google.android.material.navigation.NavigationView
+import pt.isec.swipe_maths.model.GameBoard
 
 class GameScreen @JvmOverloads constructor(
     context: Context,

@@ -1,12 +1,14 @@
-package pt.isec.swipe_maths
+package pt.isec.swipe_maths.activities
 
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import pt.isec.swipe_maths.model.GameBoard
+import pt.isec.swipe_maths.views.GameScreen
+import pt.isec.swipe_maths.IGameBoardFragment
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
+import pt.isec.swipe_maths.model.Game
 import kotlin.random.Random
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
@@ -15,7 +17,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
     lateinit var gameScreen : GameScreen
 
-    private val gameBoard = GameBoard()
+    private val game : Game = Game()
+
+    private val gameBoard = game.gameBoard
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
@@ -27,7 +31,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         for(i in 0 .. 4){
             for(j in 0 .. 4){
                 val text = findViewById<TextView>(gameBoard.textArray[i][j])
-                text.text = gameBoard.numbersArray[i][j].toString()
+                text.text = gameBoard.numbers[i][j].toString()
             }
         }
 //        binding.lblLevel

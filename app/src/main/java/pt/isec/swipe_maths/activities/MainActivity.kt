@@ -1,4 +1,4 @@
-package pt.isec.swipe_maths
+package pt.isec.swipe_maths.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import com.google.android.material.snackbar.Snackbar
+import pt.isec.swipe_maths.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
