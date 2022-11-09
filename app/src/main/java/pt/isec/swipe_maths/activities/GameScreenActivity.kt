@@ -33,7 +33,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 //        }
     }
 
-    override fun test(selectedColumn: Int): Boolean {
+    override fun swipe(selectedColumn: Int): Boolean {
 //        var col = Random.nextInt(4)
 //        var row = Random.nextInt(4)
 //        var number = Random.nextInt(200)
@@ -41,7 +41,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 //        val text = findViewById<TextView>(gameBoard.textArray[row][col])
 //        text.text = number.toString()
 //        Log.i("Debug", "Worked!")
-        Log.i("Debug", "$selectedColumn")
+        Log.i("Debug", "Col: $selectedColumn")
+        return true
+    }
+
+    override fun fling(selectedRow: Int): Boolean {
+        Log.i("Debug", "Row: $selectedRow")
         return true
     }
 }

@@ -14,7 +14,9 @@ import pt.isec.swipe_maths.views.GameScreen
 import pt.isec.swipe_maths.views.GameViewModel
 
 interface IGameBoardFragment{
-    fun test(selectedColumn: Int) : Boolean
+    fun swipe(selectedColumn: Int) : Boolean
+
+    fun fling(selectedRow: Int) : Boolean
 }
 
 class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
@@ -88,20 +90,12 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             binding.sq14.text = viewModel.gameBoard.value?.getVerticalOperation(2, 0)
             binding.sq34.text = viewModel.gameBoard.value?.getVerticalOperation(2, 1)
         }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Log.i("Debug", "$colWidth")
-//        for(i in 0 .. 4){
-//            for(j in 0 .. 4){
-//                val text = binding.root.findViewById<TextView>(gameBoard.textArray[i][j])
-//                text.text = gameBoard.numbersArray[i][j].toString() + "  "
-//            }
-//        }
     }
 
     private val gestureDetector : GestureDetector by lazy {
@@ -109,10 +103,11 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     }
 
     override fun onDown(e: MotionEvent?): Boolean {
-        binding.frBoard.rootView.measure(0,0)
-        colWidth = binding.frBoard.rootView.measuredWidth
-        Log.i("Debug","${e!!.x}")
+        colWidth = binding.sq00.width
+        rowHeight = binding.sq00.height
+        Log.i("Debug","x: ${e!!.x} y: ${e.y}")
         Log.i("Debug", "width: $colWidth")
+        Log.i("Debug", "height: $rowHeight")
         viewModel.changeValue()
         return true
     }
@@ -131,10 +126,20 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if(e1!!.y + e2!!.y > rowHeight * 4 /*&& !selectedPlay*/) {
-            Log.i("Debug", "${e1?.x}, ${e2?.x}")
-            actBase!!.test(getColumnScrolled(e1!!.x.toInt()))
+        rowHeight = binding.sq00.height
+//        if(e1!!.y + e2!!.y > rowHeight * 4) {
+////            Log.i("Debug", "${e1.x}, ${e2.x}")
+//            actBase!!.swipe(getColumnScrolled(e1.x.toInt()))
+//            return true
+//        } else if(e1.x + e2.x > colWidth * 4){
+//            actBase!!.fling(getRowFling(e1.y.toInt()))
+//            return true
+//        }
+        if(e2!!.y > e1!!.y + rowHeight * 2 || e2!!.y < e1!!.y - rowHeight * 2){
+            actBase!!.swipe(getColumnScrolled(e1.x.toInt()))
             return true
+        } else if (e2!!.x > e1!!.x + colWidth * 2 || e2!!.x < e1!!.x - colWidth * 2){
+            actBase!!.fling(getRowFling(e1.y.toInt()))
         }
         return false
     }
@@ -149,20 +154,27 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        return true
+        return false
     }
 
     fun getColumnScrolled(x : Int) : Int {
-        if(x in 1 until colWidth){
-            return 0
-        }
-
         when(x){
             in 1 until colWidth -> return 0
             in colWidth + 1 until colWidth * 2 -> return 1
             in (colWidth * 2) + 1 until colWidth * 3 -> return 2
             in (colWidth * 3) + 1 until colWidth * 4 -> return 3
             in (colWidth * 4) + 1 until colWidth * 5 -> return 4
+        }
+        return 100
+    }
+
+    fun getRowFling(x: Int) : Int {
+        when(x){
+            in 1 until rowHeight -> return 0
+            in rowHeight + 1 until rowHeight * 2 -> return 1
+            in (rowHeight * 2) + 1 until rowHeight * 3 -> return 2
+            in (rowHeight * 3) + 1 until rowHeight * 4 -> return 3
+            in (rowHeight * 4) + 1 until rowHeight * 5 -> return 4
         }
         return 100
     }
