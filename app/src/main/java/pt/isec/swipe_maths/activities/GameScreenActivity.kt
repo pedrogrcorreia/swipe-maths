@@ -33,7 +33,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 //        }
     }
 
-    override fun swipe(selectedColumn: Int): Boolean {
+    override fun swipeVertical(selectedColumn: Int): Boolean {
 //        var col = Random.nextInt(4)
 //        var row = Random.nextInt(4)
 //        var number = Random.nextInt(200)
@@ -45,7 +45,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         return true
     }
 
-    override fun fling(selectedRow: Int): Boolean {
+    override fun swipeHorizontal(selectedRow: Int): Boolean {
         Log.i("Debug", "Row: $selectedRow")
         return true
     }
