@@ -11,7 +11,7 @@
         <item name="autoSizeTextType">uniform</item>
         <item name="autoSizeMinTextSize">13sp</item>
         <item name="android:maxLines">1</item>
-        <item name="android:text">123</item>
+<!--        <item name="android:text">123</item>-->
     </style>
     <style name="numberText" parent="cellText">
         <item name="android:background">@drawable/number_square</item>

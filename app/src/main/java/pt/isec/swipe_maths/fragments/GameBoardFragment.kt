@@ -112,7 +112,7 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         Log.i("Debug","x: ${e!!.x} y: ${e.y}")
         Log.i("Debug", "width: $colWidth")
         Log.i("Debug", "height: $rowHeight")
-        viewModel.changeValue()
+//        viewModel.changeValue()
         selectedPlay = false
         return true
     }

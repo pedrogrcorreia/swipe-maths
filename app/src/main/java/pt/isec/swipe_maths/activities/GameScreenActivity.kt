@@ -34,13 +34,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-//        var col = Random.nextInt(4)
-//        var row = Random.nextInt(4)
-//        var number = Random.nextInt(200)
-//        gameBoard.numbersArray[row][col] = number
-//        val text = findViewById<TextView>(gameBoard.textArray[row][col])
-//        text.text = number.toString()
-//        Log.i("Debug", "Worked!")
+        Log.i("Debug", "max value: ${gameBoard.maxValue()}")
         Log.i("Debug", "Col: $selectedColumn")
         return true
     }

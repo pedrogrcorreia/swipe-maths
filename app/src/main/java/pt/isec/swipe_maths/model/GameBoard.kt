@@ -5,9 +5,10 @@ import kotlin.random.Random
 
 class GameBoard(private val min : Int, private val  max : Int, private val operations : Array<String>) {
     var numbers = Array(3){IntArray(3)}
-
     var verticalOperations = Array(3){Array<String>(2){""} }
     var horizontalOperations = Array(3){Array<String>(2){""} }
+
+    var maxValue = 0
 
     fun initializeNumbers(): GameBoard{
 //        for(i in numbers.indices){
@@ -17,7 +18,7 @@ class GameBoard(private val min : Int, private val  max : Int, private val opera
 //        }
         numbers = arrayOf(intArrayOf(1,2,3), intArrayOf(4,5,6), intArrayOf(7,8,9))
         verticalOperations = arrayOf(arrayOf("+", "*"), arrayOf("-", "/"), arrayOf("-", "+"))
-        horizontalOperations = arrayOf(arrayOf("-", "+"), arrayOf("/", "*"), arrayOf("/", "/"))
+        horizontalOperations = arrayOf(arrayOf("+", "+"), arrayOf("+", "+"), arrayOf("+", "+"))
         return this
     }
 
@@ -37,4 +38,46 @@ class GameBoard(private val min : Int, private val  max : Int, private val opera
     fun getHorizontalOperation(row: Int, col: Int) : String = horizontalOperations[row][col]
 
     fun getNumber(row: Int, col: Int) : String = numbers[row][col].toString()
+
+    fun maxValue() : Int {
+        horizontalCalculations()
+        return maxValue
+    }
+
+    private fun horizontalCalculations(){
+        calculateLine(numbers[0], horizontalOperations[0])
+    }
+
+    private fun calculateLine(numbers: IntArray, operations: Array<String>){
+        var result = 0
+        maxValue = 0
+        for(i in operations.indices){
+            when(operations[i]){
+                "+" -> {
+                    result += numbers[i] + numbers[i+1]
+                    if(result > maxValue){
+                        maxValue = result
+                    }
+                }
+                "-" -> {
+                    result += numbers[i] - numbers[i+1]
+                    if(result > maxValue){
+                        maxValue = result
+                    }
+                }
+                "*" -> {
+                    result += numbers[i] * numbers[i+1]
+                    if(result > maxValue){
+                        maxValue = result
+                    }
+                }
+                "/" -> {
+                    result += numbers[i] / numbers[i+1]
+                    if(result > maxValue){
+                        maxValue = result
+                    }
+                }
+            }
+        }
+    }
 }
