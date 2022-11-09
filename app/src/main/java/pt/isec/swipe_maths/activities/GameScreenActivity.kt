@@ -4,11 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
-import pt.isec.swipe_maths.model.GameBoard
-import pt.isec.swipe_maths.views.GameScreen
+import androidx.activity.viewModels
 import pt.isec.swipe_maths.IGameBoardFragment
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.views.GameViewModel
 import kotlin.random.Random
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
@@ -17,28 +17,31 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
     private val game : Game = Game()
 
+    private val viewModel : GameViewModel by viewModels()
+
     private val gameBoard = game.gameBoard
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        for(i in 0 .. 4){
-            for(j in 0 .. 4){
-                val text = findViewById<TextView>(gameBoard.textArray[i][j])
-                text.text = gameBoard.numbers[i][j].toString()
-            }
-        }
+//        for(i in 0 .. 4){
+//            for(j in 0 .. 4){
+//                val text = findViewById<TextView>(gameBoard.textArray[i][j])
+//                text.text = gameBoard.numbers[i][j].toString()
+//            }
+//        }
     }
 
-    override fun test(): Boolean {
-        var col = Random.nextInt(4)
-        var row = Random.nextInt(4)
-        var number = Random.nextInt(200)
-        gameBoard.numbersArray[row][col] = number
-        val text = findViewById<TextView>(gameBoard.textArray[row][col])
-        text.text = number.toString()
-        Log.i("Debug", "Worked!")
+    override fun test(selectedColumn: Int): Boolean {
+//        var col = Random.nextInt(4)
+//        var row = Random.nextInt(4)
+//        var number = Random.nextInt(200)
+//        gameBoard.numbersArray[row][col] = number
+//        val text = findViewById<TextView>(gameBoard.textArray[row][col])
+//        text.text = number.toString()
+//        Log.i("Debug", "Worked!")
+        Log.i("Debug", "$selectedColumn")
         return true
     }
 }
