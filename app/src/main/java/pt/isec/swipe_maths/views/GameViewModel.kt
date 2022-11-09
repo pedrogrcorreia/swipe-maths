@@ -14,7 +14,7 @@ import pt.isec.swipe_maths.model.GameBoard
 
 class GameViewModel() : ViewModel() {
 
-    private val game : Game = Game()
+    var game : Game = Game()
     private val _gameBoard : MutableLiveData<GameBoard> by lazy {
         MutableLiveData<GameBoard>().apply {
             value = game.gameBoard

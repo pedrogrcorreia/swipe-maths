@@ -1,5 +1,6 @@
 package pt.isec.swipe_maths.model
 
+import android.util.Log
 import pt.isec.swipe_maths.R
 import kotlin.random.Random
 
@@ -49,30 +50,31 @@ class GameBoard(private val min : Int, private val  max : Int, private val opera
     }
 
     private fun calculateLine(numbers: IntArray, operations: Array<String>){
-        var result = 0
+        var result = numbers[0]
         maxValue = 0
+        Log.i("Debug", "numbers: ${numbers[0]}")
         for(i in operations.indices){
             when(operations[i]){
                 "+" -> {
-                    result += numbers[i] + numbers[i+1]
+                    result += numbers[i+1]
                     if(result > maxValue){
                         maxValue = result
                     }
                 }
                 "-" -> {
-                    result += numbers[i] - numbers[i+1]
+                    result += numbers[i+1]
                     if(result > maxValue){
                         maxValue = result
                     }
                 }
                 "*" -> {
-                    result += numbers[i] * numbers[i+1]
+                    result += numbers[i+1]
                     if(result > maxValue){
                         maxValue = result
                     }
                 }
                 "/" -> {
-                    result += numbers[i] / numbers[i+1]
+                    result += numbers[i+1]
                     if(result > maxValue){
                         maxValue = result
                     }
