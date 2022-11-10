@@ -25,16 +25,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        for(i in 0 .. 4){
-//            for(j in 0 .. 4){
-//                val text = findViewById<TextView>(gameBoard.textArray[i][j])
-//                text.text = gameBoard.numbers[i][j].toString()
-//            }
-//        }
+        viewModel.initializeViewModel(game)
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-        Log.i("Debug", "max value: ${viewModel.game.gameBoard.maxValue()}")
+        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
         Log.i("Debug", "Col: $selectedColumn")
         return true
     }
