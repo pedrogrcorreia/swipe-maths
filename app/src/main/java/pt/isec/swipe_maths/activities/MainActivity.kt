@@ -3,10 +3,12 @@ package pt.isec.swipe_maths.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.model.board.Line
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +23,11 @@ class MainActivity : AppCompatActivity() {
             intent = Intent(this, GameScreenActivity::class.java)
             startActivity(intent)
         }
-        buttonMulti.setOnClickListener(makeSnackbar)
+        buttonMulti.setOnClickListener{
+            val line : Line = Line()
+            Log.i("Debug", line.printLine())
+            Log.i("Debug", line.lineValue().toString())
+        }
         buttonProfile.setOnClickListener(makeSnackbar)
     }
 
