@@ -22,15 +22,10 @@ class Line {
     }
 
     fun lineValue() : Int {
-        val firstNumber = numbers[0]
-        val secondNumber = numbers[1]
-        val thirdNumber = numbers[2]
-        val firstOperator = operators[0]
-        val secondOperator = operators[1]
-        var result = 0
-        result = Operations.calculate(firstNumber, firstOperator, secondNumber)
-        Log.i("Debug", "result: $result")
-        result = Operations.calculate(result, secondOperator, thirdNumber)
+        var result = numbers[0]
+        for(i in operators.indices){
+            result = Operations.calculate(result, operators[i], numbers[i+1])
+        }
         return result
     }
 }
