@@ -27,7 +27,7 @@ enum class Levels : ILevels {
     },
     Expert {
         override val validOperations: Array<String>
-            get() = arrayOf("+", "-", "*")
+            get() = arrayOf("+", "-", "*", "/")
         override val min: Int
             get() = 99
         override val max: Int
