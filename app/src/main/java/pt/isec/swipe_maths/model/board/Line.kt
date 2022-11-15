@@ -3,12 +3,12 @@ package pt.isec.swipe_maths.model.board
 import android.util.Log
 import kotlin.random.Random
 
-class Line {
+class Line(maxValue: Int = 10) {
     var numbers : Array<Int> = arrayOf()
     private var operators : Array<String>
 
     init{
-        numbers = arrayOf(Random.nextInt(10), Random.nextInt(10), Random.nextInt(10))
+        numbers = arrayOf(Random.nextInt(maxValue), Random.nextInt(maxValue), Random.nextInt(maxValue))
         operators = arrayOf("+", "*")
     }
 
