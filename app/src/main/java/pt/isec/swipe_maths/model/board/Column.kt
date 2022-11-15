@@ -9,26 +9,22 @@ class Column(firstNumber: Int,
              level: Levels = Levels.Easy) {
     private var numbers : Array<Int> = arrayOf()
     private var operators : Array<String>
+    val colValue : Int
 
 
     init {
         numbers = arrayOf(firstNumber, secondNumber, thirdNumber)
-    }
-
-    init {
         operators = arrayOf(level.validOperations[Random.nextInt(level.validOperations.size)],
             level.validOperations[Random.nextInt(level.validOperations.size)])
+        colValue = colValue()
     }
 
-    fun printColumn() : String {
-        var colString : String = ""
-        colString += "${numbers[0]} ${operators[0]} " +
-                "${numbers[1]} ${operators[1]} ${numbers[2]}"
-
-        return colString
+    fun printColumn(): String {
+        return "${numbers[0]} ${operators[0]} " +
+                "${numbers[1]} ${operators[1]} ${numbers[2]} = $colValue"
     }
 
-    fun colValue() : Int {
+    private fun colValue() : Int {
         var result = numbers[0]
         for(i in operators.indices){
             result = Operations.calculate(result, operators[i], numbers[i+1])
