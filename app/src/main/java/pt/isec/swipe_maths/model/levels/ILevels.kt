@@ -4,6 +4,6 @@ interface ILevels {
 
     val validOperations : Array<String>
 
-    val min : Int?
-    val max : Int?
+    val min : Int
+    val max : Int
 }

@@ -30,7 +30,7 @@ enum class Levels : ILevels {
             get() = arrayOf("+", "-", "*")
         override val min: Int
             get() = 99
-        override val max: Int?
-            get() = TODO("Not yet implemented")
+        override val max: Int
+            get() = 999
     },
 }

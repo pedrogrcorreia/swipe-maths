@@ -1,8 +1,12 @@
 package pt.isec.swipe_maths.model.board
 
-import android.util.Log
+import pt.isec.swipe_maths.model.levels.Levels
+import kotlin.random.Random
 
-class Column(firstNumber: Int, secondNumber: Int, thirdNumber: Int) {
+class Column(firstNumber: Int,
+             secondNumber: Int,
+             thirdNumber: Int,
+             level: Levels = Levels.Easy) {
     private var numbers : Array<Int> = arrayOf()
     private var operators : Array<String>
 
@@ -12,15 +16,16 @@ class Column(firstNumber: Int, secondNumber: Int, thirdNumber: Int) {
     }
 
     init {
-        operators = arrayOf("-", "+")
+        operators = arrayOf(level.validOperations[Random.nextInt(level.validOperations.size)],
+            level.validOperations[Random.nextInt(level.validOperations.size)])
     }
 
     fun printColumn() : String {
-        var lineString : String = ""
-        for(i in numbers.indices){
-            lineString += numbers[i].toString() + " "
-        }
-        return lineString
+        var colString : String = ""
+        colString += "${numbers[0]} ${operators[0]} " +
+                "${numbers[1]} ${operators[1]} ${numbers[2]}"
+
+        return colString
     }
 
     fun colValue() : Int {

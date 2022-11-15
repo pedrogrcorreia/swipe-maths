@@ -11,6 +11,7 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Column
 import pt.isec.swipe_maths.model.board.Line
+import pt.isec.swipe_maths.model.levels.Levels
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 //            Log.i("Debug","Col 3: " + thirdCol.printColumn())
 //
 //            Log.i("Debug", "Col 1 value : " + firstCol.colValue())
-            var board : Board = Board(10)
+            var board : Board = Board(Levels.Expert)
             Log.i("Debug", board.printBoard())
         }
         buttonProfile.setOnClickListener(makeSnackbar)
