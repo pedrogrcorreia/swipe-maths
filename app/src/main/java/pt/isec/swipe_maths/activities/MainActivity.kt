@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.model.board.Column
 import pt.isec.swipe_maths.model.board.Line
 
 class MainActivity : AppCompatActivity() {
@@ -24,9 +25,23 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         buttonMulti.setOnClickListener{
-            val line : Line = Line()
-            Log.i("Debug", line.printLine())
-            Log.i("Debug", line.lineValue().toString())
+            val firstLine = Line()
+            val secLine = Line()
+            val thirdLine = Line()
+
+            val firstCol = Column(firstLine.numbers[0], secLine.numbers[0], thirdLine.numbers[0])
+            val secCol = Column(firstLine.numbers[1], secLine.numbers[1], thirdLine.numbers[1])
+            val thirdCol = Column(firstLine.numbers[2], secLine.numbers[2], thirdLine.numbers[2])
+
+            Log.i("Debug", "Line 1: " + firstLine.printLine())
+            Log.i("Debug", "Line 2: " + secLine.printLine())
+            Log.i("Debug", "Line 3: " + thirdLine.printLine())
+
+            Log.i("Debug","Col 1: " + firstCol.printColumn())
+            Log.i("Debug","Col 2: " + secCol.printColumn())
+            Log.i("Debug","Col 3: " + thirdCol.printColumn())
+
+            Log.i("Debug", "Col 1 value : " + firstCol.colValue())
         }
         buttonProfile.setOnClickListener(makeSnackbar)
     }
