@@ -6,7 +6,21 @@ import pt.isec.swipe_maths.model.levels.Levels
 class Board(level: Levels = Levels.Easy) {
     var lines : Array<Line> = arrayOf()
     var cols : MutableList<Column> = mutableListOf()
-    var maxValue = 0
+    var maxValue : Int = 0
+        get() {
+            for(i in lines.indices){
+                if(lines[i].lineValue > field){
+                    field = lines[i].lineValue
+                }
+            }
+
+            for(i in cols.indices){
+                if(cols[i].colValue > field){
+                    field = cols[i].colValue
+                }
+            }
+            return field
+        }
     var maxValueExpression : String = ""
 
     init {
@@ -32,21 +46,19 @@ class Board(level: Levels = Levels.Easy) {
         return boardString
     }
 
-    fun maxOperation() {
+    fun maxOperation() : Int {
+        var localMaxValue = 0
         for(i in lines.indices){
            if(lines[i].lineValue > maxValue){
-               maxValue = lines[i].lineValue
-               maxValueExpression = ""
-               maxValueExpression = "Line $i: " + lines[i].printLine()
+               localMaxValue = lines[i].lineValue
            }
         }
 
         for(i in cols.indices){
             if(cols[i].colValue > maxValue){
-                maxValue = cols[i].colValue
-                maxValueExpression = ""
-                maxValueExpression = "Col $i: " + cols[i].printColumn()
+                localMaxValue = cols[i].colValue
             }
         }
+        return localMaxValue
     }
 }

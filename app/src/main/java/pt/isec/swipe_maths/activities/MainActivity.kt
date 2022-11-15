@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity() {
 //            Log.i("Debug", "Col 1 value : " + firstCol.colValue())
             var board : Board = Board(Levels.Expert)
             Log.i("Debug", board.printBoard())
-            board.maxOperation()
-            Log.i("Debug", board.maxValueExpression + " = ${board.maxValue}")
+            Log.i("Debug", "maxValue: ${board.maxValue}")
         }
         buttonProfile.setOnClickListener(makeSnackbar)
     }
