@@ -1,10 +1,12 @@
 package pt.isec.swipe_maths.activities
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import pt.isec.swipe_maths.IGameBoardFragment
+import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.board.Board
@@ -29,11 +31,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.lblLevel.text = game.level.name
+        binding.lblLevel.text = getString(R.string.level, game.level)
 
         game.startTime()
         viewModel.timer.observe(this){
-            binding.timer.text = it.toString()
+            binding.timer.text = getString(R.string.timer, it)
         }
 
         Log.i("Debug", game.board.printBoard())
