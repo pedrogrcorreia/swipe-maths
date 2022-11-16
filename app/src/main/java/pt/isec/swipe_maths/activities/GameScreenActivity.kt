@@ -12,16 +12,16 @@ import pt.isec.swipe_maths.views.GameViewModel
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
-    lateinit var binding: ActivityGameScreenBinding
+    private lateinit var binding: ActivityGameScreenBinding
 
     private val game : Game = Game()
 
     private val viewModel : GameViewModel by viewModels {
-        GameViewModel.GameViewModelFactory(game.board)
+        GameViewModel.GameViewModelFactory(game)
     }
 
     override fun getDefaultViewModelProviderFactory(): GameViewModel.GameViewModelFactory {
-        return GameViewModel.GameViewModelFactory(game.board)
+        return GameViewModel.GameViewModelFactory(game)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
         binding.lblLevel.text = game.level.name
 
-        binding.timer.text = viewModel.getLines()[0].numbers[0].toString()
+        game.startTime()
+        viewModel.timer.observe(this){
+            binding.timer.text = it.toString()
+        }
 
         Log.i("Debug", game.board.printBoard())
     }
