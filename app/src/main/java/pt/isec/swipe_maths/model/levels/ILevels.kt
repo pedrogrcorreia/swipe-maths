@@ -6,4 +6,8 @@ interface ILevels {
 
     val min : Int
     val max : Int
+
+    val timer : Int
+    val correctAnswers : Int
+    val bonusTime : Int
 }

@@ -8,6 +8,13 @@ enum class Levels : ILevels {
             get() = 1
         override val max: Int
             get() = 9
+        override val timer: Int
+            get() = 60
+        override val correctAnswers: Int
+            get() = 5
+        override val bonusTime: Int
+            get() = 5
+
     },
     Medium {
         override val validOperations: Array<String>
@@ -16,6 +23,12 @@ enum class Levels : ILevels {
             get() = 1
         override val max: Int
             get() = 99
+        override val timer: Int
+            get() = 50
+        override val correctAnswers: Int
+            get() = 7
+        override val bonusTime: Int
+            get() = 5
     },
     Hard {
         override val validOperations: Array<String>
@@ -24,6 +37,12 @@ enum class Levels : ILevels {
             get() = 1
         override val max: Int
             get() = 999
+        override val timer: Int
+            get() = 45
+        override val correctAnswers: Int
+            get() = 7
+        override val bonusTime: Int
+            get() = 3
     },
     Expert {
         override val validOperations: Array<String>
@@ -32,5 +51,11 @@ enum class Levels : ILevels {
             get() = 99
         override val max: Int
             get() = 999
+        override val timer: Int
+            get() = 30
+        override val correctAnswers: Int
+            get() = 10
+        override val bonusTime: Int
+            get() = 5
     },
 }
