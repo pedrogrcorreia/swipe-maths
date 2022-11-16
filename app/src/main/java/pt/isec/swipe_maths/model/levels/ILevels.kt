@@ -10,4 +10,5 @@ interface ILevels {
     val timer : Int
     val correctAnswers : Int
     val bonusTime : Int
+    val nextLevel : Levels
 }

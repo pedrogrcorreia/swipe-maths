@@ -34,11 +34,19 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="pt.isec.swipe_maths.GameBoardFragment"
+        android:name="pt.isec.swipe_maths.fragments.GameBoardFragment"
         tools:layout="@layout/fragment_game_board"
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:id="@+id/fragmentGameBoard"/>
-    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/answers"
+        android:layout_margin="10dp"
+        android:id="@+id/lblAnswers"/>
 
 </LinearLayout>

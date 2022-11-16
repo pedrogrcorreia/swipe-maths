@@ -11,18 +11,19 @@ import pt.isec.swipe_maths.model.levels.Levels
 class Game {
     var level : Levels = Levels.Easy
 
+    var levelLive : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
+
     var boardLive : MutableLiveData<Board> = MutableLiveData(Board(level))
 
-    val board : Board
-        get(){
-            return boardLive.value!!
-        }
+    var board : Board = boardLive.value!!
 
     var remainingTimeLive : MutableLiveData<Int> = MutableLiveData(level.timer)
 
     var remainingTime : Int = remainingTimeLive.value!!
 
-    var correctAnswers : MutableLiveData<Int> = MutableLiveData(0)
+    var correctAnswersLive : MutableLiveData<Int> = MutableLiveData(0)
+
+    var correctAnswers : Int = correctAnswersLive.value!!
 
     var timer: CountDownTimer? = null
 
@@ -44,10 +45,7 @@ class Game {
 
     fun isCorrectLine(line: Int): Boolean{
         if (board.lines[line].lineValue == board.maxValue) {
-            boardLive.postValue(Board())
-            timer?.cancel()
-            addTime()
-            startTimer()
+            correctPlay()
             return true
         }
         return false
@@ -55,10 +53,7 @@ class Game {
 
     fun isCorrectColumn(col: Int): Boolean{
         if(board.cols[col].colValue == board.maxValue) {
-            boardLive.postValue(Board())
-            timer?.cancel()
-            addTime()
-            startTimer()
+            correctPlay()
             return true
         }
         return false
@@ -76,4 +71,25 @@ class Game {
         Log.i("Debug", "$remainingTime")
     }
 
+    private fun correctPlay(){
+        correctAnswers = correctAnswersLive.value!!
+        correctAnswersLive.postValue(++correctAnswers)
+        Log.i("Debug", "correctAnswers: $correctAnswers")
+        if(correctAnswers == level.correctAnswers){
+            Log.i("Debug", "HEREEEEEEEEEEE")
+            level = level.nextLevel
+            levelLive.postValue(level)
+            correctAnswersLive.postValue(0)
+        }
+        nextBoard()
+    }
+
+    private fun nextBoard(){
+        board = Board(level)
+        boardLive.postValue(board)
+        Log.i("Debug", board.printBoard())
+        timer?.cancel()
+        addTime()
+        startTimer()
+    }
 }

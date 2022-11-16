@@ -1,16 +1,12 @@
-package pt.isec.swipe_maths
+package pt.isec.swipe_maths.fragments
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import pt.isec.swipe_maths.databinding.FragmentGameBoardBinding
-import pt.isec.swipe_maths.model.Game
-import pt.isec.swipe_maths.views.GameScreen
 import pt.isec.swipe_maths.views.GameViewModel
 
 const val SQUARES_TO_SCROLL = 2

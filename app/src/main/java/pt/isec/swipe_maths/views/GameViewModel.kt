@@ -12,6 +12,7 @@ import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameBoard
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Line
+import pt.isec.swipe_maths.model.levels.Levels
 
 class GameViewModel(private var game: Game) : ViewModel() {
 
@@ -36,5 +37,15 @@ class GameViewModel(private var game: Game) : ViewModel() {
     val timer : LiveData<Int>
         get(){
             return game.remainingTimeLive
+        }
+
+    val level : LiveData<Levels>
+        get(){
+            return game.levelLive
+        }
+
+    val correctAnswers : LiveData<Int>
+        get(){
+            return game.correctAnswersLive
         }
 }

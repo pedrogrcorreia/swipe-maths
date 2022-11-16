@@ -14,7 +14,8 @@ enum class Levels : ILevels {
             get() = 5
         override val bonusTime: Int
             get() = 5
-
+        override val nextLevel: Levels
+            get() = Medium
     },
     Medium {
         override val validOperations: Array<String>
@@ -29,6 +30,8 @@ enum class Levels : ILevels {
             get() = 7
         override val bonusTime: Int
             get() = 5
+        override val nextLevel: Levels
+            get() = Hard
     },
     Hard {
         override val validOperations: Array<String>
@@ -43,6 +46,8 @@ enum class Levels : ILevels {
             get() = 7
         override val bonusTime: Int
             get() = 3
+        override val nextLevel: Levels
+            get() = Expert
     },
     Expert {
         override val validOperations: Array<String>
@@ -57,5 +62,7 @@ enum class Levels : ILevels {
             get() = 10
         override val bonusTime: Int
             get() = 5
+        override val nextLevel: Levels
+            get() = Expert
     },
 }
