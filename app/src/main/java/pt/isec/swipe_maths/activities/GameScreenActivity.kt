@@ -32,17 +32,19 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         binding.lblLevel.text = game.level.name
 
         binding.timer.text = viewModel.getLines()[0].numbers[0].toString()
+
+        Log.i("Debug", game.board.printBoard())
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
 //        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
-        viewModel.updateBoard(Board())
+        Log.i("Debug", game.isCorrectColumn(selectedColumn).toString())
         Log.i("Debug", "Col: $selectedColumn")
         return true
     }
 
     override fun swipeHorizontal(selectedRow: Int): Boolean {
-        Log.i("Debug", "Row: $selectedRow")
+        Log.i("Debug", game.isCorrectLine(selectedRow).toString())
         return true
     }
 }

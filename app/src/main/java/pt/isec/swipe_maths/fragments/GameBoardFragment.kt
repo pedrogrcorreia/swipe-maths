@@ -140,13 +140,13 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             if (e2!!.y > e1!!.y + rowHeight * SQUARES_TO_SCROLL
                 || e2!!.y < e1!!.y - rowHeight * SQUARES_TO_SCROLL
             ) {
-                actBase!!.swipeVertical(getColumnScrolled(e1.x.toInt()))
+                getColumnScrolled(e1.x.toInt())?.let { actBase!!.swipeVertical(it) }
                 selectedPlay = true
                 return true
             } else if (e2!!.x > e1!!.x + colWidth * SQUARES_TO_SCROLL
                 || e2!!.x < e1!!.x - colWidth * SQUARES_TO_SCROLL
             ) {
-                actBase!!.swipeHorizontal(getRowScrolled(e1.y.toInt()))
+                getRowScrolled(e1.y.toInt())?.let { actBase!!.swipeHorizontal(it) }
                 selectedPlay = true
                 return true
             }
@@ -167,25 +167,25 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         return false
     }
 
-    fun getColumnScrolled(x : Int) : Int {
+    private fun getColumnScrolled(x : Int) : Int? {
         when(x){
             in 1 until colWidth -> return 0
-            in colWidth + 1 until colWidth * 2 -> return 1
-            in (colWidth * 2) + 1 until colWidth * 3 -> return 2
-            in (colWidth * 3) + 1 until colWidth * 4 -> return 3
-            in (colWidth * 4) + 1 until colWidth * 5 -> return 4
+//            in colWidth + 1 until colWidth * 2 -> return 1
+            in (colWidth * 2) + 1 until colWidth * 3 -> return 1
+//            in (colWidth * 3) + 1 until colWidth * 4 -> return 3
+            in (colWidth * 4) + 1 until colWidth * 5 -> return 2
         }
-        return 100
+        return null
     }
 
-    fun getRowScrolled(x: Int) : Int {
+    private fun getRowScrolled(x: Int) : Int? {
         when(x){
             in 1 until rowHeight -> return 0
-            in rowHeight + 1 until rowHeight * 2 -> return 1
-            in (rowHeight * 2) + 1 until rowHeight * 3 -> return 2
-            in (rowHeight * 3) + 1 until rowHeight * 4 -> return 3
-            in (rowHeight * 4) + 1 until rowHeight * 5 -> return 4
+//            in rowHeight + 1 until rowHeight * 2 -> return 1
+            in (rowHeight * 2) + 1 until rowHeight * 3 -> return 1
+//            in (rowHeight * 3) + 1 until rowHeight * 4 -> return 3
+            in (rowHeight * 4) + 1 until rowHeight * 5 -> return 2
         }
-        return 100
+        return null
     }
 }
