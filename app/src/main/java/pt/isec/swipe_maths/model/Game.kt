@@ -19,4 +19,8 @@ class Game {
             return true
         return false
     }
+
+    fun nextBoard(){
+        board = Board(level)
+    }
 }
