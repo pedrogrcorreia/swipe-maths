@@ -31,7 +31,6 @@ class Game {
         timer = object: CountDownTimer((remainingTime * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 remainingTimeLive.postValue((millisUntilFinished/1000).toInt())
-//            Log.i("Debug", "${remainingTime.value}")
             }
             override fun onFinish() {}
         }.start()
@@ -40,7 +39,6 @@ class Game {
 
     fun startTime(){
         startTimer()
-        Log.i("Debug", "$remainingTime")
     }
 
     fun isCorrectLine(line: Int): Boolean{

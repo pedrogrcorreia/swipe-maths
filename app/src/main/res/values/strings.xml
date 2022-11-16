@@ -6,6 +6,10 @@
     <string name="level">Level: %s</string>
     <string name="timer">Timer: %d</string>
     <string name="answers">Correct Answers: %d</string>
+    <string name="correct_col">✅ Column %d is right!</string>
+    <string name="incorrect_col">❌ Column %d is wrong!</string>
+    <string name="correct_row">✅ Row %d is right!</string>
+    <string name="incorrect_row">❌ Row %d is wrong!</string>
     <string name="todo">Not implemented yet...</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

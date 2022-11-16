@@ -1,9 +1,17 @@
 package pt.isec.swipe_maths.activities
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
+import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
@@ -49,13 +57,29 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
 //        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
-        Log.i("Debug", game.isCorrectColumn(selectedColumn).toString())
-        Log.i("Debug", "Col: $selectedColumn")
+        if(game.isCorrectColumn(selectedColumn)){
+            Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn), Snackbar.LENGTH_SHORT).apply{
+                setTextColor(Color.GREEN)
+            }.show()
+        } else {
+            Snackbar.make(binding.root, getString(R.string.incorrect_col, selectedColumn), Snackbar.LENGTH_SHORT).apply{
+                setTextColor(Color.RED)
+            }.show()
+        }
+
         return true
     }
 
     override fun swipeHorizontal(selectedRow: Int): Boolean {
-        Log.i("Debug", game.isCorrectLine(selectedRow).toString())
+        if(game.isCorrectLine(selectedRow)){
+            Snackbar.make(binding.root, getString(R.string.correct_row, selectedRow), Snackbar.LENGTH_SHORT).apply{
+                setTextColor(Color.GREEN)
+            }.show()
+        } else{
+            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedRow), Snackbar.LENGTH_SHORT).apply{
+                setTextColor(Color.RED)
+            }.show()
+        }
         return true
     }
 }
