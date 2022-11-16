@@ -7,21 +7,6 @@ class Board(level: Levels = Levels.Easy) {
     var lines : Array<Line> = arrayOf()
     var cols : MutableList<Column> = mutableListOf()
     var maxValue : Int = 0
-        get() {
-            for(i in lines.indices){
-                if(lines[i].lineValue > field){
-                    field = lines[i].lineValue
-                }
-            }
-
-            for(i in cols.indices){
-                if(cols[i].colValue > field){
-                    field = cols[i].colValue
-                }
-            }
-            return field
-        }
-    var maxValueExpression : String = ""
 
     init {
         lines = arrayOf(Line(level), Line(level), Line(level))
@@ -33,6 +18,7 @@ class Board(level: Levels = Levels.Easy) {
                 level
             ))
         }
+        maxValue = maxOperation()
     }
 
     fun printBoard() : String {
@@ -46,16 +32,16 @@ class Board(level: Levels = Levels.Easy) {
         return boardString
     }
 
-    fun maxOperation() : Int {
+    private fun maxOperation() : Int {
         var localMaxValue = 0
         for(i in lines.indices){
-           if(lines[i].lineValue > maxValue){
+           if(lines[i].lineValue > localMaxValue){
                localMaxValue = lines[i].lineValue
            }
         }
 
         for(i in cols.indices){
-            if(cols[i].colValue > maxValue){
+            if(cols[i].colValue > localMaxValue){
                 localMaxValue = cols[i].colValue
             }
         }
