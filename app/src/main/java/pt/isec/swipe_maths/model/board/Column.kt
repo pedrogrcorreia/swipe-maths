@@ -7,8 +7,8 @@ class Column(firstNumber: Int,
              secondNumber: Int,
              thirdNumber: Int,
              level: Levels = Levels.Easy) {
-    private var numbers : Array<Int> = arrayOf()
-    private var operators : Array<String>
+    var numbers : Array<Int> = arrayOf()
+    var operators : Array<String>
     val colValue : Int
 
 

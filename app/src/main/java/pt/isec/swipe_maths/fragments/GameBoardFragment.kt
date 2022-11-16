@@ -64,41 +64,39 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         })
 
 
-        viewModel.boardData.observe(viewLifecycleOwner){
-            binding.sq00.text = viewModel.boardData.value?.lines?.get(0)?.numbers?.get(0).toString()
-        }
+        viewModel.board.observe(viewLifecycleOwner){
 
-//        viewModel.gameBoard.observe(viewLifecycleOwner){
-//            binding.sq00.text = viewModel.gameBoard.value?.getNumber(0, 0)
-//            binding.sq02.text = viewModel.gameBoard.value?.getNumber(0, 1)
-//            binding.sq04.text = viewModel.gameBoard.value?.getNumber(0, 2)
-//
-//            binding.sq20.text = viewModel.gameBoard.value?.getNumber(1, 0)
-//            binding.sq22.text = viewModel.gameBoard.value?.getNumber(1, 1)
-//            binding.sq24.text = viewModel.gameBoard.value?.getNumber(1, 2)
-//
-//            binding.sq40.text = viewModel.gameBoard.value?.getNumber(2, 0)
-//            binding.sq42.text = viewModel.gameBoard.value?.getNumber(2, 1)
-//            binding.sq44.text = viewModel.gameBoard.value?.getNumber(2, 2)
-//
-//            binding.sq01.text = viewModel.gameBoard.value?.getHorizontalOperation(0, 0)
-//            binding.sq03.text = viewModel.gameBoard.value?.getHorizontalOperation(0, 1)
-//
-//            binding.sq21.text = viewModel.gameBoard.value?.getHorizontalOperation(1, 0)
-//            binding.sq23.text = viewModel.gameBoard.value?.getHorizontalOperation(1, 1)
-//
-//            binding.sq41.text = viewModel.gameBoard.value?.getHorizontalOperation(2, 0)
-//            binding.sq43.text = viewModel.gameBoard.value?.getHorizontalOperation(2, 1)
-//
-//            binding.sq10.text = viewModel.gameBoard.value?.getVerticalOperation(0, 0)
-//            binding.sq30.text = viewModel.gameBoard.value?.getVerticalOperation(0, 1)
-//
-//            binding.sq12.text = viewModel.gameBoard.value?.getVerticalOperation(1, 0)
-//            binding.sq32.text = viewModel.gameBoard.value?.getVerticalOperation(1, 1)
-//
-//            binding.sq14.text = viewModel.gameBoard.value?.getVerticalOperation(2, 0)
-//            binding.sq34.text = viewModel.gameBoard.value?.getVerticalOperation(2, 1)
-//        }
+            // Lines
+            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
+//            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
+            binding.sq01.text = viewModel.board.value?.lines?.get(0)?.operators?.get(0)
+            binding.sq02.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(1).toString()
+            binding.sq03.text = viewModel.board.value?.lines?.get(0)?.operators?.get(1)
+            binding.sq04.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(2).toString()
+
+            binding.sq20.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(0).toString()
+            binding.sq21.text = viewModel.board.value?.lines?.get(1)?.operators?.get(0)
+            binding.sq22.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(1).toString()
+            binding.sq23.text = viewModel.board.value?.lines?.get(1)?.operators?.get(1)
+            binding.sq24.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(2).toString()
+
+            binding.sq40.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(0).toString()
+            binding.sq41.text = viewModel.board.value?.lines?.get(2)?.operators?.get(0)
+            binding.sq42.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(1).toString()
+            binding.sq43.text = viewModel.board.value?.lines?.get(2)?.operators?.get(1)
+            binding.sq44.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(2).toString()
+
+
+            // Column operators
+            binding.sq10.text = viewModel.board.value?.cols?.get(0)?.operators?.get(0)
+            binding.sq30.text = viewModel.board.value?.cols?.get(0)?.operators?.get(1)
+
+            binding.sq12.text = viewModel.board.value?.cols?.get(1)?.operators?.get(0)
+            binding.sq32.text = viewModel.board.value?.cols?.get(1)?.operators?.get(1)
+
+            binding.sq14.text = viewModel.board.value?.cols?.get(2)?.operators?.get(0)
+            binding.sq34.text = viewModel.board.value?.cols?.get(2)?.operators?.get(1)
+        }
         return binding.root
     }
 
@@ -114,10 +112,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     override fun onDown(e: MotionEvent?): Boolean {
         colWidth = binding.sq00.width
         rowHeight = binding.sq00.height
-        Log.i("Debug","x: ${e!!.x} y: ${e.y}")
-        Log.i("Debug", "width: $colWidth")
-        Log.i("Debug", "height: $rowHeight")
-//        viewModel.changeValue()
         selectedPlay = false
         return true
     }

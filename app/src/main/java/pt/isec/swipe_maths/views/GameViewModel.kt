@@ -28,25 +28,13 @@ class GameViewModel(private var game: Game) : ViewModel() {
         }
     }
 
-    private val _gameBoard : MutableLiveData<Board> by lazy {
-    MutableLiveData<Board>().apply {
-        value = game.board
+    val board: LiveData<Board>
+        get() {
+            return game.boardLive
         }
-    }
-
 
     val timer : LiveData<Int>
         get(){
-            return game.remainingTime
+            return game.remainingTimeLive
         }
-
-    val boardData : LiveData<Board>
-        get() {
-            return _gameBoard
-        }
-
-    fun updateBoard(board: Board){
-        Log.i("Debug", board.printBoard())
-        _gameBoard.value = board
-    }
 }
