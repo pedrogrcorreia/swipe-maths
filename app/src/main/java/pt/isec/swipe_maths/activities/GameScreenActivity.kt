@@ -19,17 +19,16 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
     private val viewModel : GameViewModel by viewModels()
 
-    private val gameBoard = game.gameBoard
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.initializeViewModel(game)
+        binding.lblLevel.text = game.level.name
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
+//        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
         Log.i("Debug", "Col: $selectedColumn")
         return true
     }
