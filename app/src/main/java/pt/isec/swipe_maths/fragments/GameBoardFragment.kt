@@ -63,6 +63,11 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             }
         })
 
+
+        viewModel.boardData.observe(viewLifecycleOwner){
+            binding.sq00.text = viewModel.boardData.value?.lines?.get(0)?.numbers?.get(0).toString()
+        }
+
 //        viewModel.gameBoard.observe(viewLifecycleOwner){
 //            binding.sq00.text = viewModel.gameBoard.value?.getNumber(0, 0)
 //            binding.sq02.text = viewModel.gameBoard.value?.getNumber(0, 1)
