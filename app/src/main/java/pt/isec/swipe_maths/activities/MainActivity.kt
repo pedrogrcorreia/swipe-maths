@@ -1,11 +1,15 @@
 package pt.isec.swipe_maths.activities
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.model.board.Board
@@ -18,35 +22,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var buttonSingle : Button = findViewById(R.id.singlePlayer)
-        var buttonMulti : Button = findViewById(R.id.multiPlayer)
-        var buttonProfile : Button = findViewById(R.id.userProfile)
+        val buttonSingle : Button = findViewById(R.id.singlePlayer)
+        val buttonMulti : Button = findViewById(R.id.multiPlayer)
+        val buttonProfile : Button = findViewById(R.id.userProfile)
 
         buttonSingle.setOnClickListener {
-            intent = Intent(this, GameScreenActivity::class.java)
-            startActivity(intent)
+            startActivity(GameScreenActivity.getSingleModeIntent(this))
         }
         buttonMulti.setOnClickListener{
-//            val firstLine = Line()
-//            val secLine = Line()
-//            val thirdLine = Line()
-//
-//            val firstCol = Column(firstLine.numbers[0], secLine.numbers[0], thirdLine.numbers[0])
-//            val secCol = Column(firstLine.numbers[1], secLine.numbers[1], thirdLine.numbers[1])
-//            val thirdCol = Column(firstLine.numbers[2], secLine.numbers[2], thirdLine.numbers[2])
-//
-//            Log.i("Debug", "Line 1: " + firstLine.printLine())
-//            Log.i("Debug", "Line 2: " + secLine.printLine())
-//            Log.i("Debug", "Line 3: " + thirdLine.printLine())
-//
-//            Log.i("Debug","Col 1: " + firstCol.printColumn())
-//            Log.i("Debug","Col 2: " + secCol.printColumn())
-//            Log.i("Debug","Col 3: " + thirdCol.printColumn())
-//
-//            Log.i("Debug", "Col 1 value : " + firstCol.colValue())
-            var board : Board = Board(Levels.Expert)
-            Log.i("Debug", board.printBoard())
-            Log.i("Debug", "maxValue: ${board.maxValue}")
+            val dlg = AlertDialog.Builder(this)
+                .setTitle("Multiplayer")
+                .setMessage("Want to be server or client")
+                .setPositiveButton("Server") { _: DialogInterface, _: Int ->
+                    startActivity(GameScreenActivity.getServerModeIntent(this))
+                }
+                .setNegativeButton("Client") { _: DialogInterface, _: Int ->
+                    startActivity(GameScreenActivity.getClientModeIntent(this))
+                }
+                .create()
+
+            dlg.show()
         }
         buttonProfile.setOnClickListener(makeSnackbar)
     }
