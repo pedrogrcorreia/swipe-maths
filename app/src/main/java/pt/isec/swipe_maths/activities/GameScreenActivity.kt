@@ -16,9 +16,14 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.navigateUp
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
@@ -93,6 +98,13 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
         viewModel.correctAnswers.observe(this){
             binding.lblAnswers.text = getString(R.string.answers, it)
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // todo: ask if user wants to end
+                finish()
+            }
+        })
     }
 
     private fun startAsClient(){
@@ -219,5 +231,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
             }.show()
         }
         return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+            val navController = findNavController(R.id.nav_host_fragment_content_main)
+            return navController.popBackStack() || super.onSupportNavigateUp()
     }
 }

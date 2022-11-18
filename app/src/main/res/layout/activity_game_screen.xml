@@ -31,14 +31,7 @@
             android:text="@string/timer"
             android:id="@+id/timer"/>
     </LinearLayout>
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="pt.isec.swipe_maths.fragments.GameBoardFragment"
-        tools:layout="@layout/fragment_game_board"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:id="@+id/fragmentGameBoard"/>
+    <include layout="@layout/content_game_screen"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
