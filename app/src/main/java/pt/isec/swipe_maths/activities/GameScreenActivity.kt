@@ -25,6 +25,8 @@ import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.utils.NetUtils
+import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
 import pt.isec.swipe_maths.views.GameViewModel
 import kotlin.concurrent.thread
 
@@ -131,7 +133,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
                 }
             }
             .setNeutralButton("EMULATOR") { _: DialogInterface, _: Int ->
-//                model.startClient("10.0.2.2", SERVER_PORT-1)
+                NetUtils.startClient("10.0.2.2", SERVER_PORT-1)
                 // Configure port redirect on the Server Emulator:
                 // telnet localhost <5554|5556|5558|...>
                 // auth <key>
