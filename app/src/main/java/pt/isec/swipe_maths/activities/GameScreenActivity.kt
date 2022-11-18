@@ -101,8 +101,15 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // todo: ask if user wants to end
-                finish()
+                AlertDialog.Builder(this@GameScreenActivity)
+                    .setTitle("Exit game")
+                    .setMessage("Close game?")
+                    .setPositiveButton("Cancel"){ d: DialogInterface, _: Int ->
+                        d.dismiss()
+                    }
+                    .setNegativeButton("Exit"){_: DialogInterface, _: Int ->
+                        finish()
+                    }.show()
             }
         })
     }
@@ -234,7 +241,15 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-            val navController = findNavController(R.id.nav_host_fragment_content_main)
-            return navController.popBackStack() || super.onSupportNavigateUp()
+        AlertDialog.Builder(this)
+            .setTitle("Exit game")
+            .setMessage("Close game?")
+            .setPositiveButton("Cancel"){ d: DialogInterface, _: Int ->
+                d.dismiss()
+            }
+            .setNegativeButton("Exit"){_: DialogInterface, _: Int ->
+                finish()
+            }.show()
+        return true
     }
 }

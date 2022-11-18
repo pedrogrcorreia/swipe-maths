@@ -21,7 +21,8 @@
         tools:layout="@layout/fragment_start_game" >
         <action
             android:id="@+id/action_startGameFragment_to_gameBoardFragment"
-            app:destination="@id/gameBoardFragment" />
+            app:destination="@id/gameBoardFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"
