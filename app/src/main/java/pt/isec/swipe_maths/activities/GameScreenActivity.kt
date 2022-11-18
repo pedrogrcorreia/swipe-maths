@@ -148,7 +148,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
                     Toast.makeText(this@GameScreenActivity, "ERRO DO CRL", Toast.LENGTH_LONG).show()
                     finish()
                 } else {
-
+                    NetUtils.startClient(strIP)
                 }
             }
             .setNeutralButton("EMULATOR") { _: DialogInterface, _: Int ->
@@ -208,6 +208,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
                 finish()
             }
             .create()
+
+        NetUtils.startServer()
 
         dlg?.show()
     }

@@ -28,13 +28,13 @@ class NetUtils {
             thread {
                 serverSocket = ServerSocket(SERVER_PORT)
                 serverSocket?.run {
-                    try {
-                        val socketClient = serverSocket!!.accept()
-                        startComm(socketClient)
-                    } catch (_: Exception) {
-                    } finally {
-                        serverSocket?.close()
-                        serverSocket = null
+                    while(true) {
+                        try {
+                            val socketClient = serverSocket!!.accept()
+                            println("Received connection request!")
+                            startComm(socketClient)
+                        } catch (_: Exception) {
+                        }
                     }
                 }
             }
@@ -57,8 +57,8 @@ class NetUtils {
         }
 
         private fun startComm(newSocket: Socket){
-            if (threadComm != null)
-                return
+//            if (threadComm != null)
+//                return
 
             socket = newSocket
 
