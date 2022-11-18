@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameBoard
 import pt.isec.swipe_maths.model.board.Board
@@ -28,6 +29,11 @@ class GameViewModel(private var game: Game) : ViewModel() {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+
+    val state: LiveData<GameStates>
+        get() {
+            return game.gameState
+        }
 
     val board: LiveData<Board>
         get() {

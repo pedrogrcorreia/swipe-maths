@@ -7,6 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentGameBoardBinding
 import pt.isec.swipe_maths.views.GameViewModel
@@ -107,6 +108,12 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
 
         viewModel.level.observe(viewLifecycleOwner){
             binding.lblLevel.text = getString(R.string.level, it)
+        }
+
+        viewModel.state.observe(viewLifecycleOwner){
+            if(it == GameStates.WAITING_FOR_LEVEL){
+                findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
+            }
         }
     }
 

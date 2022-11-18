@@ -28,7 +28,7 @@ class Game {
 
     var timer: CountDownTimer? = null
 
-    var gameState = GameStates.WAITING_FOR_START
+    var gameState : MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
 
     private fun startTimer(){
         timer = object: CountDownTimer((remainingTime * 1000).toLong(), 1000) {
@@ -76,7 +76,7 @@ class Game {
         correctAnswersLive.postValue(++correctAnswers)
         Log.i("Debug", "correctAnswers: $correctAnswers")
         if(correctAnswers == level.correctAnswers){
-            gameState = GameStates.WAITING_FOR_LEVEL
+            gameState.postValue(GameStates.WAITING_FOR_LEVEL)
             level = level.nextLevel
             levelLive.postValue(level)
             correctAnswersLive.postValue(0)
