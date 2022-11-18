@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
@@ -27,6 +28,8 @@ class Game {
 
     var timer: CountDownTimer? = null
 
+    var gameState = GameStates.WAITING_FOR_START
+
     private fun startTimer(){
         timer = object: CountDownTimer((remainingTime * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -35,7 +38,6 @@ class Game {
             override fun onFinish() {}
         }.start()
     }
-
 
     fun startTime(){
         startTimer()
@@ -74,7 +76,7 @@ class Game {
         correctAnswersLive.postValue(++correctAnswers)
         Log.i("Debug", "correctAnswers: $correctAnswers")
         if(correctAnswers == level.correctAnswers){
-            Log.i("Debug", "HEREEEEEEEEEEE")
+            gameState = GameStates.WAITING_FOR_LEVEL
             level = level.nextLevel
             levelLive.postValue(level)
             correctAnswersLive.postValue(0)
