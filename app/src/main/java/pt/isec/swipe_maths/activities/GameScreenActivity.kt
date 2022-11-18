@@ -86,19 +86,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
             CLIENT_MODE -> startAsClient()
         }
 
-        game.startTime()
-        viewModel.timer.observe(this){
-            binding.timer.text = getString(R.string.timer, it)
-        }
-
-        viewModel.level.observe(this){
-            binding.lblLevel.text = getString(R.string.level, it)
-        }
-
-        viewModel.correctAnswers.observe(this){
-            binding.lblAnswers.text = getString(R.string.answers, it)
-        }
-
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 AlertDialog.Builder(this@GameScreenActivity)
