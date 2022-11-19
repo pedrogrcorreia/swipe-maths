@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/nextLevel"
+            android:id="@+id/nextLevelLabel"
             />
         <TextView
             android:layout_margin="8dp"
@@ -26,12 +27,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/nextLevelTimer"
+            android:id="@+id/nextLevelTimer"
             />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Pause" />
+            android:text="@string/pauseButton"
+            android:id="@+id/btnPause"/>
     </LinearLayout>
 
 </FrameLayout>

@@ -54,4 +54,8 @@ class GameViewModel(private var game: Game) : ViewModel() {
         get(){
             return game.correctAnswersLive
         }
+
+    fun startGame(){
+        game.startTime()
+    }
 }

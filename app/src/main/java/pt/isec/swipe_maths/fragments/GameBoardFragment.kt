@@ -115,6 +115,8 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
                 findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
             }
         }
+
+        viewModel.startGame()
     }
 
     private val gestureDetector : GestureDetector by lazy {
