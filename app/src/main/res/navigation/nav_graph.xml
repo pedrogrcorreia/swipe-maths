@@ -29,6 +29,9 @@
         tools:layout="@layout/fragment_new_level" >
         <action
             android:id="@+id/action_newLevelFragment_to_gameBoardFragment"
-            app:destination="@id/gameBoardFragment" />
+            app:destination="@id/gameBoardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

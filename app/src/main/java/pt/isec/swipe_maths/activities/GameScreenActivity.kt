@@ -26,16 +26,18 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
+import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.utils.NetUtils
 import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
 import pt.isec.swipe_maths.views.GameViewModel
 import kotlin.concurrent.thread
 
-class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
+class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
         private const val SINGLE_MODE = 0
         private const val SERVER_MODE = 1
@@ -227,6 +229,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment {
             }.show()
         }
         return true
+    }
+
+    override fun timesUp(){
+        game.gameState.postValue(GameStates.PLAYING)
     }
 
     override fun onSupportNavigateUp(): Boolean {

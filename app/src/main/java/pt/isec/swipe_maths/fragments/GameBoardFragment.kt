@@ -126,6 +126,7 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     override fun onDown(e: MotionEvent?): Boolean {
         colWidth = binding.sq00.width
         rowHeight = binding.sq00.height
+        binding.sq00.y
         selectedPlay = false
         return true
     }
