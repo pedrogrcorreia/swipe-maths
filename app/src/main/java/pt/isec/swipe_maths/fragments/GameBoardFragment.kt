@@ -102,14 +102,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.timer.observe(viewLifecycleOwner){
-            binding.timer.text = getString(R.string.timer, it)
-        }
-
-        viewModel.level.observe(viewLifecycleOwner){
-            binding.lblLevel.text = getString(R.string.level, it)
-        }
-
         viewModel.state.observe(viewLifecycleOwner){
             if(it == GameStates.WAITING_FOR_LEVEL){
                 findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
