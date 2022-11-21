@@ -11,11 +11,13 @@ class Column(firstNumber: Int,
     var operators : Array<String>
     val colValue : Int
 
+    private val random : Random = Random(System.currentTimeMillis())
+
 
     init {
         numbers = arrayOf(firstNumber, secondNumber, thirdNumber)
-        operators = arrayOf(level.validOperations[Random.nextInt(level.validOperations.size)],
-            level.validOperations[Random.nextInt(level.validOperations.size)])
+        operators = arrayOf(level.validOperations[random.nextInt(level.validOperations.size)],
+            level.validOperations[random.nextInt(level.validOperations.size)])
         colValue = colValue()
     }
 

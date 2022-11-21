@@ -8,12 +8,14 @@ class Line(level: Levels = Levels.Easy) {
     var operators : Array<String>
     val lineValue : Int
 
+    private val random : Random = Random(System.currentTimeMillis())
+
     init{
-        numbers = arrayOf(Random.nextInt(level.min, level.max),
-            Random.nextInt(level.min, level.max),
-            Random.nextInt(level.min, level.max))
-        operators = arrayOf(level.validOperations[Random.nextInt(level.validOperations.size)],
-            level.validOperations[Random.nextInt(level.validOperations.size)]
+        numbers = arrayOf(random.nextInt(level.min, level.max),
+            random.nextInt(level.min, level.max),
+            random.nextInt(level.min, level.max))
+        operators = arrayOf(level.validOperations[random.nextInt(level.validOperations.size)],
+            level.validOperations[random.nextInt(level.validOperations.size)]
             )
         lineValue = lineValue()
     }
