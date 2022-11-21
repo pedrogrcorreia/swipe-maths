@@ -15,7 +15,7 @@ import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Line
 import pt.isec.swipe_maths.model.levels.Levels
 
-class GameViewModel(private var game: Game) : ViewModel() {
+class GameViewModel() : ViewModel() {
 
     class GameViewModelFactory(private var game: Game)
         : ViewModelProvider.NewInstanceFactory() {
@@ -29,6 +29,10 @@ class GameViewModel(private var game: Game) : ViewModel() {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+
+    constructor(game: Game) : this()
+
+    private val game : Game = Game()
 
     val state: LiveData<GameStates>
         get() {
@@ -58,4 +62,10 @@ class GameViewModel(private var game: Game) : ViewModel() {
     fun startGame(){
         game.startTime()
     }
+
+    fun linePlay(selectedLine: Int): Boolean = game.isCorrectLine(selectedLine)
+
+    fun columnPlay(selectedCol: Int): Boolean = game.isCorrectColumn(selectedCol)
+
+    fun nextLevelTimerUp() = game.gameState.postValue(GameStates.PLAYING)
 }

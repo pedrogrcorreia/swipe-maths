@@ -20,6 +20,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
@@ -30,7 +31,9 @@ import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
+import pt.isec.swipe_maths.fragments.GameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
+import pt.isec.swipe_maths.fragments.NewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.utils.NetUtils
 import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
@@ -66,22 +69,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private lateinit var binding: ActivityGameScreenBinding
 
-    private val game : Game = Game()
-
-    private val viewModel : GameViewModel by viewModels {
-        GameViewModel.GameViewModelFactory(game)
-    }
-
-    override fun getDefaultViewModelProviderFactory(): GameViewModel.GameViewModelFactory {
-        return GameViewModel.GameViewModelFactory(game)
-    }
+    private val viewModel : GameViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-//        binding.lblLevel.text = getString(R.string.level, game.level)
 
         when (intent.getIntExtra("mode", SERVER_MODE)) {
             SERVER_MODE -> startAsServer()
@@ -102,6 +95,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         })
     }
+
 
     private fun startAsClient(){
         val edtBox = EditText(this).apply {
@@ -205,7 +199,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
 //        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
-        if(game.isCorrectColumn(selectedColumn)){
+        if(viewModel.columnPlay(selectedColumn)){
             Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.GREEN)
             }.show()
@@ -218,13 +212,13 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         return true
     }
 
-    override fun swipeHorizontal(selectedRow: Int): Boolean {
-        if(game.isCorrectLine(selectedRow)){
-            Snackbar.make(binding.root, getString(R.string.correct_row, selectedRow), Snackbar.LENGTH_SHORT).apply{
+    override fun swipeHorizontal(selectedLine: Int): Boolean {
+        if(viewModel.linePlay(selectedLine)){
+            Snackbar.make(binding.root, getString(R.string.correct_row, selectedLine), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.GREEN)
             }.show()
         } else{
-            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedRow), Snackbar.LENGTH_SHORT).apply{
+            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedLine), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.RED)
             }.show()
         }
@@ -232,7 +226,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
     }
 
     override fun timesUp(){
-        game.gameState.postValue(GameStates.PLAYING)
+        viewModel.nextLevelTimerUp()
     }
 
     override fun onSupportNavigateUp(): Boolean {

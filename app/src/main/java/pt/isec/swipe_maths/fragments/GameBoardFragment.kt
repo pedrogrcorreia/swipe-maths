@@ -61,41 +61,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
                 return true
             }
         })
-
-
-        viewModel.board.observe(viewLifecycleOwner){
-
-            // Lines
-            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
-//            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
-            binding.sq01.text = viewModel.board.value?.lines?.get(0)?.operators?.get(0)
-            binding.sq02.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(1).toString()
-            binding.sq03.text = viewModel.board.value?.lines?.get(0)?.operators?.get(1)
-            binding.sq04.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(2).toString()
-
-            binding.sq20.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(0).toString()
-            binding.sq21.text = viewModel.board.value?.lines?.get(1)?.operators?.get(0)
-            binding.sq22.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(1).toString()
-            binding.sq23.text = viewModel.board.value?.lines?.get(1)?.operators?.get(1)
-            binding.sq24.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(2).toString()
-
-            binding.sq40.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(0).toString()
-            binding.sq41.text = viewModel.board.value?.lines?.get(2)?.operators?.get(0)
-            binding.sq42.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(1).toString()
-            binding.sq43.text = viewModel.board.value?.lines?.get(2)?.operators?.get(1)
-            binding.sq44.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(2).toString()
-
-
-            // Column operators
-            binding.sq10.text = viewModel.board.value?.cols?.get(0)?.operators?.get(0)
-            binding.sq30.text = viewModel.board.value?.cols?.get(0)?.operators?.get(1)
-
-            binding.sq12.text = viewModel.board.value?.cols?.get(1)?.operators?.get(0)
-            binding.sq32.text = viewModel.board.value?.cols?.get(1)?.operators?.get(1)
-
-            binding.sq14.text = viewModel.board.value?.cols?.get(2)?.operators?.get(0)
-            binding.sq34.text = viewModel.board.value?.cols?.get(2)?.operators?.get(1)
-        }
         return binding.root
     }
 
@@ -108,6 +73,8 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             }
         }
 
+        fillSquares()
+
         viewModel.startGame()
     }
 
@@ -118,7 +85,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     override fun onDown(e: MotionEvent?): Boolean {
         colWidth = binding.sq00.width
         rowHeight = binding.sq00.height
-        binding.sq00.y
         selectedPlay = false
         return true
     }
@@ -166,6 +132,40 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
         velocityY: Float
     ): Boolean {
         return false
+    }
+
+    private fun fillSquares(){
+        viewModel.board.observe(viewLifecycleOwner){
+            // Lines
+            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
+            binding.sq01.text = viewModel.board.value?.lines?.get(0)?.operators?.get(0)
+            binding.sq02.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(1).toString()
+            binding.sq03.text = viewModel.board.value?.lines?.get(0)?.operators?.get(1)
+            binding.sq04.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(2).toString()
+
+            binding.sq20.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(0).toString()
+            binding.sq21.text = viewModel.board.value?.lines?.get(1)?.operators?.get(0)
+            binding.sq22.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(1).toString()
+            binding.sq23.text = viewModel.board.value?.lines?.get(1)?.operators?.get(1)
+            binding.sq24.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(2).toString()
+
+            binding.sq40.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(0).toString()
+            binding.sq41.text = viewModel.board.value?.lines?.get(2)?.operators?.get(0)
+            binding.sq42.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(1).toString()
+            binding.sq43.text = viewModel.board.value?.lines?.get(2)?.operators?.get(1)
+            binding.sq44.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(2).toString()
+
+
+            // Column operators
+            binding.sq10.text = viewModel.board.value?.cols?.get(0)?.operators?.get(0)
+            binding.sq30.text = viewModel.board.value?.cols?.get(0)?.operators?.get(1)
+
+            binding.sq12.text = viewModel.board.value?.cols?.get(1)?.operators?.get(0)
+            binding.sq32.text = viewModel.board.value?.cols?.get(1)?.operators?.get(1)
+
+            binding.sq14.text = viewModel.board.value?.cols?.get(2)?.operators?.get(0)
+            binding.sq34.text = viewModel.board.value?.cols?.get(2)?.operators?.get(1)
+        }
     }
 
     private fun getColumnScrolled(x : Int) : Int? {
