@@ -20,6 +20,8 @@ class Game {
 
     var gameState : MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
 
+    var nextLevelProgress : MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
+
     var timer: CountDownTimer? = null
 
     private fun startTimer(){
@@ -64,10 +66,10 @@ class Game {
 
     private fun correctPlay(){
         correctAnswers.value = correctAnswers.value!! + 1
+        nextLevelProgress.value = level.value!!.correctAnswers - correctAnswers.value!!
         if(correctAnswers.value!! == level.value!!.correctAnswers){
             gameState.value = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
-            println("correctAnswers: $correctAnswers")
         }
         else {
             addTime()
@@ -82,8 +84,9 @@ class Game {
     }
 
     fun newLevel(){
-        correctAnswers.value = 0
         level.value = level.value!!.nextLevel
+        correctAnswers.value = 0
+        nextLevelProgress.value = level.value!!.correctAnswers
         remainingTime.value = level.value!!.timer
         nextBoard()
         gameState.value = GameStates.PLAYING

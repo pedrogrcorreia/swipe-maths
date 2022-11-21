@@ -24,5 +24,14 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/timer"
         android:id="@+id/timer"/>
+    <TextView
+        android:layout_margin="8dp"
+        android:padding="20dp"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/answers"
+        android:id="@+id/correctAnswers"/>
 
 </LinearLayout>

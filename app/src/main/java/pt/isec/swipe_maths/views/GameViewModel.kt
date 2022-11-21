@@ -59,6 +59,11 @@ class GameViewModel() : ViewModel() {
             return game.correctAnswers
         }
 
+    val nextLevelProgress : LiveData<Int>
+        get(){
+            return game.nextLevelProgress
+        }
+
     fun startGame(){
         game.startTime()
     }

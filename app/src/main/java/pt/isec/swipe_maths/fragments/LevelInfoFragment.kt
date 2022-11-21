@@ -39,5 +39,9 @@ class LevelInfoFragment : Fragment() {
         viewModel.level.observe(viewLifecycleOwner){
             binding.lblLevel.text = getString(R.string.level, it)
         }
+
+        viewModel.nextLevelProgress.observe(viewLifecycleOwner){
+            binding.correctAnswers.text = getString(R.string.answers, it)
+        }
     }
 }
