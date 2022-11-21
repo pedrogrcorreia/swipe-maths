@@ -22,7 +22,7 @@ class Game {
 
     var nextLevelProgress : MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
 
-    var timer: CountDownTimer? = null
+    private var timer: CountDownTimer? = null
 
     private fun startTimer(){
         println(remainingTime.value!!)
@@ -37,6 +37,7 @@ class Game {
     }
 
     fun startTime(){
+        gameState.value = GameStates.PLAYING
         startTimer()
     }
 

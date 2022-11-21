@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentLevelInfoBinding
 import pt.isec.swipe_maths.views.GameViewModel
@@ -50,7 +51,12 @@ class LevelInfoFragment : Fragment() {
             )
         }
 
-        viewModel.nextLevelProgress.observe(viewLifecycleOwner){
+        viewModel.state.observe(viewLifecycleOwner){
+            when(it){
+                GameStates.WAITING_FOR_LEVEL -> this.requireView().visibility = View.INVISIBLE
+                GameStates.PLAYING -> this.requireView().visibility = View.VISIBLE
+                GameStates.WAITING_FOR_START -> this.requireView().visibility = View.INVISIBLE
+            }
         }
     }
 }
