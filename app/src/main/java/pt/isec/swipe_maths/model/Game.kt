@@ -41,6 +41,7 @@ class Game {
             correctPlay()
             return true
         }
+        nextBoard()
         return false
     }
 
@@ -49,6 +50,7 @@ class Game {
             correctPlay()
             return true
         }
+        nextBoard()
         return false
     }
 
