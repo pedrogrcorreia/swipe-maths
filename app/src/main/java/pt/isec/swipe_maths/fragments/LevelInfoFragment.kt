@@ -34,6 +34,7 @@ class LevelInfoFragment : Fragment() {
 
         viewModel.timer.observe(viewLifecycleOwner){
             binding.timer.text = getString(R.string.timer, it)
+            binding.timerPB.progress = it
         }
 
         viewModel.level.observe(viewLifecycleOwner){

@@ -4,7 +4,7 @@
     <string name="multi">Multiplayer</string>
     <string name="profile">User Profile</string>
     <string name="level">Level: %s</string>
-    <string name="timer">Timer: %d</string>
+    <string name="timer">%d</string>
     <string name="answers">Answers to next level</string>
     <string name="correct_col">✅ Column %d is right!</string>
     <string name="incorrect_col">❌ Column %d is wrong!</string>
