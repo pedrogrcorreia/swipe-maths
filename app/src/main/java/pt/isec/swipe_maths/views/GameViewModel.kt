@@ -41,31 +41,35 @@ class GameViewModel() : ViewModel() {
 
     val board: LiveData<Board>
         get() {
-            return game.boardLive
+            return game.board
         }
 
     val timer : LiveData<Int>
         get(){
-            return game.remainingTimeLive
+            return game.remainingTime
         }
 
     val level : LiveData<Levels>
         get(){
-            return game.levelLive
+            return game.level
         }
 
     val correctAnswers : LiveData<Int>
         get(){
-            return game.correctAnswersLive
+            return game.correctAnswers
         }
 
     fun startGame(){
         game.startTime()
     }
 
+
+
     fun linePlay(selectedLine: Int): Boolean = game.isCorrectLine(selectedLine)
 
     fun columnPlay(selectedCol: Int): Boolean = game.isCorrectColumn(selectedCol)
 
-    fun nextLevelTimerUp() = game.gameState.postValue(GameStates.PLAYING)
+    fun nextLevelTimerUp(){
+        game.newLevel()
+    }
 }

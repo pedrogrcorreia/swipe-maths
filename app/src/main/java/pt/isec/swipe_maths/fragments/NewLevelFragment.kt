@@ -51,7 +51,7 @@ class NewLevelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.nextLevelLabel.text = getString(R.string.nextLevel, viewModel.level.value)
+        binding.nextLevelLabel.text = getString(R.string.nextLevel, viewModel.level.value!!.nextLevel)
 
         startTimer()
 
