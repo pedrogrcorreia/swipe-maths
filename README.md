@@ -17,7 +17,7 @@ Can be played alone or with friends!
     - [x] Game Screen 
     - [x] New level screen
     - [x] Start timer when starting the game
-    - [ ] Stopping timer when entering a new level
+    - [x] Stopping timer when entering a new level
     - [ ] Changing all states accordingly
     - [ ] Hide level info on new level state
     - [ ] Lose game on time's up
