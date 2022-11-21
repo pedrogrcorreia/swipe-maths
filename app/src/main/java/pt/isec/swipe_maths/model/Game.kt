@@ -23,6 +23,7 @@ class Game {
     var timer: CountDownTimer? = null
 
     private fun startTimer(){
+        println(remainingTime.value!!)
         timer = object: CountDownTimer((remainingTime.value!! * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 remainingTime.postValue((millisUntilFinished/1000).toInt())
@@ -53,35 +54,36 @@ class Game {
 
     private fun addTime(){
         if(remainingTime.value!! > level.value!!.timer - level.value!!.bonusTime){
-            remainingTime.postValue(level.value!!.timer)
+            remainingTime.value = (level.value!!.timer)
         } else {
-            remainingTime.postValue(remainingTime.value!! + level.value!!.bonusTime)
+            remainingTime.value = (remainingTime.value!! + level.value!!.bonusTime)
         }
     }
 
     private fun correctPlay(){
         correctAnswers.value = correctAnswers.value!! + 1
         if(correctAnswers.value!! == level.value!!.correctAnswers){
-            gameState.postValue(GameStates.WAITING_FOR_LEVEL)
+            gameState.value = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
+            println("correctAnswers: $correctAnswers")
         }
         else {
             addTime()
+            timer!!.cancel()
+            startTimer()
             nextBoard()
         }
     }
 
     private fun nextBoard(){
-        board.postValue(Board(level.value!!))
-        timer?.cancel()
-        addTime()
-        startTimer()
+        board.value = Board(level.value!!)
     }
 
     fun newLevel(){
+        correctAnswers.value = 0
         level.value = level.value!!.nextLevel
-        startTimer()
+        remainingTime.value = level.value!!.timer
         nextBoard()
-        gameState.postValue(GameStates.PLAYING)
+        gameState.value = GameStates.PLAYING
     }
 }
