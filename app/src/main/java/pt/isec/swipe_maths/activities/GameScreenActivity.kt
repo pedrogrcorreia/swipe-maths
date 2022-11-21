@@ -94,6 +94,24 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                     }.show()
             }
         })
+
+        viewModel.state.observe(this){
+            when(it){
+                GameStates.GAME_OVER -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Game over")
+                        .setMessage("You ran out of time!")
+                        .setPositiveButton("Play Again"){ _: DialogInterface, _: Int ->
+                            finish()
+                            startActivity(this.intent)
+                        }
+                        .setNegativeButton("Exit"){ _: DialogInterface, _: Int ->
+                            finish()
+                        }
+                        .show()
+                }
+            }
+        }
     }
 
 

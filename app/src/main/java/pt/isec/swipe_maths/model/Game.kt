@@ -30,7 +30,9 @@ class Game {
             override fun onTick(millisUntilFinished: Long) {
                 remainingTime.postValue((millisUntilFinished/1000).toInt())
             }
-            override fun onFinish() {}
+            override fun onFinish() {
+                gameOver()
+            }
         }.start()
     }
 
@@ -90,5 +92,9 @@ class Game {
         remainingTime.value = level.value!!.timer
         nextBoard()
         gameState.value = GameStates.PLAYING
+    }
+
+    fun gameOver(){
+        gameState.value = GameStates.GAME_OVER
     }
 }
