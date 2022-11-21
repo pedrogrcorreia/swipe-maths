@@ -27,10 +27,10 @@ class Column(firstNumber: Int,
     }
 
     private fun colValue() : Int {
-        var result = numbers[0]
-        for(i in operators.indices){
-            result = Operations.calculate(result, operators[i], numbers[i+1])
-        }
-        return result
+//        var result = numbers[0]
+//        for(i in operators.indices){
+//            result = Operations.calculate(result, operators[i], numbers[i+1])
+//        }
+        return Operations.calculateExpression(numbers, operators)
     }
 }

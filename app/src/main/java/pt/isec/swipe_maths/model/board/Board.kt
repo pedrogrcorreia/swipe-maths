@@ -19,6 +19,7 @@ class Board(level: Levels = Levels.Easy) {
             ))
         }
         maxValue = maxOperation()
+        println(printBoard())
     }
 
     fun printBoard() : String {

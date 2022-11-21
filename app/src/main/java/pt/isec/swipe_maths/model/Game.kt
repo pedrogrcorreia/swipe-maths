@@ -10,7 +10,7 @@ import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
 
 class Game {
-    var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
+    var level : MutableLiveData<Levels> = MutableLiveData(Levels.Hard)
 
     var board : MutableLiveData<Board> = MutableLiveData(level.value?.let { Board(it) })
 
