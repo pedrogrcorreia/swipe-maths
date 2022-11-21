@@ -218,11 +218,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
     override fun swipeVertical(selectedColumn: Int): Boolean {
 //        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
         if(viewModel.columnPlay(selectedColumn)){
-            Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn), Snackbar.LENGTH_SHORT).apply{
+            Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn+1), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.GREEN)
             }.show()
         } else {
-            Snackbar.make(binding.root, getString(R.string.incorrect_col, selectedColumn), Snackbar.LENGTH_SHORT).apply{
+            Snackbar.make(binding.root, getString(R.string.incorrect_col, selectedColumn+1), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.RED)
             }.show()
         }
@@ -232,11 +232,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun swipeHorizontal(selectedLine: Int): Boolean {
         if(viewModel.linePlay(selectedLine)){
-            Snackbar.make(binding.root, getString(R.string.correct_row, selectedLine), Snackbar.LENGTH_SHORT).apply{
+            Snackbar.make(binding.root, getString(R.string.correct_row, selectedLine+1), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.GREEN)
             }.show()
         } else{
-            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedLine), Snackbar.LENGTH_SHORT).apply{
+            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedLine+1), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.RED)
             }.show()
         }
