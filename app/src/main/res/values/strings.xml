@@ -5,7 +5,7 @@
     <string name="profile">User Profile</string>
     <string name="level">Level: %s</string>
     <string name="timer">%d</string>
-    <string name="answers">Answers to next level</string>
+    <string name="timerInfo">Time left to complete the level</string>
     <string name="correct_col">✅ Column %d is right!</string>
     <string name="incorrect_col">❌ Column %d is wrong!</string>
     <string name="correct_row">✅ Row %d is right!</string>
@@ -16,4 +16,5 @@
     <string name="nextLevel">Next level: %s</string>
     <string name="startGame">Start Game</string>
     <string name="levelProgress">%d of %d</string>
+    <string name="levelProgressInfo">Correct answers to next level</string>
 </resources>

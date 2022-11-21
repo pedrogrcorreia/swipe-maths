@@ -1,11 +1,13 @@
 package pt.isec.swipe_maths.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentLevelInfoBinding
@@ -57,6 +59,14 @@ class LevelInfoFragment : Fragment() {
                 GameStates.PLAYING -> this.requireView().visibility = View.VISIBLE
                 GameStates.WAITING_FOR_START -> this.requireView().visibility = View.INVISIBLE
             }
+        }
+
+        binding.timer.setOnClickListener {
+            Snackbar.make(binding.root, getString(R.string.timerInfo), Snackbar.LENGTH_SHORT).show()
+        }
+
+        binding.nextLevelProgress.setOnClickListener {
+            Snackbar.make(binding.root, getString(R.string.levelProgressInfo), Snackbar.LENGTH_SHORT).show()
         }
     }
 }
