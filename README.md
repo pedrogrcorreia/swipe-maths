@@ -9,8 +9,8 @@ Can be played alone or with friends!
 - Game
     - [x] Main Activity buttons
     - [ ] Main Activity design
-    - [ ] Operation precedence
-    - [ ] Two highest values
+    - [x] Operation precedence
+    - [x] Two highest values
     - [ ] Point system
 - Single Player
     - [x] Start game screen
@@ -19,8 +19,8 @@ Can be played alone or with friends!
     - [x] Start timer when starting the game
     - [x] Stopping timer when entering a new level
     - [ ] Changing all states accordingly
-    - [ ] Hide level info on new level state
-    - [ ] Lose game on time's up
+    - [x] Hide level info on new level state
+    - [x] Lose game on time's up
     - [ ] All with firebase
 - Multiplayer
     - Server
