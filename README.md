@@ -11,14 +11,14 @@ Can be played alone or with friends!
     - [ ] Main Activity design
     - [x] Operation precedence
     - [x] Two highest values
-    - [ ] Point system
+    - [x] Point system
 - Single Player
     - [x] Start game screen
     - [x] Game Screen 
     - [x] New level screen
     - [x] Start timer when starting the game
     - [x] Stopping timer when entering a new level
-    - [ ] Changing all states accordingly
+    - [x] Changing all states accordingly
     - [x] Hide level info on new level state
     - [x] Lose game on time's up
     - [ ] All with firebase
