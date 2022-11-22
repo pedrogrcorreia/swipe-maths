@@ -22,6 +22,8 @@ class Game {
 
     var nextLevelProgress : MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
 
+    var points : MutableLiveData<Int> = MutableLiveData(0)
+
     private var timer: CountDownTimer? = null
 
     private fun startTimer(){
@@ -45,6 +47,8 @@ class Game {
         if (board.value?.lines?.get(line)?.lineValue == board.value?.maxValue) {
             correctPlay()
             return true
+        } else if(board.value?.lines?.get(line)?.lineValue == board.value?.secMaxValue){
+            points.value = points.value!! + 1
         }
         nextBoard()
         return false
@@ -54,6 +58,8 @@ class Game {
         if(board.value?.cols?.get(col)?.colValue == board.value?.maxValue) {
             correctPlay()
             return true
+        } else if(board.value?.cols?.get(col)?.colValue == board.value?.secMaxValue){
+            points.value = points.value!! + 1
         }
         nextBoard()
         return false
@@ -68,6 +74,7 @@ class Game {
     }
 
     private fun correctPlay(){
+        points.value = points.value!! + 2
         correctAnswers.value = correctAnswers.value!! + 1
         nextLevelProgress.value = level.value!!.correctAnswers - correctAnswers.value!!
         if(correctAnswers.value!! == level.value!!.correctAnswers){

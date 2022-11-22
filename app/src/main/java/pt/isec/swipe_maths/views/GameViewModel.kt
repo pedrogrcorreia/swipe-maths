@@ -64,6 +64,11 @@ class GameViewModel() : ViewModel() {
             return game.nextLevelProgress
         }
 
+    val points : LiveData<Int>
+        get(){
+            return game.points
+        }
+
     fun startGame(){
         game.startTime()
     }

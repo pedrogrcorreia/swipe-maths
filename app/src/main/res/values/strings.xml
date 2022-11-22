@@ -17,4 +17,5 @@
     <string name="startGame">Start Game</string>
     <string name="levelProgress">%d of %d</string>
     <string name="levelProgressInfo">Correct answers to next level</string>
+    <string name="points">Points: %d</string>
 </resources>
