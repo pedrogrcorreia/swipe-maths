@@ -7,6 +7,7 @@ class Board(level: Levels = Levels.Easy) {
     var lines : Array<Line> = arrayOf()
     var cols : MutableList<Column> = mutableListOf()
     var maxValue : Int = 0
+    var secMaxValue : Int = 0
 
     init {
         lines = arrayOf(Line(level), Line(level), Line(level))
@@ -18,8 +19,10 @@ class Board(level: Levels = Levels.Easy) {
                 level
             ))
         }
-        maxValue = maxOperation()
+        maxOperation()
         println(printBoard())
+        println("maxValue = $maxValue")
+        println("secMaxValue = $secMaxValue")
     }
 
     fun printBoard() : String {
@@ -33,19 +36,20 @@ class Board(level: Levels = Levels.Easy) {
         return boardString
     }
 
-    private fun maxOperation() : Int {
-        var localMaxValue = 0
+    private fun maxOperation() {
+
+        val results : MutableList<Int> = mutableListOf()
+
         for(i in lines.indices){
-           if(lines[i].lineValue > localMaxValue){
-               localMaxValue = lines[i].lineValue
-           }
+            results.add(lines[i].lineValue)
+        }
+        for(i in cols.indices){
+            results.add(cols[i].colValue)
         }
 
-        for(i in cols.indices){
-            if(cols[i].colValue > localMaxValue){
-                localMaxValue = cols[i].colValue
-            }
-        }
-        return localMaxValue
+        results.sort()
+        maxValue = results.maxOrNull() ?: 0
+        results.removeAll(listOf(maxValue))
+        secMaxValue = results.maxOrNull() ?: 0
     }
 }
