@@ -26,6 +26,9 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
@@ -35,6 +38,7 @@ import pt.isec.swipe_maths.fragments.GameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.fragments.NewLevelFragment
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.utils.NetUtils
 import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
 import pt.isec.swipe_maths.views.GameViewModel
@@ -65,6 +69,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         }
     }
 
+    private lateinit var auth : FirebaseAuth
+
     private var dlg: AlertDialog? = null
 
     private lateinit var binding: ActivityGameScreenBinding
@@ -75,6 +81,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        auth = Firebase.auth
 
         when (intent.getIntExtra("mode", SERVER_MODE)) {
             SERVER_MODE -> startAsServer()
@@ -98,6 +106,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         viewModel.state.observe(this){
             when(it){
                 GameStates.GAME_OVER -> {
+                    FirestoreUtils.addGame(viewModel.points.value!!, viewModel.totalTime, auth.currentUser!!.email!!)
                     AlertDialog.Builder(this)
                         .setTitle("Game over")
                         .setMessage("You ran out of time!")

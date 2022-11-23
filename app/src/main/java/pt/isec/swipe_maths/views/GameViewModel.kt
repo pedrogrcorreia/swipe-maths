@@ -69,6 +69,9 @@ class GameViewModel() : ViewModel() {
             return game.points
         }
 
+    val totalTime : Int
+        get() = game.totalTime
+
     fun startGame(){
         game.startTime()
     }
