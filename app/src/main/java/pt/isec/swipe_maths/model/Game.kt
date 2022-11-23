@@ -26,10 +26,13 @@ class Game {
 
     private var timer: CountDownTimer? = null
 
+    var totalTime : Int = 0
+
     private fun startTimer(){
         println(remainingTime.value!!)
         timer = object: CountDownTimer((remainingTime.value!! * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
+                totalTime++
                 remainingTime.postValue((millisUntilFinished/1000).toInt())
             }
             override fun onFinish() {
@@ -80,6 +83,7 @@ class Game {
         if(correctAnswers.value!! == level.value!!.correctAnswers){
             gameState.value = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
+            println("totalTime: $totalTime")
         }
         else {
             addTime()
