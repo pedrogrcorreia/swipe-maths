@@ -16,8 +16,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMainBinding
+import pt.isec.swipe_maths.utils.FirestoreUtils
+import pt.isec.swipe_maths.utils.SinglePlayerGame
 
 
 class MainActivity : AppCompatActivity() {
@@ -81,6 +85,17 @@ class MainActivity : AppCompatActivity() {
 
         binding.googleButton.setOnClickListener {
             signInWithGoogle.launch(googleSignInClient.signInIntent)
+        }
+
+        binding.highScores.setOnClickListener {
+            runBlocking {
+                launch {
+                    for(game in FirestoreUtils.highscoresSinglePlayer()){
+                        println("${game.username}: ${game.score} points in ${game.time} seconds")
+                    }
+                }
+            }
+
         }
     }
 

@@ -74,5 +74,13 @@
             android:padding="16dp"
             android:layout_margin="8dp"
             android:id="@+id/userProfile"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/high_scores"
+            android:textSize="24sp"
+            android:padding="16dp"
+            android:layout_margin="8dp"
+            android:id="@+id/highScores"/>
     </LinearLayout>
 </FrameLayout>
