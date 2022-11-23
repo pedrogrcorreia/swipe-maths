@@ -4,13 +4,15 @@ import pt.isec.swipe_maths.model.levels.Levels
 import kotlin.random.Random
 
 class Line(level: Levels = Levels.Easy) {
+    companion object{
+        private val random : Random = Random(System.currentTimeMillis())
+    }
     var numbers : Array<Int> = arrayOf()
     var operators : Array<String>
     val lineValue : Int
 
-    private val random : Random = Random(System.currentTimeMillis())
-
     init{
+        println("$random")
         numbers = arrayOf(random.nextInt(level.min, level.max),
             random.nextInt(level.min, level.max),
             random.nextInt(level.min, level.max))
