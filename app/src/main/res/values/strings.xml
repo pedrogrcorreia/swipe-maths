@@ -18,4 +18,5 @@
     <string name="levelProgress">%d of %d</string>
     <string name="levelProgressInfo">Correct answers to next level</string>
     <string name="points">Points: %d</string>
+    <string name="welcome">Welcome, %s</string>
 </resources>
