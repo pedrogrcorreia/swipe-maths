@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -22,8 +25,6 @@ import kotlinx.coroutines.tasks.await
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMainBinding
 import pt.isec.swipe_maths.utils.FirestoreUtils
-import pt.isec.swipe_maths.utils.SinglePlayerGame
-import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -77,11 +78,41 @@ class MainActivity : AppCompatActivity() {
         binding.userProfile.setOnClickListener(makeSnackbar)
 
         binding.emailButton.setOnClickListener {
-            auth.signInWithEmailAndPassword("pedrogrcorreia@gmail.com", "123456")
+            AlertDialog.Builder(this)
+                .setTitle("Sign in")
+                .setView(layoutInflater.inflate(R.layout.sign_in_form, null))
+                .setPositiveButton("Login"){dialogInterface : DialogInterface, _ : Int ->
+                    val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignIn)!!
+                    val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignIn)!!
+
+                    if(email.text.isEmpty() || password.text.isEmpty()){
+                        // TODO verify this
+                        return@setPositiveButton
+                    }
+                    firebaseAuthWithEmail(email.text.toString(), password.text.toString())
+                }
+                .show()
         }
 
         binding.signUpButton.setOnClickListener {
-            println("HELLO!!")
+            AlertDialog.Builder(this)
+                .setTitle("New user sign up")
+                .setView(layoutInflater.inflate(R.layout.sign_up_form, null))
+                .setPositiveButton("Sign Up"){dialogInterface: DialogInterface, _: Int ->
+                    val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignUp)!!
+                    val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignUp)!!
+                    val confPassword : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etConfPasswordSignUp)!!
+                    val firstName : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etFirstName)!!
+                    val lastName : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etLastName)!!
+
+                    // TODO check empty and conditions
+
+                    firebaseSignUpWithEmail(email.text.toString(),
+                        password.text.toString(),
+                        firstName.text.toString(),
+                        lastName.text.toString())
+                }
+                .show()
         }
 
         binding.googleButton.setOnClickListener {
@@ -160,7 +191,52 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    private fun firebaseAuthWithEmail(email: String, password: String) {
+        scope.launch {
+            val job = launch {
+                auth.signInWithEmailAndPassword(email, password).await()
+                // TODO Deal with this exceptions
+                loadingDialog.dismiss()
+            }
+            if(job.isActive) {
+                runOnUiThread {
+                    loadingDialog.show()
+                }
+            }
+        }
+    }
+
+    private fun firebaseSignUpWithEmail(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String){
+        scope.launch {
+            val job = launch {
+                var result : AuthResult? = null
+                try {
+                    result = auth.createUserWithEmailAndPassword(email, password).await()
+                } catch (e : Exception){
+                    // TODO Deal with all exceptions
+                    Snackbar.make(this@MainActivity.findViewById(R.id.frLayout), "${e.message}", Snackbar.LENGTH_LONG).show()
+                    println("${e.message}")
+                }
+                if(result?.user != null){
+                    val profileRequest = UserProfileChangeRequest.Builder()
+                        .setDisplayName("$firstName $lastName")
+                        .build()
+                    result.user!!.updateProfile(profileRequest).await()
+                }
+                loadingDialog.dismiss()
+            }
+            if(job.isActive){
+                runOnUiThread {
+                    loadingDialog.show()
+                }
+            }
+        }
     }
 
     private fun updateUI(){
