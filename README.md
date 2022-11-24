@@ -21,7 +21,7 @@ Can be played alone or with friends!
     - [x] Changing all states accordingly
     - [x] Hide level info on new level state
     - [x] Lose game on time's up
-    - [ ] All with firebase
+    - [x] All with firebase
 - Multiplayer
     - Server
         - [x] Server start
