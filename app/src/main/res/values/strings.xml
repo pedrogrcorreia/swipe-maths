@@ -29,4 +29,12 @@
     <string name="password">Password:</string>
     <string name="confirm_password">Confirm password:</string>
     <string name="upload_photo">Upload photo!</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="server_or_client">Server or Client?</string>
+    <string name="server_btn">Server</string>
+    <string name="client_btn">Client</string>
+    <string name="sign_in">Sign in</string>
+    <string name="login">Login</string>
+    <string name="loading_title">Loading</string>
+    <string name="loading_message">Wait a moment...</string>
 </resources>

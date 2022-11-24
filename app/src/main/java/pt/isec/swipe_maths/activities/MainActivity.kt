@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var googleSignInClient : GoogleSignInClient
 
-    private var authListener : FirebaseAuth.AuthStateListener? = null
-
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,12 +60,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.multiPlayer.setOnClickListener{
             val dlg = AlertDialog.Builder(this)
-                .setTitle("Multiplayer")
-                .setMessage("Want to be server or client")
-                .setPositiveButton("Server") { _: DialogInterface, _: Int ->
+                .setTitle(getString(R.string.multiplayer))
+                .setMessage(getString(R.string.server_or_client))
+                .setPositiveButton(getString(R.string.server_btn)) { _: DialogInterface, _: Int ->
                     startActivity(GameScreenActivity.getServerModeIntent(this))
                 }
-                .setNegativeButton("Client") { _: DialogInterface, _: Int ->
+                .setNegativeButton(getString(R.string.client_btn)) { _: DialogInterface, _: Int ->
                     startActivity(GameScreenActivity.getClientModeIntent(this))
                 }
                 .create()
@@ -79,9 +77,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.emailButton.setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Sign in")
+                .setTitle(getString(R.string.sign_in))
                 .setView(layoutInflater.inflate(R.layout.sign_in_form, null))
-                .setPositiveButton("Login"){dialogInterface : DialogInterface, _ : Int ->
+                .setPositiveButton(getString(R.string.login)){ dialogInterface : DialogInterface, _ : Int ->
                     val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignIn)!!
                     val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignIn)!!
 
@@ -96,9 +94,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.signUpButton.setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("New user sign up")
+                .setTitle(getString(R.string.sign_up))
                 .setView(layoutInflater.inflate(R.layout.sign_up_form, null))
-                .setPositiveButton("Sign Up"){dialogInterface: DialogInterface, _: Int ->
+                .setPositiveButton(getString(R.string.sign_up)){dialogInterface: DialogInterface, _: Int ->
                     val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignUp)!!
                     val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignUp)!!
                     val confPassword : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etConfPasswordSignUp)!!
@@ -157,7 +155,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         auth.addAuthStateListener{
-            println("Auth listener called!")
             updateUI()
         }
 
@@ -165,7 +162,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val tokenListener = FirebaseAuth.IdTokenListener {
-        println("Token listener called!")
         updateUI()
     }
 
@@ -278,8 +274,8 @@ class MainActivity : AppCompatActivity() {
 
     private val loadingDialog: AlertDialog by lazy {
         AlertDialog.Builder(this)
-            .setTitle("Loading data..")
-            .setMessage("Loading data")
+            .setTitle(getString(R.string.loading_title))
+            .setMessage(getString(R.string.loading_message))
             .setView(ProgressBar(this))
             .create()
     }
