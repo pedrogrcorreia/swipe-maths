@@ -27,6 +27,8 @@ class HighScoresActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_high_scores)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         var highScoresList = findViewById<RecyclerView>(R.id.highScoresList)
         highScoresList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 

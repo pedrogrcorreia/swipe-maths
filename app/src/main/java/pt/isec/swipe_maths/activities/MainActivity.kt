@@ -18,6 +18,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMainBinding
 import pt.isec.swipe_maths.utils.FirestoreUtils
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
 
     private lateinit var googleSignInClient : GoogleSignInClient
+
+    private var authListener : FirebaseAuth.AuthStateListener? = null
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
@@ -71,37 +74,27 @@ class MainActivity : AppCompatActivity() {
             dlg.show()
         }
 
-        binding.userProfile.setOnClickListener{
-            if(auth.currentUser == null){
-                AlertDialog.Builder(this)
-                    .setTitle("Login")
-                    .setMessage("You are not logged in")
-                    .show()
-            }
-        }
+        binding.userProfile.setOnClickListener(makeSnackbar)
 
         binding.emailButton.setOnClickListener {
-            auth.signInWithEmailAndPassword("pedrogrcorreia@gmail.com", "123456").addOnSuccessListener {
-                updateUI()
-            }
+            auth.signInWithEmailAndPassword("pedrogrcorreia@gmail.com", "123456")
         }
 
         binding.googleButton.setOnClickListener {
             signInWithGoogle.launch(googleSignInClient.signInIntent)
         }
 
-
-
-        binding.highScores.setOnClickListener {
+        binding.logoutBtn.setOnClickListener {
             scope.launch {
                 val job = launch {
-                    delay(5000)
-                    val highscoresList = FirestoreUtils.highscoresSinglePlayer()
-                    val highscores = ArrayList(highscoresList)
-                    startActivity(HighScoresActivity.getIntent(this@MainActivity, highscores))
+                    if(auth.currentUser?.getIdToken(false)
+                            ?.result
+                            ?.signInProvider == GoogleAuthProvider.PROVIDER_ID) {
+                        googleSignInClient.signOut().await()
+                    }
+                    auth.signOut()
                     loadingDialog.dismiss()
                 }
-                delay(250)
 
                 if (job.isActive) {
                     runOnUiThread {
@@ -110,6 +103,28 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.highScores.setOnClickListener {
+            scope.launch {
+                val job = launch {
+                    val highscoresList = FirestoreUtils.highscoresSinglePlayer()
+                    val highscores = ArrayList(highscoresList)
+                    startActivity(HighScoresActivity.getIntent(this@MainActivity, highscores))
+                    loadingDialog.dismiss()
+                }
+
+                if (job.isActive) {
+                    runOnUiThread {
+                        loadingDialog.show()
+                    }
+                }
+            }
+        }
+
+        auth.addAuthStateListener{
+            updateUI()
+        }
+
     }
 
     val signInWithGoogle = registerForActivityResult(
@@ -118,10 +133,8 @@ class MainActivity : AppCompatActivity() {
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try{
             val account = task.getResult(ApiException::class.java)!!
-            println("firebaseAuthWithGoogle: ${account.id}")
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: ApiException){
-            println("Login with google failed! ${e.message}")
         }
     }
 
@@ -131,23 +144,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(idToken: String){
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnSuccessListener(this) { result ->
-                println("Success login google!")
-                updateUI()
+        scope.launch {
+            val job = launch {
+                auth.signInWithCredential(credential).await()
+                loadingDialog.dismiss()
             }
+
+            if (job.isActive) {
+                runOnUiThread {
+                    loadingDialog.show()
+                }
+            }
+        }
+
     }
 
     private fun updateUI(){
         if(auth.currentUser != null){
             binding.emailButton.visibility = View.INVISIBLE
             binding.googleButton.visibility = View.INVISIBLE
+            binding.logoutBtn.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.VISIBLE
             binding.welcomeTxt.text = getString(R.string.welcome, auth.currentUser!!.displayName)
         } else {
             binding.emailButton.visibility = View.VISIBLE
             binding.googleButton.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.INVISIBLE
+            binding.logoutBtn.visibility = View.INVISIBLE
         }
     }
 

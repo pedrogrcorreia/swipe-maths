@@ -11,14 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
-            android:layout_margin="16dp"
-            android:padding="32dp"
-            android:textSize="32sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/app_name" />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="32dp"
@@ -42,7 +34,16 @@
             android:layout_margin="10dp"
             android:layout_gravity="center_horizontal"
             android:textSize="18sp"
-            android:text="Sign in with email"/>
+            android:text="@string/sign_in_with_email"/>
+        <Button
+            android:id="@+id/logoutBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp"
+            android:text="@string/logout"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
