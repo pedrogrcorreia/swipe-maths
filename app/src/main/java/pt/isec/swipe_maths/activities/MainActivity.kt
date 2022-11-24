@@ -157,9 +157,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         auth.addAuthStateListener{
+            println("Auth listener called!")
             updateUI()
         }
 
+        auth.addIdTokenListener(tokenListener)
+    }
+
+    private val tokenListener = FirebaseAuth.IdTokenListener {
+        println("Token listener called!")
+        updateUI()
     }
 
     val signInWithGoogle = registerForActivityResult(
@@ -230,11 +237,24 @@ class MainActivity : AppCompatActivity() {
                     result.user!!.updateProfile(profileRequest).await()
                 }
                 loadingDialog.dismiss()
+                updateUser()
             }
             if(job.isActive){
                 runOnUiThread {
                     loadingDialog.show()
                 }
+            }
+        }
+    }
+
+    private fun updateUser(){
+        scope.launch {
+            val job = launch {
+                auth.currentUser!!.getIdToken(true)
+                loadingDialog.dismiss()
+            }
+            if(job.isActive){
+                loadingDialog.show()
             }
         }
     }
