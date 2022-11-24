@@ -1,5 +1,7 @@
 package pt.isec.swipe_maths.utils
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -46,4 +48,31 @@ class FirestoreUtils {
     }
 }
 
-data class SinglePlayerGame(val username: String, val score: Int, val time: Int)
+data class SinglePlayerGame(val username: String?, val score: Int, val time: Int) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readInt(),
+        parcel.readInt()
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(username)
+        parcel.writeInt(score)
+        parcel.writeInt(time)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SinglePlayerGame> {
+        override fun createFromParcel(parcel: Parcel): SinglePlayerGame {
+            return SinglePlayerGame(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SinglePlayerGame?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

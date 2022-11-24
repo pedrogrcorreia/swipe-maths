@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +17,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMainBinding
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.utils.SinglePlayerGame
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
 
     private lateinit var googleSignInClient : GoogleSignInClient
+
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                 .requestEmail()
                 .build()
 
-        val googleSignInClient = GoogleSignIn.getClient(this, gso);
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         updateUI()
 
@@ -87,15 +90,25 @@ class MainActivity : AppCompatActivity() {
             signInWithGoogle.launch(googleSignInClient.signInIntent)
         }
 
+
+
         binding.highScores.setOnClickListener {
-            runBlocking {
-                launch {
-                    for(game in FirestoreUtils.highscoresSinglePlayer()){
-                        println("${game.username}: ${game.score} points in ${game.time} seconds")
+            scope.launch {
+                val job = launch {
+                    delay(5000)
+                    val highscoresList = FirestoreUtils.highscoresSinglePlayer()
+                    val highscores = ArrayList(highscoresList)
+                    startActivity(HighScoresActivity.getIntent(this@MainActivity, highscores))
+                    loadingDialog.dismiss()
+                }
+                delay(250)
+
+                if (job.isActive) {
+                    runOnUiThread {
+                        loadingDialog.show()
                     }
                 }
             }
-
         }
     }
 
@@ -136,5 +149,13 @@ class MainActivity : AppCompatActivity() {
             binding.googleButton.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.INVISIBLE
         }
+    }
+
+    private val loadingDialog: AlertDialog by lazy {
+        AlertDialog.Builder(this)
+            .setTitle("Loading data..")
+            .setMessage("Loading data")
+            .setView(ProgressBar(this))
+            .create()
     }
 }

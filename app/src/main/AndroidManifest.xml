@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Swipemaths"
         tools:targetApi="31">
         <activity
+            android:name=".activities.HighScoresActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.GameScreenActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity">
