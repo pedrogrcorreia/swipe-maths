@@ -80,6 +80,10 @@ class MainActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword("pedrogrcorreia@gmail.com", "123456")
         }
 
+        binding.signUpButton.setOnClickListener {
+            println("HELLO!!")
+        }
+
         binding.googleButton.setOnClickListener {
             signInWithGoogle.launch(googleSignInClient.signInIntent)
         }
@@ -161,16 +165,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(){
         if(auth.currentUser != null){
-            binding.emailButton.visibility = View.INVISIBLE
-            binding.googleButton.visibility = View.INVISIBLE
+            binding.emailButton.visibility = View.GONE
+            binding.googleButton.visibility = View.GONE
+            binding.signUpButton.visibility = View.GONE
             binding.logoutBtn.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.VISIBLE
             binding.welcomeTxt.text = getString(R.string.welcome, auth.currentUser!!.displayName)
         } else {
             binding.emailButton.visibility = View.VISIBLE
             binding.googleButton.visibility = View.VISIBLE
-            binding.welcomeTxt.visibility = View.INVISIBLE
-            binding.logoutBtn.visibility = View.INVISIBLE
+            binding.signUpButton.visibility = View.VISIBLE
+            binding.welcomeTxt.visibility = View.GONE
+            binding.logoutBtn.visibility = View.GONE
         }
     }
 

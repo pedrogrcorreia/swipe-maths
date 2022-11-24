@@ -22,4 +22,5 @@
     <string name="high_scores">High Scores</string>
     <string name="sign_in_with_email">Sign in with email</string>
     <string name="logout">Logout</string>
+    <string name="sign_up">Sign up</string>
 </resources>

@@ -36,6 +36,16 @@
             android:textSize="18sp"
             android:text="@string/sign_in_with_email"/>
         <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp"
+            android:visibility="gone"
+            android:text="@string/sign_up"/>
+        <Button
             android:id="@+id/logoutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
