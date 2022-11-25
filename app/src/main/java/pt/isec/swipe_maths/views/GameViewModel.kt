@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameBoard
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Line
 import pt.isec.swipe_maths.model.levels.Levels
+import pt.isec.swipe_maths.utils.NetUtils
 
 class GameViewModel() : ViewModel() {
 
@@ -71,6 +73,10 @@ class GameViewModel() : ViewModel() {
 
     val totalTime : Int
         get() = game.totalTime
+
+
+    val connectionState : LiveData<ConnectionStates>
+        get() = NetUtils.state
 
     fun startGame(){
         game.startTime()

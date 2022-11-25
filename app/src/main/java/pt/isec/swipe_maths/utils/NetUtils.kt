@@ -4,7 +4,9 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.provider.Settings.Global.getString
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
 import java.io.InputStream
 import java.io.OutputStream
@@ -14,6 +16,8 @@ import kotlin.concurrent.thread
 
 class NetUtils {
     companion object {
+        val state : MutableLiveData<ConnectionStates> = MutableLiveData()
+
         const val SERVER_PORT = 9999
 
         private var socket: Socket? = null
@@ -22,8 +26,6 @@ class NetUtils {
         private val socketO: OutputStream?
             get() = socket?.getOutputStream()
 
-        private var udpSocket : DatagramSocket? = null
-
         private var serverSocket: ServerSocket? = null
 
         private var threadComm: Thread? = null
@@ -31,7 +33,7 @@ class NetUtils {
         fun startServer(strIpAddress: String){
             if (serverSocket != null || socket != null)
                 return
-
+            state.value = ConnectionStates.SERVER_CONNECTING
             thread {
                 serverSocket = ServerSocket(SERVER_PORT)
                 serverSocket?.run {
@@ -128,6 +130,7 @@ class NetUtils {
                 val ipAndPort = str.split(" ")
                 startClient(ipAndPort[0], ipAndPort[1].toInt())
             } catch (e : SocketTimeoutException){
+                state.postValue(ConnectionStates.CONNECTION_ERROR)
                 return e.message!!
             }
             return null

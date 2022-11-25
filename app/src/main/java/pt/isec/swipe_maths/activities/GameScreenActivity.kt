@@ -34,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
@@ -134,6 +135,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         viewModel.points.observe(this){
             binding.lblPoints.text = getString(R.string.points, it)
         }
+
+        viewModel.connectionState.observe(this){
+            when(it){
+                ConnectionStates.CONNECTION_ERROR -> finish()
+            }
+        }
     }
 
 
@@ -187,7 +194,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                         val job = launch {
                             val ipAddress = NetUtils.contactMulticast()
                             if (ipAddress != null) {
-                                showSnackbarError(getString(R.string.error_timeout))
+                                runOnUiThread{
+                                    Toast.makeText(this@GameScreenActivity, getString(R.string.error_timeout), Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
                         if (job.isActive) {
