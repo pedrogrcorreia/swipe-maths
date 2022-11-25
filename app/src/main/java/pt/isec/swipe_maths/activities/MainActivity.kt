@@ -76,20 +76,25 @@ class MainActivity : AppCompatActivity() {
         binding.userProfile.setOnClickListener(makeSnackbar)
 
         binding.emailButton.setOnClickListener {
-            AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.sign_in_form, null)
+            val dialog = AlertDialog.Builder(this)
                 .setTitle(getString(R.string.sign_in))
-                .setView(layoutInflater.inflate(R.layout.sign_in_form, null))
-                .setPositiveButton(getString(R.string.login)){ dialogInterface : DialogInterface, _ : Int ->
-                    val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignIn)!!
-                    val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignIn)!!
-
-                    if(email.text.isEmpty() || password.text.isEmpty()){
-                        // TODO verify this
-                        return@setPositiveButton
-                    }
-                    firebaseAuthWithEmail(email.text.toString(), password.text.toString())
-                }
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.login), null)
                 .show()
+
+            val positiveButton : Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
+                val email : TextView = dialogView.findViewById(R.id.etEmailSignIn)!!
+                val password : TextView = dialogView.findViewById(R.id.etPasswordSignIn)!!
+
+                if(email.text.isEmpty() || password.text.isEmpty()){
+                    Snackbar.make(dialogView, "All fields must be filled!", Snackbar.LENGTH_LONG).show()
+                } else {
+                    firebaseAuthWithEmail(email.text.toString(), password.text.toString())
+                    dialog.dismiss()
+                }
+            }
         }
 
         binding.signUpButton.setOnClickListener {
