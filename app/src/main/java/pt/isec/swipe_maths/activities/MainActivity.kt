@@ -93,24 +93,37 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.signUpButton.setOnClickListener {
-            AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.sign_up_form, null)
+            val dialog = AlertDialog.Builder(this)
                 .setTitle(getString(R.string.sign_up))
-                .setView(layoutInflater.inflate(R.layout.sign_up_form, null))
-                .setPositiveButton(getString(R.string.sign_up)){dialogInterface: DialogInterface, _: Int ->
-                    val email : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etEmailSignUp)!!
-                    val password : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etPasswordSignUp)!!
-                    val confPassword : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etConfPasswordSignUp)!!
-                    val firstName : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etFirstName)!!
-                    val lastName : TextView = (dialogInterface as AlertDialog).findViewById(R.id.etLastName)!!
-
-                    // TODO check empty and conditions
-
-                    firebaseSignUpWithEmail(email.text.toString(),
-                        password.text.toString(),
-                        firstName.text.toString(),
-                        lastName.text.toString())
-                }
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.sign_up), null)
                 .show()
+
+            val positiveButton : Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+            positiveButton.setOnClickListener {
+                val email : String = dialogView.findViewById<TextView?>(R.id.etEmailSignUp).text.toString()
+                val password : String = dialogView.findViewById<TextView?>(R.id.etPasswordSignUp).text.toString()
+                val confPassword : String = dialogView.findViewById<TextView?>(R.id.etConfPasswordSignUp).text.toString()
+                val firstName : String = dialogView.findViewById<TextView?>(R.id.etFirstName).text.toString()
+                val lastName : String = dialogView.findViewById<TextView?>(R.id.etLastName).text.toString()
+                if(email.isEmpty() || password.isEmpty() ||
+                        confPassword.isEmpty() || firstName.isEmpty() ||
+                        lastName.isEmpty()){
+                    Snackbar.make(dialogView, "All fields must be filled.", Snackbar.LENGTH_LONG).show()
+                } else if (confPassword != password){
+                    Snackbar.make(dialogView, "Password don't match!", Snackbar.LENGTH_LONG).show()
+                } else if (password.length < 6){
+                    Snackbar.make(dialogView, "Password must have 6 characters!", Snackbar.LENGTH_LONG).show()
+                } else{
+                    firebaseSignUpWithEmail(email,
+                        password,
+                        firstName,
+                        lastName)
+                    dialog.dismiss()
+                }
+            }
         }
 
         binding.googleButton.setOnClickListener {
@@ -154,9 +167,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        auth.addAuthStateListener{
-            updateUI()
-        }
+//        auth.addAuthStateListener{
+//            updateUI()
+//        }
 
         auth.addIdTokenListener(tokenListener)
     }
@@ -221,19 +234,19 @@ class MainActivity : AppCompatActivity() {
                 var result : AuthResult? = null
                 try {
                     result = auth.createUserWithEmailAndPassword(email, password).await()
+                    if(result?.user != null){
+                        val profileRequest = UserProfileChangeRequest.Builder()
+                            .setDisplayName("$firstName $lastName")
+                            .build()
+                        result.user!!.updateProfile(profileRequest).await()
+                    }
+                    updateUser()
                 } catch (e : Exception){
                     // TODO Deal with all exceptions
                     Snackbar.make(this@MainActivity.findViewById(R.id.frLayout), "${e.message}", Snackbar.LENGTH_LONG).show()
                     println("${e.message}")
                 }
-                if(result?.user != null){
-                    val profileRequest = UserProfileChangeRequest.Builder()
-                        .setDisplayName("$firstName $lastName")
-                        .build()
-                    result.user!!.updateProfile(profileRequest).await()
-                }
                 loadingDialog.dismiss()
-                updateUser()
             }
             if(job.isActive){
                 runOnUiThread {
