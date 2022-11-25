@@ -34,4 +34,7 @@ Can be played alone or with friends!
     - [ ] Connection states
     - [ ] How to deal with multiplayer mode (more than 2 players)
     - [ ] Firebase integration
+    - [ ] List of lines played on each level
+    - [ ] When all players complete a level, start new level
+    - [ ] Check players losses
 
