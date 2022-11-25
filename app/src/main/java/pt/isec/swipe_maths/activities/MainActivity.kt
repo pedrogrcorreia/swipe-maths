@@ -1,6 +1,8 @@
 package pt.isec.swipe_maths.activities
 
 import android.content.DialogInterface
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -191,21 +193,22 @@ class MainActivity : AppCompatActivity() {
             val account = task.getResult(ApiException::class.java)!!
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: ApiException){
+            e.message?.let{ showSnackbarError(it) }
         }
-    }
-
-    private val makeSnackbar = View.OnClickListener {
-        Snackbar.make(it, "${(it as Button).text}: ${getString(R.string.todo)}", Snackbar.LENGTH_LONG).show()
     }
 
     private fun firebaseAuthWithGoogle(idToken: String){
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         scope.launch {
             val job = launch {
-                auth.signInWithCredential(credential).await()
+                try {
+                    auth.signInWithCredential(credential).await()
+                } catch(e : Exception){
+                    e.message?.let { showSnackbarError(it) }
+                }
+
                 loadingDialog.dismiss()
             }
-
             if (job.isActive) {
                 runOnUiThread {
                     loadingDialog.show()
@@ -217,8 +220,11 @@ class MainActivity : AppCompatActivity() {
     private fun firebaseAuthWithEmail(email: String, password: String) {
         scope.launch {
             val job = launch {
-                auth.signInWithEmailAndPassword(email, password).await()
-                // TODO Deal with this exceptions
+                try {
+                    auth.signInWithEmailAndPassword(email, password).await()
+                } catch (e : Exception){
+                    e.message?.let { showSnackbarError(it) }
+                }
                 loadingDialog.dismiss()
             }
             if(job.isActive) {
@@ -247,9 +253,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     updateUser()
                 } catch (e : Exception){
-                    // TODO Deal with all exceptions
-                    Snackbar.make(this@MainActivity.findViewById(R.id.frLayout), "${e.message}", Snackbar.LENGTH_LONG).show()
-                    println("${e.message}")
+                    e.message?.let { showSnackbarError(it) }
                 }
                 loadingDialog.dismiss()
             }
@@ -296,5 +300,25 @@ class MainActivity : AppCompatActivity() {
             .setMessage(getString(R.string.loading_message))
             .setView(ProgressBar(this))
             .create()
+    }
+
+    private fun showSnackbarError(error : String){
+        Snackbar.make(this@MainActivity.findViewById(R.id.frLayout),
+            getString(R.string.error_message, error),
+            Snackbar.LENGTH_LONG).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setTextColor(getColor(R.color.white))
+                setBackgroundTint(getColor(R.color.snackbar_error_bkg))
+            }
+        }
+            .show()
+    }
+
+    /**
+     * Makes a snackbar displaying that the pressed button is
+     * not implemented yet.
+     */
+    private val makeSnackbar = View.OnClickListener {
+        Snackbar.make(it, "${(it as Button).text}: ${getString(R.string.todo)}", Snackbar.LENGTH_LONG).show()
     }
 }
