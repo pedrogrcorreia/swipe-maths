@@ -162,20 +162,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.highScores.setOnClickListener {
-            scope.launch {
-                val job = launch {
-                    val highscoresList = FirestoreUtils.highscoresSinglePlayer()
-                    val highscores = ArrayList(highscoresList)
-                    startActivity(HighScoresActivity.getIntent(this@MainActivity, highscores))
-                    loadingDialog.dismiss()
-                }
-
-                if (job.isActive) {
-                    runOnUiThread {
-                        loadingDialog.show()
-                    }
-                }
-            }
+            startActivity(HighScoresActivity.getIntent(this))
         }
 
 //        auth.addAuthStateListener{
@@ -276,7 +263,9 @@ class MainActivity : AppCompatActivity() {
                 loadingDialog.dismiss()
             }
             if(job.isActive){
-                loadingDialog.show()
+                runOnUiThread {
+                    loadingDialog.show()
+                }
             }
         }
     }

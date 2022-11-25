@@ -7,21 +7,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.utils.SinglePlayerGame
 
 class HighScoresActivity : AppCompatActivity() {
 
     companion object{
-        fun getIntent(context: Context, highscores: ArrayList<SinglePlayerGame>): Intent{
-            return Intent(context, HighScoresActivity::class.java).apply {
-                putExtra("highScores", highscores)
-            }
+        fun getIntent(context: Context): Intent{
+            return Intent(context, HighScoresActivity::class.java)
         }
     }
+
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
+
+    lateinit var highscores : ArrayList<SinglePlayerGame>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +37,32 @@ class HighScoresActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        var highScoresList = findViewById<RecyclerView>(R.id.highScoresList)
-        highScoresList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        val highscores : ArrayList<SinglePlayerGame> = intent.getParcelableArrayListExtra<SinglePlayerGame>("highScores") as ArrayList<SinglePlayerGame>
-        highScoresList.adapter = HighScoresListAdapter(highscores)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        scope.launch {
+            val job = launch {
+                highscores = ArrayList(FirestoreUtils.highscoresSinglePlayer())
+            }
+            if(job.isActive){
+                runOnUiThread {
+                    loadingDialog.show()
+                }
+            }
+        }.invokeOnCompletion {
+            runOnUiThread {
+                var highScoresList = findViewById<RecyclerView>(R.id.highScoresList)
+                highScoresList.layoutManager = LinearLayoutManager(
+                    this@HighScoresActivity,
+                    LinearLayoutManager.VERTICAL,
+                    false
+                )
+                highScoresList.adapter = HighScoresListAdapter(highscores)
+                loadingDialog.dismiss()
+            }
+        }
     }
 
     class HighScoresListAdapter(val data: ArrayList<SinglePlayerGame>) : RecyclerView.Adapter<HighScoresListAdapter.MyViewHolder>(){
@@ -68,5 +97,13 @@ class HighScoresActivity : AppCompatActivity() {
             position % 2 == 0 -> 1
             else -> 0
         }
+    }
+
+    private val loadingDialog: AlertDialog by lazy {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.loading_title))
+            .setMessage(getString(R.string.loading_message))
+            .setView(ProgressBar(this))
+            .create()
     }
 }
