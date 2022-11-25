@@ -57,22 +57,26 @@ class MainActivity : AppCompatActivity() {
         updateUI()
 
         binding.singlePlayer.setOnClickListener {
-            startActivity(GameScreenActivity.getSingleModeIntent(this))
+            if(checkLogin()) {
+                startActivity(GameScreenActivity.getSingleModeIntent(this))
+            }
         }
 
         binding.multiPlayer.setOnClickListener{
-            val dlg = AlertDialog.Builder(this)
-                .setTitle(getString(R.string.multiplayer))
-                .setMessage(getString(R.string.server_or_client))
-                .setPositiveButton(getString(R.string.server_btn)) { _: DialogInterface, _: Int ->
-                    startActivity(GameScreenActivity.getServerModeIntent(this))
-                }
-                .setNegativeButton(getString(R.string.client_btn)) { _: DialogInterface, _: Int ->
-                    startActivity(GameScreenActivity.getClientModeIntent(this))
-                }
-                .create()
+            if(checkLogin()) {
+                val dlg = AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.multiplayer))
+                    .setMessage(getString(R.string.server_or_client))
+                    .setPositiveButton(getString(R.string.server_btn)) { _: DialogInterface, _: Int ->
+                        startActivity(GameScreenActivity.getServerModeIntent(this))
+                    }
+                    .setNegativeButton(getString(R.string.client_btn)) { _: DialogInterface, _: Int ->
+                        startActivity(GameScreenActivity.getClientModeIntent(this))
+                    }
+                    .create()
 
-            dlg.show()
+                dlg.show()
+            }
         }
 
         binding.userProfile.setOnClickListener(makeSnackbar)
@@ -312,6 +316,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
             .show()
+    }
+
+    private fun checkLogin() : Boolean{
+        return if(auth.currentUser != null){
+            true
+        } else {
+            showSnackbarError("You must be logged in to play!")
+            false
+        }
     }
 
     /**
