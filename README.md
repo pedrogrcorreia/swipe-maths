@@ -37,4 +37,7 @@ Can be played alone or with friends!
     - [ ] List of lines played on each level
     - [ ] When all players complete a level, start new level
     - [ ] Check players losses
+- Application
+    - [ ] Return activity results from GameScreenActivity
+    - [ ] Make snackbars from the results above
 
