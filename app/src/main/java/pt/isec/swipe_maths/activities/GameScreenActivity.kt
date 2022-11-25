@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.wifi.WifiManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputFilter
@@ -29,7 +30,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
@@ -71,6 +75,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private lateinit var auth : FirebaseAuth
 
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
+
     private var dlg: AlertDialog? = null
 
     private lateinit var binding: ActivityGameScreenBinding
@@ -84,6 +90,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
         auth = Firebase.auth
 
+
+        loadingDialog.show()
+        loadingDialog.dismiss()
         when (intent.getIntExtra("mode", SERVER_MODE)) {
             SERVER_MODE -> startAsServer()
             CLIENT_MODE -> startAsClient()
@@ -172,10 +181,26 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 // auth <key>
                 // redir add tcp:9998:9999
             }
-            .setNegativeButton("CANCEL") { _: DialogInterface, _: Int ->
-                finish()
+            .setNegativeButton("SEARCH") { _: DialogInterface, _: Int ->
+                thread {
+                    scope.launch {
+                        val job = launch {
+                            val ipAddress = NetUtils.contactMulticast()
+                            if (ipAddress != null) {
+                                showSnackbarError(getString(R.string.error_timeout))
+                            }
+                        }
+                        if (job.isActive) {
+                            runOnUiThread {
+                                loadingDialog.show()
+                            }
+                        }
+                    }.invokeOnCompletion {
+                        loadingDialog.dismiss()
+                    }
+                }
             }
-            .setCancelable(false)
+            .setCancelable(true)
             .setView(edtBox)
             .create()
 
@@ -223,7 +248,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
             .create()
 
-        NetUtils.startServer()
+        NetUtils.startServer(strIPAddress)
 
         dlg?.show()
     }
@@ -271,5 +296,28 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 finish()
             }.show()
         return true
+    }
+
+
+    // TODO join this
+    private val loadingDialog: AlertDialog by lazy {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.loading_title))
+            .setMessage(getString(R.string.loading_message))
+            .setView(ProgressBar(this))
+            .create()
+    }
+
+    // TODO join this
+    private fun showSnackbarError(error : String){
+        Snackbar.make(this@GameScreenActivity.findViewById(R.id.lLayout),
+            getString(R.string.error_message, error),
+            Snackbar.LENGTH_LONG).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setTextColor(getColor(R.color.white))
+                setBackgroundTint(getColor(R.color.snackbar_error_bkg))
+            }
+        }
+            .show()
     }
 }

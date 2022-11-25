@@ -2,10 +2,14 @@ package pt.isec.swipe_maths.utils
 
 import android.content.Context
 import android.net.wifi.WifiManager
+import android.provider.Settings.Global.getString
 import androidx.core.content.ContextCompat.getSystemService
+import com.google.android.material.snackbar.Snackbar
+import pt.isec.swipe_maths.R
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.*
+import java.util.concurrent.TimeoutException
 import kotlin.concurrent.thread
 
 class NetUtils {
@@ -24,7 +28,7 @@ class NetUtils {
 
         private var threadComm: Thread? = null
 
-        fun startServer(){
+        fun startServer(strIpAddress: String){
             if (serverSocket != null || socket != null)
                 return
 
@@ -43,40 +47,16 @@ class NetUtils {
             }
 
             thread {
-                udpSocket = DatagramSocket(9997)
-                udpSocket?.run {
-                    while(true){
-                        udpSocket?.broadcast = true
-                        val buffer = ByteArray(2048)
-                        try {
-                            println("UDP Server running!! ${udpSocket?.localPort} ${udpSocket?.localAddress}")
-                            val packet = DatagramPacket(buffer, buffer.size)
-                            udpSocket!!.receive(packet)
-                            println("Received request")
-                            val strMsg = "${serverSocket?.localPort}"
-                            packet.data = strMsg.toByteArray()
-                            udpSocket!!.send(packet)
-                        } catch(_: Exception){
-                            println("Exception!!!")
-                        }
-
-                    }
-                }
-            }
-
-            thread {
-                val multiSocket = MulticastSocket(3030)
-                val group = InetAddress.getByName("230.30.30.30")
+                val multiSocket = MulticastSocket(9996)
+                val group = InetAddress.getByName("224.0.0.251")
                 multiSocket.joinGroup(group)
                 multiSocket.broadcast = true
                 val buffer = ByteArray(2048)
                 while(true) {
                     try {
-                        println("Multicast Server running!! ${multiSocket.localPort} ${multiSocket.localAddress}")
                         val packet = DatagramPacket(buffer, buffer.size)
                         multiSocket.receive(packet)
-                        println("Received request")
-                        val strMsg = "${serverSocket?.localPort}"
+                        val strMsg = "$strIpAddress ${serverSocket?.localPort}"
                         packet.data = strMsg.toByteArray()
                         multiSocket.send(packet)
                     } catch (_: Exception) {
@@ -86,7 +66,7 @@ class NetUtils {
             }
         }
 
-        fun startClient(serverIP: String,serverPort: Int = SERVER_PORT){
+        fun startClient(serverIP: String, serverPort: Int = SERVER_PORT){
             if (socket != null)
                 return
 
@@ -124,6 +104,33 @@ class NetUtils {
 
                 }
             }
+        }
+
+        fun contactMulticast() : String? {
+            val buffer = ByteArray(2056)
+            val messageStr = "Connect"
+            val socket = DatagramSocket()
+            socket.broadcast = true
+            val sendRequest = messageStr.toByteArray()
+            val packet =
+                DatagramPacket(sendRequest, sendRequest.size, InetAddress.getByName("224.0.0.251"), 9996)
+
+            socket.soTimeout = 5000
+
+            try {
+                socket.send(packet)
+                packet.data = buffer
+                packet.length = buffer.size
+                socket.receive(packet)
+                val received = ByteArray(packet.length)
+                packet.data.copyInto(received, 0, 0, packet.length)
+                val str = String(received)
+                val ipAndPort = str.split(" ")
+                startClient(ipAndPort[0], ipAndPort[1].toInt())
+            } catch (e : SocketTimeoutException){
+                return e.message!!
+            }
+            return null
         }
     }
 }

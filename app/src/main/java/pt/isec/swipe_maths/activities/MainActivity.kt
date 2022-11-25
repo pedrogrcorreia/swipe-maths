@@ -27,6 +27,7 @@ import kotlinx.coroutines.tasks.await
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMainBinding
 import pt.isec.swipe_maths.utils.FirestoreUtils
+import pt.isec.swipe_maths.utils.NetUtils
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -84,32 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.userProfile.setOnClickListener{
-            thread {
-                val messageStr = "Hello"
-                val socket = DatagramSocket()
-                socket.broadcast = true
-                val sendData = messageStr.toByteArray()
-                val sendPacket =
-                    DatagramPacket(sendData, sendData.size, InetAddress.getByName("10.0.2.2"), 9996)
-                socket.send(sendPacket)
-                println("fun sendBroadcast: packet sent to: ${sendPacket.address}")
-                socket.receive(sendPacket)
-                val str = String(sendPacket.data)
-                println("received packet: ${sendPacket.data.toString()} $str")
-            }
-            thread {
-                val messageStr = "Hello"
-                val socket = DatagramSocket()
-                socket.broadcast = true
-                val sendData = messageStr.toByteArray()
-                val sendPacket =
-                    DatagramPacket(sendData, sendData.size, InetAddress.getByName("230.30.30.30"), 3029)
-                socket.send(sendPacket)
-                println("multicast: packet sent to: ${sendPacket.address}")
-                socket.receive(sendPacket)
-                val str = String(sendPacket.data)
-                println("received packet multicast: ${sendPacket.data.toString()} $str")
-            }
+
         }
 
         binding.emailButton.setOnClickListener {
