@@ -113,6 +113,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         })
 
+        NetUtils.newClient()
+
         viewModel.state.observe(this){
             when(it){
                 GameStates.GAME_OVER -> {
@@ -138,7 +140,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
         viewModel.connectionState.observe(this){
             when(it){
-                ConnectionStates.CONNECTION_ERROR -> finish()
+                ConnectionStates.CONNECTION_ERROR -> {
+                    finish()
+                }
             }
         }
     }
@@ -169,7 +173,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
             })
         }
-        val dlg = AlertDialog.Builder(this)
+        dlg = AlertDialog.Builder(this)
             .setTitle("Client mode")
             .setMessage("IP")
             .setPositiveButton("CONNECT") { _: DialogInterface, _: Int ->
@@ -213,7 +217,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             .setView(edtBox)
             .create()
 
-        dlg.show()
+        dlg?.show()
     }
 
     private fun startAsServer(){
@@ -328,5 +332,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         }
             .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dlg?.dismiss()
     }
 }

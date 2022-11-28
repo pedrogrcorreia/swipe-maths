@@ -72,6 +72,7 @@ class NetUtils {
             if (socket != null)
                 return
 
+            state.value = ConnectionStates.CLIENT_CONNECTING
             thread {
                 try {
                     //val newsocket = Socket(serverIP, serverPort)
@@ -134,6 +135,10 @@ class NetUtils {
                 return e.message!!
             }
             return null
+        }
+
+        fun newClient(){
+            state.value = ConnectionStates.CLIENT_CONNECTING
         }
     }
 }
