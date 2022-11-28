@@ -18,6 +18,8 @@ class NetUtils {
     companion object {
         val state : MutableLiveData<ConnectionStates> = MutableLiveData()
 
+        val clients : MutableList<Socket> = mutableListOf()
+
         const val SERVER_PORT = 9999
 
         private var socket: Socket? = null
@@ -40,9 +42,11 @@ class NetUtils {
                     while(true) {
                         try {
                             val socketClient = serverSocket!!.accept()
+                            clients.add(socketClient)
                             println("Received connection request!")
                             startComm(socketClient)
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            println("${e.message}")
                         }
                     }
                 }
@@ -72,7 +76,7 @@ class NetUtils {
             if (socket != null)
                 return
 
-            state.value = ConnectionStates.CLIENT_CONNECTING
+            state.postValue(ConnectionStates.CLIENT_CONNECTING)
             thread {
                 try {
                     //val newsocket = Socket(serverIP, serverPort)
