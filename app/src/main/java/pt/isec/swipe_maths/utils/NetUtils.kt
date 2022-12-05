@@ -10,6 +10,7 @@ import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.PrintStream
 import java.net.*
 import java.util.concurrent.TimeoutException
 import kotlin.concurrent.thread
@@ -44,7 +45,7 @@ class NetUtils {
                             val socketClient = serverSocket!!.accept()
                             clients.add(socketClient)
                             println("Received connection request!")
-                            startComm(socketClient)
+                            startClientComm(socketClient)
                         } catch (e: Exception) {
                             println("${e.message}")
                         }
@@ -68,6 +69,38 @@ class NetUtils {
                     } catch (_: Exception) {
                         println("Exception!!!")
                     }
+                }
+            }
+        }
+
+        fun startClientComm(clientSocket: Socket){
+            socket = clientSocket
+
+            val clientThread = thread {
+                try {
+                    if (socketI == null)
+                        return@thread
+
+                    val bufI = socketI!!.bufferedReader()
+                    socketO?.run {
+                        thread {
+                            try {
+                                val printStream = PrintStream(this)
+                                printStream.println("you are connected to the server")
+                                printStream.flush()
+                            } catch (_: Exception) {
+
+                            }
+                        }
+                    }
+
+                    while (true) {
+                        val message = bufI.readLine()
+                        val move = message.toIntOrNull()
+                    }
+                } catch (_: Exception) {
+                } finally {
+
                 }
             }
         }
@@ -101,10 +134,10 @@ class NetUtils {
                         return@thread
 
                     val bufI = socketI!!.bufferedReader()
-                    println("Connected successfully!")
                     while (true) {
                         val message = bufI.readLine()
                         val move = message.toIntOrNull()
+                        println(message)
                     }
                 } catch (_: Exception) {
                 } finally {
