@@ -144,7 +144,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                     finish()
                 }
                 ConnectionStates.WAITING_FOR_PLAYERS -> {
-                    println("Waiting for players!!")
+                    loadingDialog.show()
+                }
+                ConnectionStates.START_GAME -> {
+                    loadingDialog.dismiss()
                 }
             }
         }
@@ -259,13 +262,15 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         dlg = AlertDialog.Builder(this)
             .setTitle("Server mode")
             .setView(ll)
+            .setPositiveButton("Start Game"){ _ : DialogInterface, _ : Int ->
+                NetUtils.startGame()
+            }
             .setOnCancelListener {
                 finish()
             }
             .create()
 
         NetUtils.startServer(strIPAddress)
-
         dlg?.show()
     }
 

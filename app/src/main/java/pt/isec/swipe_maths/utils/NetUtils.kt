@@ -186,5 +186,30 @@ class NetUtils {
             json.put("state", ConnectionStates.WAITING_FOR_PLAYERS)
             return json
         }
+
+        fun startGame(){
+            val json = JSONObject()
+            json.put("state", ConnectionStates.START_GAME)
+            sendToClients(json.toString())
+        }
+
+        fun sendToClients(json : String){
+            thread {
+                for(i in clients.indices){
+                    socket = clients[i]
+                    socketO!!.run {
+                        thread {
+                            try {
+                                val printStream = PrintStream(this)
+                                printStream.println(json)
+                                printStream.flush()
+                            } catch (_: Exception) {
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
