@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.activities
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -69,18 +70,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.multiPlayer.setOnClickListener{
             if(checkLogin()) {
-                val dlg = AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.multiplayer))
-                    .setMessage(getString(R.string.server_or_client))
-                    .setPositiveButton(getString(R.string.server_btn)) { _: DialogInterface, _: Int ->
-                        startActivity(GameScreenActivity.getServerModeIntent(this))
-                    }
-                    .setNegativeButton(getString(R.string.client_btn)) { _: DialogInterface, _: Int ->
-                        startActivity(GameScreenActivity.getClientModeIntent(this))
-                    }
-                    .create()
-
-                dlg.show()
+                intent = Intent(this, MultiplayerActivity::class.java)
+                startActivity(intent)
             }
         }
 
