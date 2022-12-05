@@ -84,6 +84,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private val viewModel : GameViewModel by viewModels()
 
+    private var mode : Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
@@ -94,7 +96,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
         loadingDialog.show()
         loadingDialog.dismiss()
-        when (intent.getIntExtra("mode", SERVER_MODE)) {
+        mode = intent.getIntExtra("mode", SINGLE_MODE)
+        when (mode) {
             SERVER_MODE -> startAsServer()
             CLIENT_MODE -> startAsClient()
         }
@@ -108,12 +111,14 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                         d.dismiss()
                     }
                     .setNegativeButton("Exit"){_: DialogInterface, _: Int ->
+//                        if(mode == CLIENT_MODE){
+                            Log.i("DEbug", "testeeeeee")
+                            NetUtils.closeClient()
+//                        }
                         finish()
                     }.show()
             }
         })
-
-        NetUtils.newClient()
 
         viewModel.state.observe(this){
             when(it){
@@ -139,6 +144,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         }
 
         viewModel.connectionState.observe(this){
+            println(it)
             when(it){
                 ConnectionStates.CONNECTION_ERROR -> {
                     finish()
@@ -155,6 +161,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
 
     private fun startAsClient(){
+        NetUtils.newClient()
         val edtBox = EditText(this).apply {
             maxLines = 1
             filters = arrayOf(object : InputFilter {
@@ -252,7 +259,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             addView(TextView(context).apply {
                 val paramsTV = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 layoutParams = paramsTV
-                text = String.format("Server IP address: %s\nWaiting for a client...",strIPAddress)
+                NetUtils.nClients.observe(this@GameScreenActivity){
+                    text = String.format("Server IP address: %s\nWaiting for a client... %d", strIPAddress, it)
+                }
                 textSize = 20f
                 setTextColor(Color.rgb(96, 96, 32))
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
@@ -344,6 +353,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun onDestroy() {
         super.onDestroy()
+        println("Client closing")
+        NetUtils.closeClient()
         dlg?.dismiss()
     }
 }
