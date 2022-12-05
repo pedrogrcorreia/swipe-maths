@@ -143,6 +143,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 ConnectionStates.CONNECTION_ERROR -> {
                     finish()
                 }
+                ConnectionStates.WAITING_FOR_PLAYERS -> {
+                    println("Waiting for players!!")
+                }
             }
         }
     }

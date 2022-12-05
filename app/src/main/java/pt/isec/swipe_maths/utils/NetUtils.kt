@@ -6,6 +6,7 @@ import android.provider.Settings.Global.getString
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
 import java.io.InputStream
@@ -86,7 +87,7 @@ class NetUtils {
                         thread {
                             try {
                                 val printStream = PrintStream(this)
-                                printStream.println("you are connected to the server")
+                                printStream.println(createJson())
                                 printStream.flush()
                             } catch (_: Exception) {
 
@@ -136,8 +137,10 @@ class NetUtils {
                     val bufI = socketI!!.bufferedReader()
                     while (true) {
                         val message = bufI.readLine()
-                        val move = message.toIntOrNull()
-                        println(message)
+                        val json = JSONObject(message)
+                        println(json.get("state"))
+                        val rState = json.getString("state")
+                        state.postValue(ConnectionStates.valueOf(rState))
                     }
                 } catch (_: Exception) {
                 } finally {
@@ -176,6 +179,12 @@ class NetUtils {
 
         fun newClient(){
             state.value = ConnectionStates.CLIENT_CONNECTING
+        }
+
+        fun createJson() : JSONObject{
+            val json = JSONObject()
+            json.put("state", ConnectionStates.WAITING_FOR_PLAYERS)
+            return json
         }
     }
 }
