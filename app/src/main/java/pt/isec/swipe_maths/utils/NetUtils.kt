@@ -110,22 +110,24 @@ class NetUtils {
                             val rState = json.getString("state")
                             if(rState == ConnectionStates.CONNECTION_ENDED.toString()){
                                 removeClient(thisClient)
+                                break
                             } else if(rState == ConnectionStates.CONNECTION_ESTABLISHED.toString()){
                                 println("new player received!")
-                                addPlayer(json)
+                                addPlayer(json, thisClient)
                             }
                         }
                     }
                 } catch (_: Exception) {
                 } finally {
-
+                    println("closing socket from client")
+                    thisClient.close()
                 }
             }
         }
 
         fun startClient(serverIP: String, serverPort: Int = SERVER_PORT){
-            if (socket != null)
-                return
+//            if (socket != null)
+//                return
 
             state.postValue(ConnectionStates.CLIENT_CONNECTING)
             thread {
@@ -153,7 +155,7 @@ class NetUtils {
                         return@thread
 
                     val bufI = socketI!!.bufferedReader()
-                    while (true) {
+                    while (state.value != ConnectionStates.CONNECTION_ENDED) {
                         val message = bufI.readLine()
                         val json = JSONObject(message)
                         println(json.get("state"))
@@ -162,7 +164,8 @@ class NetUtils {
                     }
                 } catch (_: Exception) {
                 } finally {
-
+                    println("Closing socket!")
+                    socket?.close()
                 }
             }
         }
@@ -199,7 +202,7 @@ class NetUtils {
             state.value = ConnectionStates.CLIENT_CONNECTING
         }
 
-        fun addPlayer(json: JSONObject){
+        fun addPlayer(json: JSONObject, socket: Socket){
             try {
                 val name = json.getString("name")
                 val photo = URL(json.getString("photo"))
@@ -207,10 +210,8 @@ class NetUtils {
                 println(photo)
 
                 val newPlayers = players.value!!
-                newPlayers.add(Player(name, photo))
+                newPlayers.add(Player(name, photo, socket))
                 players.postValue(newPlayers)
-
-                println(players.value?.size)
             } catch(e : Exception){
                 println(e.message)
             }
@@ -220,6 +221,10 @@ class NetUtils {
             println("Removed a client ${clientSocket.localPort}")
             clientSocket.close()
             clients.remove(clientSocket)
+            val newPlayers = players.value!!
+            val playerToRemove = newPlayers.find { it.socket == clientSocket }
+            newPlayers.remove(playerToRemove)
+            players.postValue(newPlayers)
             nClients.postValue(clients.size)
         }
 
@@ -237,6 +242,7 @@ class NetUtils {
 
         fun closeClient(){
             val json = JSONObject()
+            state.value = ConnectionStates.CONNECTION_ENDED
             json.put("state", ConnectionStates.CONNECTION_ENDED)
             thread {
                 socketO!!.run {

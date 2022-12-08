@@ -55,11 +55,20 @@ class ClientFragment : Fragment() {
             thread {
                 scope.launch {
                     val job = launch {
-                        val ipAddress = NetUtils.contactMulticast()
-                        if(ipAddress != null){
-                            activity?.runOnUiThread {
-                                Toast.makeText(context, getString(R.string.error_timeout), Toast.LENGTH_LONG)
+                        try {
+                            val ipAddress = NetUtils.contactMulticast()
+                            println(ipAddress)
+                            if (ipAddress != null) {
+                                activity?.runOnUiThread {
+                                    Toast.makeText(
+                                        context,
+                                        getString(R.string.error_timeout),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
+                        } catch(e : Exception){
+                            println(e.message)
                         }
                     }
                     if(job.isActive){
@@ -76,6 +85,11 @@ class ClientFragment : Fragment() {
 
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        NetUtils.closeClient()
     }
 
     private val loadingDialog: AlertDialog by lazy {
