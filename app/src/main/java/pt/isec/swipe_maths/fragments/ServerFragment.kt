@@ -47,7 +47,6 @@ class ServerFragment : Fragment() {
         playersList.adapter = listAdapter
 
         NetUtils.players.observe(viewLifecycleOwner){
-            println("Changed value!!")
             listAdapter.notifyDataSetChanged()
         }
 
@@ -84,7 +83,7 @@ class ServerFragment : Fragment() {
             (ip shr 24) and 0xff
         )
 
-        binding.ipAddress.text = strIPAddress
+        binding.ipAddress.text = getString(R.string.ip_address, strIPAddress)
 
         NetUtils.startServer(strIPAddress)
     }

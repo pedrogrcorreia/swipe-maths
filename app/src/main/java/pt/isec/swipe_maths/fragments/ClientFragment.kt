@@ -89,6 +89,7 @@ class ClientFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // TODO only close if it's connected
         NetUtils.closeClient()
     }
 

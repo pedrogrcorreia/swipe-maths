@@ -8,15 +8,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Acting as Client" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/client_started" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/ipAddressString"
+            android:id="@+id/edtIpAddress"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search for server"
+            android:text="@string/connect"
+            android:id="@+id/btnConnect"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connect_emulator"
+            android:id="@+id/btnEmulator"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_servers"
             android:id="@+id/btnSearch"/>
     </LinearLayout>
 
