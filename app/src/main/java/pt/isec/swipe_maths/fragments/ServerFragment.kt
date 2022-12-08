@@ -41,10 +41,17 @@ class ServerFragment : Fragment() {
             false
         )
 
-        val players = arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
+        val players = NetUtils.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
 
-        val listAdapter = PlayerListAdapter(players, requireContext())
+        val listAdapter = PlayerListAdapter(players.value!!, requireContext())
         playersList.adapter = listAdapter
+
+        NetUtils.players.observe(viewLifecycleOwner){
+            println("Changed value!!")
+            listAdapter.notifyDataSetChanged()
+        }
+
+
 
 //        thread {
 //            while(true) {
@@ -86,7 +93,7 @@ class ServerFragment : Fragment() {
         super.onDestroy()
     }
 
-    class PlayerListAdapter(val data: ArrayList<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){
+    class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){
         class MyViewHolder(val view : View) : RecyclerView.ViewHolder(view){
             var name : TextView = view.findViewById(R.id.playerName)
             var photo : ImageView = view.findViewById(R.id.playerPhoto)

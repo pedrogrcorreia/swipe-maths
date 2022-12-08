@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
@@ -21,6 +22,8 @@ class NetUtils {
         val state : MutableLiveData<ConnectionStates> = MutableLiveData()
 
         val clients : MutableList<Socket> = mutableListOf()
+
+        val players : MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
         val nClients : MutableLiveData<Int> = MutableLiveData(0)
 
@@ -107,6 +110,9 @@ class NetUtils {
                             val rState = json.getString("state")
                             if(rState == ConnectionStates.CONNECTION_ENDED.toString()){
                                 removeClient(thisClient)
+                            } else if(rState == ConnectionStates.CONNECTION_ESTABLISHED.toString()){
+                                println("new player received!")
+                                addPlayer(json)
                             }
                         }
                     }
@@ -137,6 +143,7 @@ class NetUtils {
         private fun startComm(newSocket: Socket){
 //            if (threadComm != null)
 //                return
+
 
             socket = newSocket
 
@@ -192,6 +199,23 @@ class NetUtils {
             state.value = ConnectionStates.CLIENT_CONNECTING
         }
 
+        fun addPlayer(json: JSONObject){
+            try {
+                val name = json.getString("name")
+                val photo = URL(json.getString("photo"))
+
+                println(photo)
+
+                val newPlayers = players.value!!
+                newPlayers.add(Player(name, photo))
+                players.postValue(newPlayers)
+
+                println(players.value?.size)
+            } catch(e : Exception){
+                println(e.message)
+            }
+        }
+
         fun removeClient(clientSocket: Socket){
             println("Removed a client ${clientSocket.localPort}")
             clientSocket.close()
@@ -244,6 +268,20 @@ class NetUtils {
 
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        fun sendToServer(json: JSONObject){
+            thread {
+                socketO!!.run{
+                    try {
+                        val printStream = PrintStream(this)
+                        printStream.println(json)
+                        printStream.flush()
+                    } catch(_: Exception){
+
                     }
                 }
             }

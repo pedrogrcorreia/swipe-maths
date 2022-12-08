@@ -8,9 +8,14 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentClientBinding
 import pt.isec.swipe_maths.utils.NetUtils
@@ -32,6 +37,20 @@ class ClientFragment : Fragment() {
     ): View? {
         binding = FragmentClientBinding.inflate(inflater, container, false)
 
+        NetUtils.state.observe(viewLifecycleOwner){
+            when(it){
+                ConnectionStates.WAITING_FOR_PLAYERS -> {
+                    thread {
+                        val json = JSONObject()
+                        json.put("state", ConnectionStates.CONNECTION_ESTABLISHED)
+                        json.put("name", Firebase.auth.currentUser?.displayName)
+                        json.put("photo", "https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")
+                        NetUtils.sendToServer(json)
+                    }
+                }
+            }
+        }
+
         binding.btnSearch.setOnClickListener {
             thread {
                 scope.launch {
@@ -51,6 +70,7 @@ class ClientFragment : Fragment() {
                 }.invokeOnCompletion {
                     loadingDialog.dismiss()
                 }
+
             }
         }
 
