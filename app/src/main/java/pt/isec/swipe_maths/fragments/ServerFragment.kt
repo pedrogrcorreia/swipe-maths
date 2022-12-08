@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.fragments
 
 import android.content.Context
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
+import pt.isec.swipe_maths.utils.NetUtils
 import java.net.URL
 import kotlin.concurrent.thread
 
@@ -43,24 +46,40 @@ class ServerFragment : Fragment() {
         val listAdapter = PlayerListAdapter(players, requireContext())
         playersList.adapter = listAdapter
 
-        thread {
-            while(true) {
-                players.add(
-                    Player(
-                        "xyz",
-                        URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")
-                    )
-                )
-                Thread.sleep(3000)
-                activity?.runOnUiThread {
-                    println(players.size)
-                    listAdapter.notifyDataSetChanged()
-                }
-            }
-        }
+//        thread {
+//            while(true) {
+//                players.add(
+//                    Player(
+//                        "xyz",
+//                        URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")
+//                    )
+//                )
+//                Thread.sleep(3000)
+//                activity?.runOnUiThread {
+//                    println(players.size)
+//                    listAdapter.notifyDataSetChanged()
+//                }
+//            }
+//        }
 
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val wifiManager = requireContext().applicationContext.getSystemService(AppCompatActivity.WIFI_SERVICE) as WifiManager
+        val ip = wifiManager.connectionInfo.ipAddress // Deprecated in API Level 31. Suggestion NetworkCallback
+        val strIPAddress = String.format("%d.%d.%d.%d",
+            ip and 0xff,
+            (ip shr 8) and 0xff,
+            (ip shr 16) and 0xff,
+            (ip shr 24) and 0xff
+        )
+
+        binding.ipAddress.text = strIPAddress
+
+        NetUtils.startServer(strIPAddress)
     }
 
     override fun onDestroy() {
