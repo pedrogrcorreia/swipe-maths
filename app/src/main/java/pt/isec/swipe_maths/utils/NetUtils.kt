@@ -25,8 +25,6 @@ class NetUtils {
 
         val players : MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
-        val nClients : MutableLiveData<Int> = MutableLiveData(0)
-
         const val SERVER_PORT = 9999
 
         private var socket: Socket? = null
@@ -50,9 +48,7 @@ class NetUtils {
                         try {
                             val socketClient = serverSocket!!.accept()
                             clients.add(socketClient)
-                            println("Received connection request!")
-                            nClients.postValue(clients.size)
-                            startClientComm(socketClient)
+                            startCommWithClient(socketClient)
                         } catch (e: Exception) {
                             println("${e.message}")
                         }
@@ -80,7 +76,7 @@ class NetUtils {
             }
         }
 
-        fun startClientComm(clientSocket: Socket){
+        private fun startCommWithClient(clientSocket: Socket){
             socket = clientSocket
             val thisClient = clientSocket
             val clientThread = thread {
@@ -126,27 +122,19 @@ class NetUtils {
         }
 
         fun startClient(serverIP: String, serverPort: Int = SERVER_PORT){
-//            if (socket != null)
-//                return
-
             state.postValue(ConnectionStates.CLIENT_CONNECTING)
             thread {
                 try {
-                    //val newsocket = Socket(serverIP, serverPort)
                     val newsocket = Socket()
                     newsocket.connect(InetSocketAddress(serverIP,serverPort),5000)
-                    startComm(newsocket)
+                    startCommWithServer(newsocket)
                 } catch (_: Exception) {
-
+                    state.postValue(ConnectionStates.CONNECTION_ERROR)
                 }
             }
         }
 
-        private fun startComm(newSocket: Socket){
-//            if (threadComm != null)
-//                return
-
-
+        private fun startCommWithServer(newSocket: Socket){
             socket = newSocket
 
             threadComm = thread {
@@ -225,7 +213,6 @@ class NetUtils {
             val playerToRemove = newPlayers.find { it.socket == clientSocket }
             newPlayers.remove(playerToRemove)
             players.postValue(newPlayers)
-            nClients.postValue(clients.size)
         }
 
         fun createJson() : JSONObject{

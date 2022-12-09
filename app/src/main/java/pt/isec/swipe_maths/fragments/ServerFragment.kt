@@ -16,9 +16,7 @@ import com.bumptech.glide.Glide
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
-import pt.isec.swipe_maths.utils.NetUtils
-import java.net.URL
-import kotlin.concurrent.thread
+import pt.isec.swipe_maths.utils.Server
 
 class ServerFragment : Fragment() {
 
@@ -41,12 +39,12 @@ class ServerFragment : Fragment() {
             false
         )
 
-        val players = NetUtils.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
+        val players = Server.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
 
         val listAdapter = PlayerListAdapter(players.value!!, requireContext())
         playersList.adapter = listAdapter
 
-        NetUtils.players.observe(viewLifecycleOwner){
+        Server.players.observe(viewLifecycleOwner){
             listAdapter.notifyDataSetChanged()
         }
 
@@ -85,7 +83,7 @@ class ServerFragment : Fragment() {
 
         binding.ipAddress.text = getString(R.string.ip_address, strIPAddress)
 
-        NetUtils.startServer(strIPAddress)
+        Server.startServer(strIPAddress)
     }
 
     override fun onDestroy() {

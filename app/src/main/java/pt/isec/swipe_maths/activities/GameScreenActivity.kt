@@ -259,9 +259,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             addView(TextView(context).apply {
                 val paramsTV = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                 layoutParams = paramsTV
-                NetUtils.nClients.observe(this@GameScreenActivity){
-                    text = String.format("Server IP address: %s\nWaiting for a client... %d", strIPAddress, it)
-                }
+//                NetUtils.nClients.observe(this@GameScreenActivity){
+//                    text = String.format("Server IP address: %s\nWaiting for a client... %d", strIPAddress, it)
+//                }
                 textSize = 20f
                 setTextColor(Color.rgb(96, 96, 32))
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
