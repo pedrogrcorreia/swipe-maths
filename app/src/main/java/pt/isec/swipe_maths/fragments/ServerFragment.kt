@@ -23,6 +23,9 @@ import pt.isec.swipe_maths.utils.Server
 class ServerFragment : Fragment() {
 
     lateinit var binding : FragmentServerBinding
+
+    lateinit var server: Server
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -33,6 +36,8 @@ class ServerFragment : Fragment() {
     ): View? {
         binding = FragmentServerBinding.inflate(inflater, container, false)
 
+        server = Server()
+
         var playersList = binding.rvList
 
         playersList.layoutManager = LinearLayoutManager(
@@ -41,17 +46,17 @@ class ServerFragment : Fragment() {
             false
         )
 
-        val players = Server.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
+        val players = server.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
 
         val listAdapter = PlayerListAdapter(players.value!!, requireContext())
         playersList.adapter = listAdapter
 
-        Server.players.observe(viewLifecycleOwner){
+        server.players.observe(viewLifecycleOwner){
             listAdapter.notifyDataSetChanged()
             val json = JSONObject()
             json.put("state", ConnectionStates.UPDATE_PLAYERS_LIST)
             json.put("players", Player.playersToJson(players.value!!))
-            Server.sendToClients(json)
+            server.sendToClients(json)
         }
 
 
@@ -89,11 +94,13 @@ class ServerFragment : Fragment() {
 
         binding.ipAddress.text = getString(R.string.ip_address, strIPAddress)
 
-        Server.startServer(strIPAddress)
+        server.startServer(strIPAddress)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        println("OnDestroy!!")
+        server.closeServer()
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){

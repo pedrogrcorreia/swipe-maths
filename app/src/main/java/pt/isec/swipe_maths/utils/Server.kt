@@ -11,175 +11,187 @@ import java.net.*
 import kotlin.concurrent.thread
 
 class Server {
-    companion object{
-        val state : MutableLiveData<ConnectionStates> = MutableLiveData()
 
-        val clients : MutableList<Socket> = mutableListOf()
+    val state: MutableLiveData<ConnectionStates> = MutableLiveData()
 
-        val players : MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
+    val clients: MutableList<Socket> = mutableListOf()
 
-        const val SERVER_PORT = 9999
+    val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
-        private var socket: Socket? = null
-        private val socketI: InputStream?
-            get() = socket?.getInputStream()
-        private val socketO: OutputStream?
-            get() = socket?.getOutputStream()
+    val SERVER_PORT = 9999
 
-        private var serverSocket: ServerSocket? = null
+    private var socket: Socket? = null
+    private val socketI: InputStream?
+        get() = socket?.getInputStream()
+    private val socketO: OutputStream?
+        get() = socket?.getOutputStream()
 
-        fun startServer(strIpAddress: String){
-            if (serverSocket != null || socket != null)
-                return
+    private var serverSocket: ServerSocket? = null
 
-            state.value = ConnectionStates.SERVER_CONNECTING
+    fun startServer(strIpAddress: String) {
+        if (serverSocket != null || socket != null)
+            return
 
-            startMulticast(strIpAddress)
+        state.value = ConnectionStates.SERVER_CONNECTING
 
-            thread {
-                try {
-                    serverSocket = ServerSocket(SERVER_PORT)
-                    state.postValue(ConnectionStates.SERVER_CONNECTED)
-                    serverSocket.run {
-                        while(true){
-                            println("HERE!!!")
-                            try {
-                                val socketClient = serverSocket!!.accept()
-                                clients.add(socketClient)
-                                clientThread(socketClient)
-                                println("Connection received")
-                            } catch(_: Exception){
-                                // TODO deal with this
-                            }
-                        }
-                    }
-                } catch(_: Exception){
-                    state.postValue(ConnectionStates.SERVER_ERROR)
-                }
-            }
-        }
+        startMulticast(strIpAddress)
 
-        private fun startMulticast(strIpAddress: String){
-            thread {
-                val multiSocket = MulticastSocket(9996)
-                val group = InetAddress.getByName("224.0.0.251")
-                multiSocket.joinGroup(group)
-                multiSocket.broadcast = true
-                val buffer = ByteArray(2048)
-                while(true) {
-                    try {
-                        val packet = DatagramPacket(buffer, buffer.size)
-                        multiSocket.receive(packet)
-                        val strMsg = "$strIpAddress ${serverSocket?.localPort}"
-                        packet.data = strMsg.toByteArray()
-                        multiSocket.send(packet)
-                    } catch (_: Exception) {
-                        println("Exception!!!")
-                    }
-                }
-            }
-        }
-
-        private fun clientThread(clientSocket: Socket){
-            val thisClient = clientSocket
-            socket = clientSocket
-
-            thread {
-                try {
-                    if (socketI == null) {
-                        return@thread
-                    }
-
-
-                    socketO?.run {
-                        thread {
-                            try {
-                                val printStream = PrintStream(this)
-                                val json = JSONObject()
-                                json.put("state", ConnectionStates.CONNECTION_ESTABLISHED)
-                                printStream.println(json)
-                                printStream.flush()
-                            } catch (e: Exception) {
-                                println("${e.message}")
-                            }
-                        }
-                    }
-
-                    while (true) {
-                        val bufI = socketI!!.bufferedReader()
-                        val message = bufI.readLine()
-                        val json = JSONObject(message)
-                        val rState = json.getString("state")
-                        if (rState == ConnectionStates.CONNECTION_ENDED.toString()) {
-                            val json = JSONObject()
-                            json.put("state", ConnectionStates.CONNECTION_ENDED)
-                            sendToClient(json.toString(), thisClient)
-                            removeClient(thisClient)
-                            break
-                        } else if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
-                            addPlayer(json, thisClient)
-                        }
-                    }
-                }catch (e: Exception){
-                    println("${e.message}")
-                }finally {
-                    // TODO exception here?
-                    println("closing client socket!")
-                    thisClient.close()
-                }
-            }
-        }
-
-        fun addPlayer(json: JSONObject, socket: Socket){
+        thread {
             try {
-                val name = json.getString("name")
-                val photo = URL(json.getString("photo")) // TODO load default image
-
-                val newPlayers = players.value!!
-                newPlayers.add(Player(name, photo, socket))
-                players.postValue(newPlayers)
-            } catch(_: Exception){
-                // TODO Send message to client
+                serverSocket = ServerSocket(SERVER_PORT)
+                state.postValue(ConnectionStates.SERVER_CONNECTED)
+                serverSocket.run {
+                    while (true) {
+                        println("HERE!!!")
+                        try {
+                            val socketClient = serverSocket!!.accept()
+                            clients.add(socketClient)
+                            clientThread(socketClient)
+                            println("Connection received")
+                        } catch (e: Exception) {
+                            // TODO deal with this
+                            println(e.message)
+                            break;
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+                state.postValue(ConnectionStates.SERVER_ERROR)
             }
         }
+    }
 
-        fun removeClient(clientSocket: Socket){
-            clients.remove(clientSocket)
-            val newPlayers = players.value!!
-            val playerToRemove = newPlayers.find {it.socket == clientSocket}
-            newPlayers.remove(playerToRemove)
-            players.postValue(newPlayers)
+    private fun startMulticast(strIpAddress: String) {
+        thread {
+            val multiSocket = MulticastSocket(9996)
+            val group = InetAddress.getByName("224.0.0.251")
+            multiSocket.joinGroup(group)
+            multiSocket.broadcast = true
+            val buffer = ByteArray(2048)
+            while (true) {
+                try {
+                    val packet = DatagramPacket(buffer, buffer.size)
+                    multiSocket.receive(packet)
+                    val strMsg = "$strIpAddress ${serverSocket?.localPort}"
+                    packet.data = strMsg.toByteArray()
+                    multiSocket.send(packet)
+                } catch (_: Exception) {
+                    println("Exception!!!")
+                }
+            }
         }
+    }
 
-        fun sendToClients(json: JSONObject){
-            thread{
-                for(i in clients.indices){
-                    socket = clients[i]
-                    socketO!!.run{
-                        try{
+    private fun clientThread(clientSocket: Socket) {
+        val thisClient = clientSocket
+        socket = clientSocket
+
+        thread {
+            try {
+                if (socketI == null) {
+                    return@thread
+                }
+
+
+                socketO?.run {
+                    thread {
+                        try {
                             val printStream = PrintStream(this)
+                            val json = JSONObject()
+                            json.put("state", ConnectionStates.CONNECTION_ESTABLISHED)
                             printStream.println(json)
                             printStream.flush()
-                        } catch(_: Exception){
-                            // TODO Exception here
+                        } catch (e: Exception) {
+                            println("${e.message}")
                         }
                     }
                 }
+
+                while (true) {
+                    val bufI = socketI!!.bufferedReader()
+                    val message = bufI.readLine()
+                    val json = JSONObject(message)
+                    val rState = json.getString("state")
+                    if (rState == ConnectionStates.CONNECTION_ENDED.toString()) {
+                        val json = JSONObject()
+                        json.put("state", ConnectionStates.CONNECTION_ENDED)
+                        sendToClient(json.toString(), thisClient)
+                        removeClient(thisClient)
+                        break
+                    } else if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
+                        addPlayer(json, thisClient)
+                    }
+                }
+            } catch (e: Exception) {
+                println("${e.message}")
+            } finally {
+                // TODO exception here?
+                println("closing client socket!")
+                thisClient.close()
             }
         }
+    }
 
-        fun sendToClient(json: String, clientSocket: Socket){
-            thread {
-                socket = clientSocket
-                socketO!!.run{
-                    try{
+    fun addPlayer(json: JSONObject, socket: Socket) {
+        try {
+            val name = json.getString("name")
+            val photo = URL(json.getString("photo")) // TODO load default image
+
+            val newPlayers = players.value!!
+            newPlayers.add(Player(name, photo, socket))
+            players.postValue(newPlayers)
+        } catch (_: Exception) {
+            // TODO Send message to client
+        }
+    }
+
+    fun removeClient(clientSocket: Socket) {
+        clients.remove(clientSocket)
+        val newPlayers = players.value!!
+        val playerToRemove = newPlayers.find { it.socket == clientSocket }
+        newPlayers.remove(playerToRemove)
+        players.postValue(newPlayers)
+    }
+
+    fun sendToClients(json: JSONObject) {
+        thread {
+            for (i in clients.indices) {
+                socket = clients[i]
+                socketO!!.run {
+                    try {
                         val printStream = PrintStream(this)
                         printStream.println(json)
                         printStream.flush()
-                    } catch(_: Exception){
+                    } catch (_: Exception) {
                         // TODO Exception here
                     }
                 }
+            }
+        }
+    }
+
+    fun sendToClient(json: String, clientSocket: Socket) {
+        thread {
+            socket = clientSocket
+            socketO!!.run {
+                try {
+                    val printStream = PrintStream(this)
+                    printStream.println(json)
+                    printStream.flush()
+                } catch (_: Exception) {
+                    // TODO Exception here
+                }
+            }
+        }
+    }
+
+    fun closeServer(){
+        serverSocket?.close()
+        for(client in clients){
+            try {
+                client.close()
+            } catch(e: Exception){
+                println(e.message)
             }
         }
     }

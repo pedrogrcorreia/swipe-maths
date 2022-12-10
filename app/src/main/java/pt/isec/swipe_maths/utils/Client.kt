@@ -76,7 +76,7 @@ class Client {
                     state.postValue(ConnectionStates.valueOf(rState))
                 }
             } catch (e: Exception) {
-                // TODO Exception here
+                // TODO Exception here meaning server was closing
                 println("${e.message}")
             } finally {
                 println("Closing from server socket!")
