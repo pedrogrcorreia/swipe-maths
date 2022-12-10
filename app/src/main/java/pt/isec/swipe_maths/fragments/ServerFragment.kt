@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import org.json.JSONObject
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
@@ -46,6 +48,10 @@ class ServerFragment : Fragment() {
 
         Server.players.observe(viewLifecycleOwner){
             listAdapter.notifyDataSetChanged()
+            val json = JSONObject()
+            json.put("state", ConnectionStates.UPDATE_PLAYERS_LIST)
+            json.put("players", Player.playersToJson(players.value!!))
+            Server.sendToClients(json)
         }
 
 

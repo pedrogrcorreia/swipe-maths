@@ -34,6 +34,10 @@
             android:layout_height="wrap_content"
             android:text="@string/search_servers"
             android:id="@+id/btnSearch"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rvList" />
     </LinearLayout>
 
 </FrameLayout>

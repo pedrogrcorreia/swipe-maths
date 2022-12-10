@@ -151,7 +151,7 @@ class Server {
             players.postValue(newPlayers)
         }
 
-        fun sendToClients(json: String){
+        fun sendToClients(json: JSONObject){
             thread{
                 for(i in clients.indices){
                     socket = clients[i]
