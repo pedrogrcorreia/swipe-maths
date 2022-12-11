@@ -83,10 +83,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private lateinit var auth : FirebaseAuth
 
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
-
-    private var dlg: AlertDialog? = null
-
     private lateinit var binding: ActivityGameScreenBinding
 
     private val viewModel : GameViewModel by viewModels()
@@ -100,9 +96,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
         auth = Firebase.auth
 
-
-        loadingDialog.show()
-        loadingDialog.dismiss()
         mode = intent.getIntExtra("mode", SINGLE_MODE)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -147,25 +140,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         viewModel.points.observe(this){
             binding.lblPoints.text = getString(R.string.points, it)
         }
-
-//        viewModel.connectionState.observe(this){
-//            println(it)
-//            when(it){
-//                ConnectionStates.CONNECTION_ERROR -> {
-//                    finish()
-//                }
-//                ConnectionStates.WAITING_FOR_PLAYERS -> {
-//                    loadingDialog.show()
-//                }
-//                ConnectionStates.START_GAME -> {
-//                    loadingDialog.dismiss()
-//                }
-//            }
-//        }
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-//        Log.i("Debug", "max value: ${viewModel.getMaxValue()}")
         if(viewModel.columnPlay(selectedColumn)){
             Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn+1), Snackbar.LENGTH_SHORT).apply{
                 setTextColor(Color.GREEN)
@@ -209,31 +186,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         return true
     }
 
-
-    // TODO join this
-    private val loadingDialog: AlertDialog by lazy {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.loading_title))
-            .setMessage(getString(R.string.loading_message))
-            .setView(ProgressBar(this))
-            .create()
-    }
-
-    // TODO join this
-    private fun showSnackbarError(error : String){
-        Snackbar.make(this@GameScreenActivity.findViewById(R.id.lLayout),
-            getString(R.string.error_message, error),
-            Snackbar.LENGTH_LONG).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setTextColor(getColor(R.color.white))
-                setBackgroundTint(getColor(R.color.snackbar_error_bkg))
-            }
-        }
-            .show()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        dlg?.dismiss()
     }
 }
