@@ -40,15 +40,13 @@ class ProfileActivity : AppCompatActivity() {
         updatePhoto(currentUser.photoUrl)
 
         binding.imageView.setOnClickListener{
-            if(permissionsGranted){
-                chooseImage()
-            } else {
-                verifyPermissions()
-            }
+            chooseImage()
         }
+
+        verifyPermissions()
     }
 
-    fun updatePhoto(imagePath: Uri?){
+    private fun updatePhoto(imagePath: Uri?){
         println("Image path: $imagePath")
         val requestOptions = RequestOptions()
         Glide.with(this)
@@ -84,14 +82,14 @@ class ProfileActivity : AppCompatActivity() {
         updatePhoto(imagePath?.toUri())
     }
 
-    fun getTempFilename(context: Context,
+    private fun getTempFilename(context: Context,
                         prefix: String = "image", extension : String = ".png") : String =
         File.createTempFile(
             prefix, extension,
             context.externalCacheDir
         ).absolutePath
 
-    fun createFileFromUri(
+    private fun createFileFromUri(
         context: Context,
         uri : Uri,
         filename : String = getTempFilename(context)
