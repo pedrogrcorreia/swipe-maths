@@ -47,4 +47,5 @@
     <string name="connect">Connect</string>
     <string name="connect_emulator">Connect to emulator</string>
     <string name="error_already_connected">You\'re already connected!</string>
+    <string name="update_profile">Update profile</string>
 </resources>
