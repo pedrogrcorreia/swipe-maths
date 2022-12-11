@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.userProfile.setOnClickListener{
-
+            println(auth.currentUser?.photoUrl)
         }
 
         binding.emailButton.setOnClickListener {
@@ -142,9 +142,8 @@ class MainActivity : AppCompatActivity() {
         binding.logoutBtn.setOnClickListener {
             scope.launch {
                 val job = launch {
-                    if(auth.currentUser?.getIdToken(false)
-                            ?.result
-                            ?.signInProvider == GoogleAuthProvider.PROVIDER_ID) {
+                    val token = auth.currentUser?.getIdToken(false)?.await()
+                    if(token?.signInProvider == GoogleAuthProvider.PROVIDER_ID){
                         googleSignInClient.signOut().await()
                     }
                     auth.signOut()
