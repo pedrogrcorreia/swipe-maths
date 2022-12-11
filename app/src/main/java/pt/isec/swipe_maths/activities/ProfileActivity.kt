@@ -1,14 +1,19 @@
 package pt.isec.swipe_maths.activities
 
+import android.content.Context
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityProfileBinding
+import java.io.File
+import java.io.FileOutputStream
 import java.net.URL
 
 class ProfileActivity : AppCompatActivity() {
@@ -32,9 +37,7 @@ class ProfileActivity : AppCompatActivity() {
         binding.edName.text =
             Editable.Factory.getInstance().newEditable(currentUser.displayName)
 
-        Glide.with(this)
-            .load(currentUser.photoUrl ?: URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg"))
-            .into(binding.imageView)
+        updatePhoto(currentUser.photoUrl)
 
         binding.imageView.setOnClickListener{
             if(permissionsGranted){
@@ -43,6 +46,15 @@ class ProfileActivity : AppCompatActivity() {
                 verifyPermissions()
             }
         }
+    }
+
+    fun updatePhoto(imagePath: Uri?){
+        println("Image path: $imagePath")
+        val requestOptions = RequestOptions()
+        Glide.with(this)
+            .load(imagePath?.path ?: URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg"))
+            .apply(requestOptions.circleCrop())
+            .into(binding.imageView)
     }
 
     private fun verifyPermissions() {
@@ -66,6 +78,29 @@ class ProfileActivity : AppCompatActivity() {
 
     private var startActivityForContentResult = registerForActivityResult(
         ActivityResultContracts.GetContent() ) { uri ->
+            // TODO Upload to storage
+        val imagePath = uri?.let { createFileFromUri(this, uri) }
+        println(imagePath)
+        updatePhoto(imagePath?.toUri())
+    }
 
+    fun getTempFilename(context: Context,
+                        prefix: String = "image", extension : String = ".png") : String =
+        File.createTempFile(
+            prefix, extension,
+            context.externalCacheDir
+        ).absolutePath
+
+    fun createFileFromUri(
+        context: Context,
+        uri : Uri,
+        filename : String = getTempFilename(context)
+    ) : String {
+        FileOutputStream(filename).use { outputStream ->
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        return filename
     }
 }
