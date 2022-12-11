@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentClientBinding
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.utils.Client
@@ -62,6 +63,11 @@ class ClientFragment : Fragment() {
                     binding.btnConnect.visibility = View.GONE
                     binding.btnEmulator.visibility = View.GONE
                     binding.edtIpAddress.visibility = View.GONE
+                }
+                ConnectionStates.SERVER_ERROR ->{
+                    Toast.makeText(activity?.applicationContext, "Server closed!", Toast.LENGTH_LONG).show()
+                    activity?.finish()
+                    startActivity(GameScreenActivity.getSingleModeIntentError(requireContext()))
                 }
             }
         }

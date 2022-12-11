@@ -52,6 +52,7 @@ import kotlin.concurrent.thread
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
         private const val SINGLE_MODE = 0
+        private const val ERROR_MODE = 1
         private const val SERVER_MODE = 1
         private const val CLIENT_MODE = 2
 
@@ -70,6 +71,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         fun getClientModeIntent(context : Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", CLIENT_MODE)
+            }
+        }
+
+        fun getSingleModeIntentError(context: Context) : Intent {
+            return Intent(context, GameScreenActivity::class.java).apply{
+                putExtra("mode", ERROR_MODE)
             }
         }
     }
@@ -97,10 +104,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         loadingDialog.show()
         loadingDialog.dismiss()
         mode = intent.getIntExtra("mode", SINGLE_MODE)
-        when (mode) {
-            SERVER_MODE -> startAsServer()
-            CLIENT_MODE -> startAsClient()
-        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -111,10 +114,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                         d.dismiss()
                     }
                     .setNegativeButton("Exit"){_: DialogInterface, _: Int ->
-//                        if(mode == CLIENT_MODE){
-                            Log.i("DEbug", "testeeeeee")
-                            NetUtils.closeClient()
-//                        }
                         finish()
                     }.show()
             }
@@ -123,7 +122,13 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         viewModel.state.observe(this){
             when(it){
                 GameStates.GAME_OVER -> {
-                    FirestoreUtils.addGame(viewModel.points.value!!, viewModel.totalTime, auth.currentUser!!.email!!)
+                    if(mode != ERROR_MODE) {
+                        FirestoreUtils.addGame(
+                            viewModel.points.value!!,
+                            viewModel.totalTime,
+                            auth.currentUser!!.email!!
+                        )
+                    }
                     AlertDialog.Builder(this)
                         .setTitle("Game over")
                         .setMessage("You ran out of time!")
@@ -143,144 +148,20 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             binding.lblPoints.text = getString(R.string.points, it)
         }
 
-        viewModel.connectionState.observe(this){
-            println(it)
-            when(it){
-                ConnectionStates.CONNECTION_ERROR -> {
-                    finish()
-                }
-                ConnectionStates.WAITING_FOR_PLAYERS -> {
-                    loadingDialog.show()
-                }
-                ConnectionStates.START_GAME -> {
-                    loadingDialog.dismiss()
-                }
-            }
-        }
-    }
-
-
-    private fun startAsClient(){
-        NetUtils.newClient()
-        val edtBox = EditText(this).apply {
-            maxLines = 1
-            filters = arrayOf(object : InputFilter {
-                override fun filter(
-                    source: CharSequence?,
-                    start: Int,
-                    end: Int,
-                    dest: Spanned?,
-                    dstart: Int,
-                    dend: Int
-                ): CharSequence? {
-                    source?.run {
-                        var ret = ""
-                        forEach {
-                            if (it.isDigit() || it == '.')
-                                ret += it
-                        }
-                        return ret
-                    }
-                    return null
-                }
-
-            })
-        }
-        dlg = AlertDialog.Builder(this)
-            .setTitle("Client mode")
-            .setMessage("IP")
-            .setPositiveButton("CONNECT") { _: DialogInterface, _: Int ->
-                val strIP = edtBox.text.toString()
-                if (strIP.isEmpty() || !Patterns.IP_ADDRESS.matcher(strIP).matches()) {
-                    Toast.makeText(this@GameScreenActivity, "ERRO DO CRL", Toast.LENGTH_LONG).show()
-                    finish()
-                } else {
-                    NetUtils.startClient(strIP)
-                }
-            }
-            .setNeutralButton("EMULATOR") { _: DialogInterface, _: Int ->
-                NetUtils.startClient("10.0.2.2", SERVER_PORT-1)
-                // Configure port redirect on the Server Emulator:
-                // telnet localhost <5554|5556|5558|...>
-                // auth <key>
-                // redir add tcp:9998:9999
-            }
-            .setNegativeButton("SEARCH") { _: DialogInterface, _: Int ->
-                thread {
-                    scope.launch {
-                        val job = launch {
-                            val ipAddress = NetUtils.contactMulticast()
-                            if (ipAddress != null) {
-                                runOnUiThread{
-                                    Toast.makeText(this@GameScreenActivity, getString(R.string.error_timeout), Toast.LENGTH_LONG).show()
-                                }
-                            }
-                        }
-                        if (job.isActive) {
-                            runOnUiThread {
-                                loadingDialog.show()
-                            }
-                        }
-                    }.invokeOnCompletion {
-                        loadingDialog.dismiss()
-                    }
-                }
-            }
-            .setCancelable(true)
-            .setView(edtBox)
-            .create()
-
-        dlg?.show()
-    }
-
-    private fun startAsServer(){
-        val wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
-        val ip = wifiManager.connectionInfo.ipAddress // Deprecated in API Level 31. Suggestion NetworkCallback
-        val strIPAddress = String.format("%d.%d.%d.%d",
-            ip and 0xff,
-            (ip shr 8) and 0xff,
-            (ip shr 16) and 0xff,
-            (ip shr 24) and 0xff
-        )
-
-        val ll = LinearLayout(this).apply {
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            this.setPadding(50, 50, 50, 50)
-            layoutParams = params
-            setBackgroundColor(Color.rgb(240, 224, 208))
-            orientation = LinearLayout.HORIZONTAL
-            addView(ProgressBar(context).apply {
-                isIndeterminate = true
-                val paramsPB = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                paramsPB.gravity = Gravity.CENTER_VERTICAL
-                layoutParams = paramsPB
-                indeterminateTintList = ColorStateList.valueOf(Color.rgb(96, 96, 32))
-            })
-            addView(TextView(context).apply {
-                val paramsTV = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                layoutParams = paramsTV
-//                NetUtils.nClients.observe(this@GameScreenActivity){
-//                    text = String.format("Server IP address: %s\nWaiting for a client... %d", strIPAddress, it)
+//        viewModel.connectionState.observe(this){
+//            println(it)
+//            when(it){
+//                ConnectionStates.CONNECTION_ERROR -> {
+//                    finish()
 //                }
-                textSize = 20f
-                setTextColor(Color.rgb(96, 96, 32))
-                textAlignment = View.TEXT_ALIGNMENT_CENTER
-            })
-        }
-
-        dlg = AlertDialog.Builder(this)
-            .setTitle("Server mode")
-            .setView(ll)
-            .setPositiveButton("Start Game"){ _ : DialogInterface, _ : Int ->
-                NetUtils.startGame()
-            }
-            .setOnCancelListener {
-                finish()
-            }
-            .create()
-
-        NetUtils.startServer(strIPAddress)
-        dlg?.show()
+//                ConnectionStates.WAITING_FOR_PLAYERS -> {
+//                    loadingDialog.show()
+//                }
+//                ConnectionStates.START_GAME -> {
+//                    loadingDialog.dismiss()
+//                }
+//            }
+//        }
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
@@ -353,8 +234,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun onDestroy() {
         super.onDestroy()
-        println("Client closing")
-        NetUtils.closeClient()
         dlg?.dismiss()
     }
 }

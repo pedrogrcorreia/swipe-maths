@@ -80,7 +80,7 @@ class Client {
                 println("${e.message}")
             } finally {
                 println("Closing from server socket!")
-                state.postValue(ConnectionStates.NO_CONNECTION)
+                state.postValue(ConnectionStates.SERVER_ERROR)
                 socket?.close()
                 socket = null
             }
