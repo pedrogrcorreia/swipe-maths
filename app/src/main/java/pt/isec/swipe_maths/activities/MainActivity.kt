@@ -76,7 +76,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.userProfile.setOnClickListener{
-            println(auth.currentUser?.photoUrl)
+            if(checkLogin()){
+                intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         binding.emailButton.setOnClickListener {
