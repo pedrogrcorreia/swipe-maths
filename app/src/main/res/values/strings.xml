@@ -49,4 +49,5 @@
     <string name="error_already_connected">You\'re already connected!</string>
     <string name="update_profile">Update profile</string>
     <string name="changes_warning">You have unsaved changes!</string>
+    <string name="default_pic_uri"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fdefault_pic.jpeg?alt=media&token=86be326f-53dd-4d5e-b281-f906abd7c26d]]></string>
 </resources>

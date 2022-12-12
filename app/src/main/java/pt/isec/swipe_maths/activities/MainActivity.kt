@@ -3,6 +3,7 @@ package pt.isec.swipe_maths.activities
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -239,6 +240,8 @@ class MainActivity : AppCompatActivity() {
                     if(result?.user != null){
                         val profileRequest = UserProfileChangeRequest.Builder()
                             .setDisplayName("$firstName $lastName")
+                            .setPhotoUri(
+                                Uri.parse(getString(R.string.default_pic_uri)))
                             .build()
                         result.user!!.updateProfile(profileRequest).await()
                     }

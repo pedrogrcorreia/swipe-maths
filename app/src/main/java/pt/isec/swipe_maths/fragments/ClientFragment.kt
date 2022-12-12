@@ -56,10 +56,10 @@ class ClientFragment : Fragment() {
                         val json = JSONObject()
                         json.put("state", ConnectionStates.RETRIEVING_CLIENT_INFO)
                         json.put("name", Firebase.auth.currentUser?.displayName)
-                        json.put("photo", "https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")
+                        json.put("photo", Firebase.auth.currentUser?.photoUrl)
                         client.sendToServer(json)
                     }
-//                    binding.btnSearch.visibility = View.GONE
+                    binding.btnSearch.visibility = View.GONE
                     binding.btnConnect.visibility = View.GONE
                     binding.btnEmulator.visibility = View.GONE
                     binding.edtIpAddress.visibility = View.GONE
