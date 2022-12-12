@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
@@ -113,6 +114,7 @@ class ServerFragment : Fragment() {
                 name.text = data.name
                 Glide.with(context)
                     .load(data.photoUrl)
+                    .apply(RequestOptions().circleCrop())
                     .into(photo)
             }
         }

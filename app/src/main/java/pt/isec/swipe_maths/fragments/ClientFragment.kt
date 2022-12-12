@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.Request
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -154,6 +156,7 @@ class ClientFragment : Fragment() {
                 name.text = data.name
                 Glide.with(context)
                     .load(data.photoUrl)
+                    .apply(RequestOptions().circleCrop())
                     .into(photo)
             }
         }
