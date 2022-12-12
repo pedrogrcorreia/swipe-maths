@@ -6,7 +6,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
+import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.Player
+import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
@@ -22,6 +24,8 @@ object Server {
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
     val SERVER_PORT = 9999
+
+    val model: GameViewModel = GameViewModel(Game())
 
     private var socket: Socket? = null
     private val socketI: InputStream?
@@ -40,6 +44,8 @@ object Server {
             return
 
         println("Server is starting...")
+
+        println(model.board.value!!.printBoard())
 
         players.value!!.clear()
 

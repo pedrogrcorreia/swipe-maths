@@ -73,6 +73,7 @@ class ServerFragment : Fragment() {
                 startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
                 val json = JSONObject().apply {
                     put("state", ConnectionStates.START_GAME)
+                    put("board", server.model.board.value!!.printBoard())
                 }
                 server.sendToClients(json)
             } else {

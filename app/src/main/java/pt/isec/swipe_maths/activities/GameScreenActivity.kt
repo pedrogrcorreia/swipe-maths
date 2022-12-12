@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -18,6 +19,7 @@ import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.fragments.INewLevelFragment
+import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.network.Server
@@ -59,7 +61,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private lateinit var binding: ActivityGameScreenBinding
 
-    private val viewModel : GameViewModel by viewModels()
+    private lateinit var viewModel : GameViewModel
 
     private var mode : Int = 0
 
@@ -77,8 +79,15 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         mode = intent.getIntExtra("mode", SINGLE_MODE)
 
         when(mode){
-            SERVER_MODE -> server = Server
-            CLIENT_MODE -> client = Client
+            SERVER_MODE -> {
+                server = Server
+                viewModel = server.model
+            }
+            CLIENT_MODE -> {
+                client = Client
+                viewModel = GameViewModel(Game())
+            }
+            SINGLE_MODE -> viewModel = ViewModelProvider(this)[GameViewModel::class.java]
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

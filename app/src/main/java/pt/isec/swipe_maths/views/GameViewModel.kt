@@ -32,7 +32,9 @@ class GameViewModel() : ViewModel() {
         }
     }
 
-    constructor(game: Game) : this()
+    constructor(game: Game) : this() {
+        println(game.level)
+    }
 
     private val game : Game = Game()
 
