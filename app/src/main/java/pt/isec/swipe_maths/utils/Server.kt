@@ -1,6 +1,9 @@
 package pt.isec.swipe_maths.utils
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Player
@@ -33,6 +36,9 @@ class Server {
             return
 
         state.value = ConnectionStates.SERVER_CONNECTING
+        val newPlayers = players.value!!
+        newPlayers.add(Player(Firebase.auth.currentUser?.displayName!!, Firebase.auth.currentUser?.photoUrl!!))
+        players.postValue(newPlayers)
 
         startMulticast(strIpAddress)
 
@@ -135,7 +141,7 @@ class Server {
     fun addPlayer(json: JSONObject, socket: Socket) {
         try {
             val name = json.getString("name")
-            val photo = URL(json.getString("photo")) // TODO load default image
+            val photo = Uri.parse(json.getString("photo"))
 
             val newPlayers = players.value!!
             newPlayers.add(Player(name, photo, socket))

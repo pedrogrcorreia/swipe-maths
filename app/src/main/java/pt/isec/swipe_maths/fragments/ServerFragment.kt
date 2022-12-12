@@ -56,6 +56,7 @@ class ServerFragment : Fragment() {
             val json = JSONObject()
             json.put("state", ConnectionStates.UPDATE_PLAYERS_LIST)
             json.put("players", Player.playersToJson(players.value!!))
+            println(players.value!!)
             server.sendToClients(json)
         }
 

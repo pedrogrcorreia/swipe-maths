@@ -1,20 +1,14 @@
 package pt.isec.swipe_maths.utils
 
-import android.content.Context
-import android.net.wifi.WifiManager
-import android.provider.Settings.Global.getString
-import androidx.core.content.ContextCompat.getSystemService
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
-import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import java.net.*
-import java.util.concurrent.TimeoutException
 import kotlin.concurrent.thread
 
 class NetUtils {
@@ -193,7 +187,7 @@ class NetUtils {
         fun addPlayer(json: JSONObject, socket: Socket){
             try {
                 val name = json.getString("name")
-                val photo = URL(json.getString("photo"))
+                val photo = Uri.parse(json.getString("photo"))
 
                 println(photo)
 

@@ -66,9 +66,9 @@ class Client {
                     if (rState == ConnectionStates.UPDATE_PLAYERS_LIST.toString()) {
                         val rPlayers = json.getJSONArray("players")
                         val newPlayers = players.value!!
+                        newPlayers.clear()
                         for (i in 0 until rPlayers.length()) {
                             val player = rPlayers.getJSONObject(i)
-                            newPlayers.clear()
                             newPlayers.add(Player.fromJson(player))
                         }
                         players.postValue(newPlayers)
