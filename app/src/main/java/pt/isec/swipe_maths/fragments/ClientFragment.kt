@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.fragments
 
 import android.content.Context
+import android.graphics.Color
 import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -162,7 +163,14 @@ class ClientFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+            val view = when(viewType) {
+                1 -> {
+                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+                }
+                else -> {
+                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list_2, parent, false)
+                }
+            }
             return MyViewHolder(view)
         }
 
@@ -172,6 +180,11 @@ class ClientFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return data.size
+        }
+
+        override fun getItemViewType(position: Int): Int = when(val boolean = false) {
+            position % 2 == 0 -> 1
+            else -> 0
         }
     }
 

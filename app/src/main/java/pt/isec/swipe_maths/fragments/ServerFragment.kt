@@ -119,8 +119,15 @@ class ServerFragment : Fragment() {
             }
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListAdapter.MyViewHolder {
+            val view = when(viewType) {
+                1 -> {
+                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+                }
+                else -> {
+                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list_2, parent, false)
+                }
+            }
             return MyViewHolder(view)
         }
 
@@ -130,6 +137,11 @@ class ServerFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return data.size
+        }
+
+        override fun getItemViewType(position: Int): Int = when(val boolean = false) {
+            position % 2 == 0 -> 1
+            else -> 0
         }
     }
 }

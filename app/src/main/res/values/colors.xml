@@ -11,4 +11,5 @@
     <color name="operation_square">#9A9999</color>
     <color name="snackbar_error_bkg">#B00020</color>
     <color name="snackbar_error_txt">#F2FFFFFF</color>
+    <color name="card_view_2">#14010101</color>
 </resources>
