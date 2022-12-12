@@ -1,5 +1,7 @@
 package pt.isec.swipe_maths.utils
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.lifecycle.MutableLiveData
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
@@ -7,10 +9,11 @@ import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
+import java.io.Serializable
 import java.net.*
 import kotlin.concurrent.thread
 
-class Client {
+class Client : Serializable {
     val state: MutableLiveData<ConnectionStates> = MutableLiveData(ConnectionStates.NO_CONNECTION)
 
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())

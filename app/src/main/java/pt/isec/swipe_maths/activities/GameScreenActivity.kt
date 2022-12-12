@@ -43,9 +43,11 @@ import pt.isec.swipe_maths.fragments.GameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.fragments.NewLevelFragment
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.utils.Client
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.utils.NetUtils
 import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
+import pt.isec.swipe_maths.utils.Server
 import pt.isec.swipe_maths.views.GameViewModel
 import kotlin.concurrent.thread
 
@@ -62,15 +64,17 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         }
 
-        fun getServerModeIntent(context : Context) : Intent {
+        fun getServerModeIntent(context : Context, server: Server) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", SERVER_MODE)
+                putExtra("server", server)
             }
         }
 
-        fun getClientModeIntent(context : Context) : Intent {
+        fun getClientModeIntent(context : Context, client: Client) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", CLIENT_MODE)
+                putExtra("client", client)
             }
         }
 

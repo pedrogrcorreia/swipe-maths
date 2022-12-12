@@ -10,10 +10,11 @@ import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
+import java.io.Serializable
 import java.net.*
 import kotlin.concurrent.thread
 
-class Server {
+class Server : Serializable {
 
     val state: MutableLiveData<ConnectionStates> = MutableLiveData()
 
