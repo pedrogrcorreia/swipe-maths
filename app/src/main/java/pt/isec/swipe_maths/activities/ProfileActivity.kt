@@ -1,16 +1,32 @@
 package pt.isec.swipe_maths.activities
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.text.Editable
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityProfileBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -20,19 +36,28 @@ class ProfileActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityProfileBinding
 
+    lateinit var storage : FirebaseStorage
+
+    lateinit var currentUser : FirebaseUser
+
     private var permissionsGranted = false
         set(value){
             field = value
         }
 
+    private var newPhotoUrl : Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        storage = Firebase.storage
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityProfileBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
-        val currentUser = Firebase.auth.currentUser!!
+        currentUser = Firebase.auth.currentUser!!
 
         binding.edName.text =
             Editable.Factory.getInstance().newEditable(currentUser.displayName)
@@ -43,15 +68,33 @@ class ProfileActivity : AppCompatActivity() {
             chooseImage()
         }
 
+        binding.button.setOnClickListener {
+            loadingDialog.show()
+            val profileRequest = UserProfileChangeRequest.Builder()
+                .setDisplayName("${binding.edName.text}")
+                .setPhotoUri(newPhotoUrl ?: currentUser.photoUrl)
+                .build()
+            currentUser.updateProfile(profileRequest).addOnSuccessListener {
+                Toast.makeText(applicationContext, "Update successfully", Toast.LENGTH_LONG).show()
+                loadingDialog.dismiss()
+            }.addOnFailureListener {
+                Toast.makeText(applicationContext, "Update failed", Toast.LENGTH_LONG).show()
+                loadingDialog.dismiss()
+            }.addOnCompleteListener {
+                checkNewInfo()
+            }
+
+        }
+
         verifyPermissions()
     }
 
     private fun updatePhoto(imagePath: Uri?){
         println("Image path: $imagePath")
-        val requestOptions = RequestOptions()
+        val requestOptions = RequestOptions().circleCrop().placeholder(R.drawable.circular_progress_bar)
         Glide.with(this)
-            .load(imagePath?.path ?: URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg"))
-            .apply(requestOptions.circleCrop())
+            .load(imagePath ?: URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg"))
+            .apply(requestOptions)
             .into(binding.imageView)
     }
 
@@ -76,29 +119,51 @@ class ProfileActivity : AppCompatActivity() {
 
     private var startActivityForContentResult = registerForActivityResult(
         ActivityResultContracts.GetContent() ) { uri ->
-            // TODO Upload to storage
-        val imagePath = uri?.let { createFileFromUri(this, uri) }
-        println(imagePath)
-        updatePhoto(imagePath?.toUri())
-    }
+        if(uri != null) {
+            val storageRef = storage.reference
 
-    private fun getTempFilename(context: Context,
-                        prefix: String = "image", extension : String = ".png") : String =
-        File.createTempFile(
-            prefix, extension,
-            context.externalCacheDir
-        ).absolutePath
+            val imageUri: Uri? = uri
+            val sd = getFileName(applicationContext, imageUri!!)
 
-    private fun createFileFromUri(
-        context: Context,
-        uri : Uri,
-        filename : String = getTempFilename(context)
-    ) : String {
-        FileOutputStream(filename).use { outputStream ->
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                inputStream.copyTo(outputStream)
+            val uploadTask = storageRef.child("file/$sd").putFile(imageUri)
+
+            uploadTask.addOnSuccessListener {
+                storageRef.child("file/$sd").downloadUrl.addOnSuccessListener {
+                    newPhotoUrl = it
+                    updatePhoto(it)
+                    checkNewInfo()
+                }
             }
         }
-        return filename
+    }
+
+    private fun getFileName(context: Context, uri: Uri): String? {
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor.use {
+                if (cursor != null) {
+                    if(cursor.moveToFirst()) {
+                        return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: 1)
+                    }
+                }
+            }
+        }
+        return uri.path?.lastIndexOf('/')?.let { uri.path?.substring(it) }
+    }
+
+    private val loadingDialog: AlertDialog by lazy {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.loading_title))
+            .setMessage(getString(R.string.loading_message))
+            .setView(ProgressBar(this))
+            .create()
+    }
+
+    private fun checkNewInfo(){
+        if(currentUser.photoUrl != newPhotoUrl){
+            binding.tvWarning.visibility = View.VISIBLE
+        } else {
+            binding.tvWarning.visibility = View.INVISIBLE
+        }
     }
 }
