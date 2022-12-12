@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentClientBinding
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.utils.Client
+import pt.isec.swipe_maths.utils.NetworkFragment
 import kotlin.concurrent.thread
 
 class ClientFragment : Fragment() {
@@ -39,6 +41,14 @@ class ClientFragment : Fragment() {
     lateinit var binding : FragmentClientBinding
 
     lateinit var client : Client
+
+    var actBase : NetworkFragment? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.i("Debug", "onAttach2: ")
+        actBase = context as? NetworkFragment
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +83,7 @@ class ClientFragment : Fragment() {
                 }
                 ConnectionStates.START_GAME -> {
                     activity?.finish()
-                    startActivity(GameScreenActivity.getClientModeIntent(requireContext()))
+                    startActivity(GameScreenActivity.getClientModeIntent(requireContext(), client))
                 }
             }
         }
@@ -96,6 +106,13 @@ class ClientFragment : Fragment() {
             for(player in it){
                 println(player)
             }
+        }
+
+        binding.btnCancel.setOnClickListener {
+            if(client.isConnected) {
+                client.closeClient()
+            }
+            actBase!!.cancel()
         }
 
         binding.btnSearch.setOnClickListener {
@@ -146,9 +163,9 @@ class ClientFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(client.isConnected) {
-            client.closeClient()
-        }
+//        if(client.isConnected) {
+//            client.closeClient()
+//        }
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){

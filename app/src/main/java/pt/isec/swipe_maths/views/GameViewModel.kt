@@ -74,10 +74,6 @@ class GameViewModel() : ViewModel() {
     val totalTime : Int
         get() = game.totalTime
 
-
-    val connectionState : LiveData<ConnectionStates>
-        get() = NetUtils.state
-
     fun startGame(){
         game.startTime()
     }

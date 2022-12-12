@@ -45,11 +45,8 @@ import pt.isec.swipe_maths.fragments.NewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.utils.Client
 import pt.isec.swipe_maths.utils.FirestoreUtils
-import pt.isec.swipe_maths.utils.NetUtils
-import pt.isec.swipe_maths.utils.NetUtils.Companion.SERVER_PORT
 import pt.isec.swipe_maths.utils.Server
 import pt.isec.swipe_maths.views.GameViewModel
-import kotlin.concurrent.thread
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {

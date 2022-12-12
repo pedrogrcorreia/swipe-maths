@@ -26,10 +26,4 @@
         android:text="Client"
         android:layout_gravity="center_horizontal"
         android:id="@+id/btnClient"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/btnCancel"/>
 </LinearLayout>

@@ -21,6 +21,7 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
+import pt.isec.swipe_maths.utils.NetworkFragment
 import pt.isec.swipe_maths.utils.Server
 
 class ServerFragment : Fragment() {
@@ -29,8 +30,15 @@ class ServerFragment : Fragment() {
 
     lateinit var server: Server
 
+    var actBase : NetworkFragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        actBase = context as? NetworkFragment
     }
 
     override fun onCreateView(
@@ -49,7 +57,7 @@ class ServerFragment : Fragment() {
             false
         )
 
-        val players = server.players //arrayListOf(Player("Pedro", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")), Player("José", URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")))
+        val players = server.players
 
         val listAdapter = PlayerListAdapter(players.value!!, requireContext())
         playersList.adapter = listAdapter
@@ -65,7 +73,7 @@ class ServerFragment : Fragment() {
 
         binding.btnStartGame.setOnClickListener {
             if(server.players.value?.size!! >= 2){
-                startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
+                startActivity(GameScreenActivity.getServerModeIntent(requireContext(), server))
                 val json = JSONObject().apply {
                     put("state", ConnectionStates.START_GAME)
                 }
@@ -74,26 +82,6 @@ class ServerFragment : Fragment() {
                 Toast.makeText(activity?.applicationContext, "Not enough players", Toast.LENGTH_LONG).show()
             }
         }
-
-
-
-//        thread {
-//            while(true) {
-//                players.add(
-//                    Player(
-//                        "xyz",
-//                        URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg")
-//                    )
-//                )
-//                Thread.sleep(3000)
-//                activity?.runOnUiThread {
-//                    println(players.size)
-//                    listAdapter.notifyDataSetChanged()
-//                }
-//            }
-//        }
-
-
         return binding.root
     }
 
@@ -110,13 +98,18 @@ class ServerFragment : Fragment() {
 
         binding.ipAddress.text = getString(R.string.ip_address, strIPAddress)
 
+        binding.btnCancel.setOnClickListener {
+            server.closeServer()
+            actBase!!.cancel()
+        }
+
         server.startServer(strIPAddress)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        println("OnDestroy!!")
-        server.closeServer()
+//        println("OnDestroy!!")
+//        server.closeServer()
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){

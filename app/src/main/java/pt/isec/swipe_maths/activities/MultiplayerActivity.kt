@@ -9,26 +9,24 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityMultiplayerBinding
 import pt.isec.swipe_maths.fragments.ClientFragment
 import pt.isec.swipe_maths.fragments.ServerFragment
+import pt.isec.swipe_maths.utils.NetworkFragment
 
-class MultiplayerActivity : AppCompatActivity() {
+class MultiplayerActivity : AppCompatActivity(), NetworkFragment {
 
     private lateinit var binding : ActivityMultiplayerBinding
+
+    var mainFragment : Fragment = Fragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMultiplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var mainFragment : Fragment = Fragment()
-
-        binding.btnCancel.isEnabled = false
-
         binding.btnClient.setOnClickListener {
             mainFragment = ClientFragment()
             supportFragmentManager.beginTransaction().add(R.id.mmLayout, mainFragment).commit()
             binding.btnClient.isEnabled = false
             binding.btnServer.isEnabled = false
-            binding.btnCancel.isEnabled = true
         }
 
         binding.btnServer.setOnClickListener {
@@ -36,14 +34,12 @@ class MultiplayerActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().add(R.id.mmLayout, mainFragment).commit()
             binding.btnClient.isEnabled = false
             binding.btnServer.isEnabled = false
-            binding.btnCancel.isEnabled = true
         }
+    }
 
-        binding.btnCancel.setOnClickListener{
-            supportFragmentManager.beginTransaction().remove(mainFragment).commit()
-            binding.btnClient.isEnabled = true
-            binding.btnServer.isEnabled = true
-            binding.btnCancel.isEnabled = false
-        }
+    override fun cancel() {
+        supportFragmentManager.beginTransaction().remove(mainFragment).commit()
+        binding.btnClient.isEnabled = true
+        binding.btnServer.isEnabled = true
     }
 }
