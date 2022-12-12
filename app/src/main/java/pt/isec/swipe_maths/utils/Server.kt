@@ -31,13 +31,24 @@ class Server {
 
     private var serverSocket: ServerSocket? = null
 
+    private var multicastThread: Thread? = null
+
+    private var multiSocket: MulticastSocket = MulticastSocket(9996)
+
+    private var running = true
+
     fun startServer(strIpAddress: String) {
         if (serverSocket != null || socket != null)
             return
 
         state.value = ConnectionStates.SERVER_CONNECTING
         val newPlayers = players.value!!
-        newPlayers.add(Player(Firebase.auth.currentUser?.displayName!!, Firebase.auth.currentUser?.photoUrl!!))
+        newPlayers.add(
+            Player(
+                Firebase.auth.currentUser?.displayName!!,
+                Firebase.auth.currentUser?.photoUrl!!
+            )
+        )
         players.postValue(newPlayers)
 
         startMulticast(strIpAddress)
@@ -69,22 +80,26 @@ class Server {
 
     private fun startMulticast(strIpAddress: String) {
         thread {
-            val multiSocket = MulticastSocket(9996)
+            //multiSocket = MulticastSocket(9996)
             val group = InetAddress.getByName("224.0.0.251")
             multiSocket.joinGroup(group)
             multiSocket.broadcast = true
             val buffer = ByteArray(2048)
-            while (true) {
+            while (running) {
                 try {
+                    println("waiting for packet!")
                     val packet = DatagramPacket(buffer, buffer.size)
                     multiSocket.receive(packet)
                     val strMsg = "$strIpAddress ${serverSocket?.localPort}"
                     packet.data = strMsg.toByteArray()
                     multiSocket.send(packet)
-                } catch (_: Exception) {
+
+                } catch (e: Exception) {
                     println("Exception!!!")
+                    break;
                 }
             }
+            println("closing multicast")
         }
     }
 
@@ -184,19 +199,21 @@ class Server {
                     val printStream = PrintStream(this)
                     printStream.println(json)
                     printStream.flush()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
                     // TODO Exception here
+                    println("${e.message}")
                 }
             }
         }
     }
 
-    fun closeServer(){
+    fun closeServer() {
+        multiSocket.close()
         serverSocket?.close()
-        for(client in clients){
+        for (client in clients) {
             try {
                 client.close()
-            } catch(e: Exception){
+            } catch (e: Exception) {
                 println(e.message)
             }
         }

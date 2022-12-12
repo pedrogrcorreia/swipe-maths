@@ -69,8 +69,11 @@ class ClientFragment : Fragment() {
                 }
                 ConnectionStates.SERVER_ERROR ->{
                     Toast.makeText(activity?.applicationContext, "Server closed!", Toast.LENGTH_LONG).show()
-                    activity?.finish()
                     startActivity(GameScreenActivity.getSingleModeIntentError(requireContext()))
+                }
+                ConnectionStates.START_GAME -> {
+                    activity?.finish()
+                    startActivity(GameScreenActivity.getClientModeIntent(requireContext()))
                 }
             }
         }

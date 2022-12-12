@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.utils.Server
@@ -59,6 +61,18 @@ class ServerFragment : Fragment() {
             json.put("players", Player.playersToJson(players.value!!))
             println(players.value!!)
             server.sendToClients(json)
+        }
+
+        binding.btnStartGame.setOnClickListener {
+            if(server.players.value?.size!! >= 2){
+                startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
+                val json = JSONObject().apply {
+                    put("state", ConnectionStates.START_GAME)
+                }
+                server.sendToClients(json)
+            } else {
+                Toast.makeText(activity?.applicationContext, "Not enough players", Toast.LENGTH_LONG).show()
+            }
         }
 
 
