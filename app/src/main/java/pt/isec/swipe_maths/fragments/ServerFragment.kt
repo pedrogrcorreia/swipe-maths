@@ -1,12 +1,8 @@
 package pt.isec.swipe_maths.fragments
 
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.os.IBinder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +22,7 @@ import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentServerBinding
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.utils.NetworkFragment
-import pt.isec.swipe_maths.utils.Server
+import pt.isec.swipe_maths.network.Server
 
 class ServerFragment : Fragment() {
 
@@ -74,7 +70,7 @@ class ServerFragment : Fragment() {
 
         binding.btnStartGame.setOnClickListener {
             if(server.players.value?.size!! >= 2){
-                startActivity(GameScreenActivity.getServerModeIntent(requireContext(), server))
+                startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
                 val json = JSONObject().apply {
                     put("state", ConnectionStates.START_GAME)
                 }

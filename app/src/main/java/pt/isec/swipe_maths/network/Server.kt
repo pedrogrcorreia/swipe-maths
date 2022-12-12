@@ -1,10 +1,6 @@
-package pt.isec.swipe_maths.utils
+package pt.isec.swipe_maths.network
 
-import android.app.Service
-import android.content.Intent
 import android.net.Uri
-import android.os.Binder
-import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -87,7 +83,6 @@ object Server {
     private fun startMulticast(strIpAddress: String) {
         thread {
             println("Multicast Server is starting...")
-            //multiSocket = MulticastSocket(9996)
             val group = InetAddress.getByName("224.0.0.251")
             multiSocket.joinGroup(group)
             multiSocket.broadcast = true
@@ -119,8 +114,6 @@ object Server {
                 if (socketI == null) {
                     return@thread
                 }
-
-
                 socketO?.run {
                     thread {
                         try {
@@ -141,13 +134,7 @@ object Server {
                     val message = bufI.readLine()
                     val json = JSONObject(message)
                     val rState = json.getString("state")
-//                    if (rState == ConnectionStates.CONNECTION_ENDED.toString()) {
-//                        val json = JSONObject()
-//                        json.put("state", ConnectionStates.CONNECTION_ENDED)
-//                        sendToClient(json.toString(), thisClient)
-//                        removeClient(thisClient)
-//                        break
-                    /*} else*/ if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
+                    if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
                         addPlayer(json, thisClient)
                     }
                 }
@@ -164,8 +151,10 @@ object Server {
 
     fun addPlayer(json: JSONObject, socket: Socket) {
         try {
-            val name = json.getString("name")
-            val photo = Uri.parse(json.getString("photo"))
+            val playerJSON = json.getJSONObject("player")
+            println(playerJSON)
+            val name = playerJSON.getString("name")
+            val photo = Uri.parse(playerJSON.getString("photoUrl"))
 
             val newPlayers = players.value!!
             newPlayers.add(Player(name, photo, socket))

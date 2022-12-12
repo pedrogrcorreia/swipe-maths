@@ -3,49 +3,24 @@ package pt.isec.swipe_maths.activities
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
-import android.net.wifi.WifiManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.Spanned
-import android.util.Log
-import android.util.Patterns
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.Navigation
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.navigateUp
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
-import pt.isec.swipe_maths.fragments.GameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
-import pt.isec.swipe_maths.fragments.NewLevelFragment
-import pt.isec.swipe_maths.model.Game
-import pt.isec.swipe_maths.utils.Client
+import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.utils.FirestoreUtils
-import pt.isec.swipe_maths.utils.Server
+import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
@@ -61,16 +36,15 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         }
 
-        fun getServerModeIntent(context : Context, server: Server) : Intent {
+        fun getServerModeIntent(context : Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", SERVER_MODE)
             }
         }
 
-        fun getClientModeIntent(context : Context, client: Client) : Intent {
+        fun getClientModeIntent(context : Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", CLIENT_MODE)
-                putExtra("client", client)
             }
         }
 
@@ -89,6 +63,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private var mode : Int = 0
 
+    private lateinit var server : Server
+
+    private lateinit var client : Client
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameScreenBinding.inflate(layoutInflater)
@@ -97,6 +75,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         auth = Firebase.auth
 
         mode = intent.getIntExtra("mode", SINGLE_MODE)
+
+        when(mode){
+            SERVER_MODE -> server = Server
+            CLIENT_MODE -> client = Client
+        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

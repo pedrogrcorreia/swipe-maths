@@ -1,8 +1,6 @@
 package pt.isec.swipe_maths.fragments
 
 import android.content.Context
-import android.graphics.Color
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,7 +15,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -30,7 +27,7 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentClientBinding
 import pt.isec.swipe_maths.model.Player
-import pt.isec.swipe_maths.utils.Client
+import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.utils.NetworkFragment
 import kotlin.concurrent.thread
 
@@ -62,14 +59,16 @@ class ClientFragment : Fragment() {
 
         client = Client
 
+        val user = Firebase.auth.currentUser
+
         client.state.observe(viewLifecycleOwner) {
             when (it) {
                 ConnectionStates.CONNECTION_ESTABLISHED -> {
                     thread {
-                        val json = JSONObject()
-                        json.put("state", ConnectionStates.RETRIEVING_CLIENT_INFO)
-                        json.put("name", Firebase.auth.currentUser?.displayName)
-                        json.put("photo", Firebase.auth.currentUser?.photoUrl)
+                        val json = JSONObject().run {
+                            put("state", ConnectionStates.RETRIEVING_CLIENT_INFO)
+                            put("player", Player(user?.displayName!!, user?.photoUrl!!).toJson())
+                        }
                         client.sendToServer(json)
                     }
                     binding.btnSearch.visibility = View.GONE
@@ -86,7 +85,7 @@ class ClientFragment : Fragment() {
                     startActivity(GameScreenActivity.getSingleModeIntentError(requireContext()))
                 }
                 ConnectionStates.START_GAME -> {
-                    startActivity(GameScreenActivity.getClientModeIntent(requireContext(), client))
+                    startActivity(GameScreenActivity.getClientModeIntent(requireContext()))
                     activity?.finish()
                 }
             }

@@ -1,7 +1,5 @@
-package pt.isec.swipe_maths.utils
+package pt.isec.swipe_maths.network
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.lifecycle.MutableLiveData
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
