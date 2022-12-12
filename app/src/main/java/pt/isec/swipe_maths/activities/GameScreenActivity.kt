@@ -64,7 +64,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         fun getServerModeIntent(context : Context, server: Server) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", SERVER_MODE)
-                putExtra("server", server)
             }
         }
 

@@ -38,11 +38,11 @@ class ClientFragment : Fragment() {
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
-    lateinit var binding : FragmentClientBinding
+    lateinit var binding: FragmentClientBinding
 
-    lateinit var client : Client
+    lateinit var client: Client
 
-    var actBase : NetworkFragment? = null
+    var actBase: NetworkFragment? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -60,10 +60,10 @@ class ClientFragment : Fragment() {
     ): View? {
         binding = FragmentClientBinding.inflate(inflater, container, false)
 
-        client = Client()
+        client = Client
 
-        client.state.observe(viewLifecycleOwner){
-            when(it){
+        client.state.observe(viewLifecycleOwner) {
+            when (it) {
                 ConnectionStates.CONNECTION_ESTABLISHED -> {
                     thread {
                         val json = JSONObject()
@@ -77,13 +77,17 @@ class ClientFragment : Fragment() {
                     binding.btnEmulator.visibility = View.GONE
                     binding.edtIpAddress.visibility = View.GONE
                 }
-                ConnectionStates.SERVER_ERROR ->{
-                    Toast.makeText(activity?.applicationContext, "Server closed!", Toast.LENGTH_LONG).show()
+                ConnectionStates.SERVER_ERROR -> {
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Server closed!",
+                        Toast.LENGTH_LONG
+                    ).show()
                     startActivity(GameScreenActivity.getSingleModeIntentError(requireContext()))
                 }
                 ConnectionStates.START_GAME -> {
-                    activity?.finish()
                     startActivity(GameScreenActivity.getClientModeIntent(requireContext(), client))
+                    activity?.finish()
                 }
             }
         }
@@ -101,15 +105,12 @@ class ClientFragment : Fragment() {
         val listAdapter = PlayerListAdapter(players.value!!, requireContext())
         playersList.adapter = listAdapter
 
-        client.players.observe(viewLifecycleOwner){
+        client.players.observe(viewLifecycleOwner) {
             listAdapter.notifyDataSetChanged()
-            for(player in it){
-                println(player)
-            }
         }
 
         binding.btnCancel.setOnClickListener {
-            if(client.isConnected) {
+            if (client.isConnected) {
                 client.closeClient()
             }
             actBase!!.cancel()
@@ -121,29 +122,28 @@ class ClientFragment : Fragment() {
                     val job = launch {
                         try {
                             val ipAddress = client.contactMulticast()
-                            if (ipAddress != null) {
-                                if(client.state.value == ConnectionStates.CONNECTION_ERROR) {
-                                    activity?.runOnUiThread {
-                                        Toast.makeText(
-                                            context,
-                                            getString(R.string.error_timeout),
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                } else {
-                                    if(client.state.value == ConnectionStates.NO_CONNECTION) {
-                                        val ipAndPort = ipAddress.split(" ")
-                                        println(ipAndPort)
-                                        client.startClient(ipAndPort[0], ipAndPort[1].toInt())
-                                    }
+                            if (ipAddress == null) {
+
+                                activity?.runOnUiThread {
+                                    Toast.makeText(
+                                        context,
+                                        getString(R.string.error_timeout),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            } else {
+                                if (client.state.value == ConnectionStates.NO_CONNECTION) {
+                                    val ipAndPort = ipAddress.split(" ")
+                                    println(ipAndPort)
+                                    client.startClient(ipAndPort[0], ipAndPort[1].toInt())
                                 }
                             }
-                        } catch(e : Exception){
+                        } catch (e: Exception) {
                             println(e.message)
                             loadingDialog.dismiss()
                         }
                     }
-                    if(job.isActive){
+                    if (job.isActive) {
                         activity?.runOnUiThread {
                             loadingDialog.show()
                         }
@@ -168,12 +168,13 @@ class ClientFragment : Fragment() {
 //        }
     }
 
-    class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){
-        class MyViewHolder(val view : View) : RecyclerView.ViewHolder(view){
-            var name : TextView = view.findViewById(R.id.playerName)
-            var photo : ImageView = view.findViewById(R.id.playerPhoto)
+    class PlayerListAdapter(val data: List<Player>, val context: Context) :
+        RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>() {
+        class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+            var name: TextView = view.findViewById(R.id.playerName)
+            var photo: ImageView = view.findViewById(R.id.playerPhoto)
 
-            fun update(data : Player, context: Context){
+            fun update(data: Player, context: Context) {
                 name.text = data.name
                 Glide.with(context)
                     .load(data.photoUrl)
@@ -183,12 +184,14 @@ class ClientFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-            val view = when(viewType) {
+            val view = when (viewType) {
                 1 -> {
-                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.connected_player_list, parent, false)
                 }
                 else -> {
-                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list_2, parent, false)
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.connected_player_list_2, parent, false)
                 }
             }
             return MyViewHolder(view)
@@ -202,7 +205,7 @@ class ClientFragment : Fragment() {
             return data.size
         }
 
-        override fun getItemViewType(position: Int): Int = when(val boolean = false) {
+        override fun getItemViewType(position: Int): Int = when (val boolean = false) {
             position % 2 == 0 -> 1
             else -> 0
         }

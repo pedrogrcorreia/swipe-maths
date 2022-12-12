@@ -1,6 +1,10 @@
 package pt.isec.swipe_maths.utils
 
+import android.app.Service
+import android.content.Intent
 import android.net.Uri
+import android.os.Binder
+import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -10,11 +14,10 @@ import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
-import java.io.Serializable
 import java.net.*
 import kotlin.concurrent.thread
 
-class Server : Serializable {
+object Server {
 
     val state: MutableLiveData<ConnectionStates> = MutableLiveData()
 
@@ -32,8 +35,6 @@ class Server : Serializable {
 
     private var serverSocket: ServerSocket? = null
 
-    private var multicastThread: Thread? = null
-
     private var multiSocket: MulticastSocket = MulticastSocket(9996)
 
     private var running = true
@@ -41,6 +42,10 @@ class Server : Serializable {
     fun startServer(strIpAddress: String) {
         if (serverSocket != null || socket != null)
             return
+
+        println("Server is starting...")
+
+        players.value!!.clear()
 
         state.value = ConnectionStates.SERVER_CONNECTING
         val newPlayers = players.value!!
@@ -60,20 +65,20 @@ class Server : Serializable {
                 state.postValue(ConnectionStates.SERVER_CONNECTED)
                 serverSocket.run {
                     while (true) {
-                        println("HERE!!!")
+                        println("Waiting for clients...")
                         try {
                             val socketClient = serverSocket!!.accept()
                             clients.add(socketClient)
                             clientThread(socketClient)
-                            println("Connection received")
+                            println("Connection received!")
                         } catch (e: Exception) {
-                            // TODO deal with this
-                            println(e.message)
-                            break;
+                            println("ServerSocket: " + e.message)
+                            break
                         }
                     }
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                println("Thread: " + e.message)
                 state.postValue(ConnectionStates.SERVER_ERROR)
             }
         }
@@ -81,6 +86,7 @@ class Server : Serializable {
 
     private fun startMulticast(strIpAddress: String) {
         thread {
+            println("Multicast Server is starting...")
             //multiSocket = MulticastSocket(9996)
             val group = InetAddress.getByName("224.0.0.251")
             multiSocket.joinGroup(group)
@@ -88,7 +94,7 @@ class Server : Serializable {
             val buffer = ByteArray(2048)
             while (running) {
                 try {
-                    println("waiting for packet!")
+                    println("Waiting for packets...")
                     val packet = DatagramPacket(buffer, buffer.size)
                     multiSocket.receive(packet)
                     val strMsg = "$strIpAddress ${serverSocket?.localPort}"
@@ -96,11 +102,11 @@ class Server : Serializable {
                     multiSocket.send(packet)
 
                 } catch (e: Exception) {
-                    println("Exception!!!")
-                    break;
+                    println("MulticastSocket: " + e.message)
+                    break
                 }
             }
-            println("closing multicast")
+            println("Closing multicast thread!")
         }
     }
 
@@ -124,31 +130,33 @@ class Server : Serializable {
                             printStream.println(json)
                             printStream.flush()
                         } catch (e: Exception) {
-                            println("${e.message}")
+                            println(e.message)
                         }
                     }
                 }
 
                 while (true) {
+                    println("Waiting for messages from client...")
                     val bufI = socketI!!.bufferedReader()
                     val message = bufI.readLine()
                     val json = JSONObject(message)
                     val rState = json.getString("state")
-                    if (rState == ConnectionStates.CONNECTION_ENDED.toString()) {
-                        val json = JSONObject()
-                        json.put("state", ConnectionStates.CONNECTION_ENDED)
-                        sendToClient(json.toString(), thisClient)
-                        removeClient(thisClient)
-                        break
-                    } else if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
+//                    if (rState == ConnectionStates.CONNECTION_ENDED.toString()) {
+//                        val json = JSONObject()
+//                        json.put("state", ConnectionStates.CONNECTION_ENDED)
+//                        sendToClient(json.toString(), thisClient)
+//                        removeClient(thisClient)
+//                        break
+                    /*} else*/ if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
                         addPlayer(json, thisClient)
                     }
                 }
             } catch (e: Exception) {
-                println("${e.message}")
+                println(e.message)
             } finally {
                 // TODO exception here?
-                println("closing client socket!")
+                println("Closing client socket!")
+                removeClient(thisClient)
                 thisClient.close()
             }
         }
@@ -162,8 +170,8 @@ class Server : Serializable {
             val newPlayers = players.value!!
             newPlayers.add(Player(name, photo, socket))
             players.postValue(newPlayers)
-        } catch (_: Exception) {
-            // TODO Send message to client
+        } catch (e: Exception) {
+            println(e.message)
         }
     }
 
@@ -184,8 +192,9 @@ class Server : Serializable {
                         val printStream = PrintStream(this)
                         printStream.println(json)
                         printStream.flush()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
                         // TODO Exception here
+                        println(e.message)
                     }
                 }
             }
@@ -202,7 +211,7 @@ class Server : Serializable {
                     printStream.flush()
                 } catch (e: Exception) {
                     // TODO Exception here
-                    println("${e.message}")
+                    println(e.message)
                 }
             }
         }
@@ -211,6 +220,8 @@ class Server : Serializable {
     fun closeServer() {
         multiSocket.close()
         serverSocket?.close()
+        multiSocket = MulticastSocket(9996)
+        serverSocket = null
         for (client in clients) {
             try {
                 client.close()

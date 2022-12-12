@@ -10,10 +10,11 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import java.io.Serializable
+import java.lang.NullPointerException
 import java.net.*
 import kotlin.concurrent.thread
 
-class Client : Serializable {
+object Client : Serializable {
     val state: MutableLiveData<ConnectionStates> = MutableLiveData(ConnectionStates.NO_CONNECTION)
 
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
@@ -26,7 +27,7 @@ class Client : Serializable {
     private val socketO: OutputStream?
         get() = socket?.getOutputStream()
 
-    var isConnected : Boolean = false
+    var isConnected: Boolean = false
         get() = socket != null
 
 
@@ -36,14 +37,18 @@ class Client : Serializable {
             return
         }
 
+        players.value!!.clear()
+
         state.postValue(ConnectionStates.CLIENT_CONNECTING)
 
         thread {
             try {
+                println("Contacting server...")
                 val serverSocket = Socket()
                 serverSocket.connect(InetSocketAddress(serverIP, serverPort), 5000)
                 serverThread(serverSocket)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                println("Start Client Thread: " + e.message)
                 state.postValue(ConnectionStates.CONNECTION_ERROR)
             }
         }
@@ -52,7 +57,7 @@ class Client : Serializable {
     private fun serverThread(serverSocket: Socket) {
         socket = serverSocket
 
-        println(state.value)
+        println("Successfully connected to server!")
 
         thread {
             try {
@@ -62,6 +67,7 @@ class Client : Serializable {
 
                 val bufI = socketI!!.bufferedReader()
                 while (state.value != ConnectionStates.CONNECTION_ENDED) {
+                    println("Waiting for server requests...")
                     val message = bufI.readLine()
                     val json = JSONObject(message)
                     val rState = json.getString("state")
@@ -78,21 +84,23 @@ class Client : Serializable {
                     }
                     state.postValue(ConnectionStates.valueOf(rState))
                 }
-            } catch (e: Exception) {
+            } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
-                println("${e.message}")
+                println("Thread: " + e)
+                state.postValue(ConnectionStates.SERVER_ERROR)
+            } catch (e: SocketException) {
+                // TODO Exception here, client closed
+                state.postValue(ConnectionStates.NO_CONNECTION)
+
+                println("Thread " + e)
             } finally {
                 println("Closing from server socket!")
-                state.postValue(ConnectionStates.SERVER_ERROR)
-                socket?.close()
-                socket = null
+                closeClient()
             }
         }
     }
 
     fun contactMulticast(): String? {
-        println(state.value)
-        println(socket)
         if (socket != null) {
             return null
         }
@@ -111,7 +119,7 @@ class Client : Serializable {
             )
         socket.soTimeout = 5000
 
-        try {
+        return try {
             socket.send(packet)
             packet.data = buffer
             packet.length = buffer.size
@@ -119,17 +127,18 @@ class Client : Serializable {
             val received = ByteArray(packet.length)
             packet.data.copyInto(received, 0, 0, packet.length)
             val str = String(received)
-            return str
+            str
         } catch (e: SocketTimeoutException) {
-            state.postValue(ConnectionStates.CONNECTION_ERROR)
-            return e.message!!
+            e.message!!
+            state.postValue(ConnectionStates.NO_CONNECTION)
+            return null
         }
     }
 
     fun closeClient() {
-        val json = JSONObject()
-        json.put("state", ConnectionStates.CONNECTION_ENDED)
-        sendToServer(json)
+        socket?.close()
+        players.value!!.clear()
+        socket = null
     }
 
     fun sendToServer(json: JSONObject) {

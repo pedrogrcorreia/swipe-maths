@@ -1,8 +1,12 @@
 package pt.isec.swipe_maths.fragments
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.IBinder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +32,7 @@ class ServerFragment : Fragment() {
 
     lateinit var binding : FragmentServerBinding
 
-    lateinit var server: Server
+    private var server = Server
 
     var actBase : NetworkFragment? = null
 
@@ -46,8 +50,6 @@ class ServerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentServerBinding.inflate(inflater, container, false)
-
-        server = Server()
 
         var playersList = binding.rvList
 
@@ -67,7 +69,6 @@ class ServerFragment : Fragment() {
             val json = JSONObject()
             json.put("state", ConnectionStates.UPDATE_PLAYERS_LIST)
             json.put("players", Player.playersToJson(players.value!!))
-            println(players.value!!)
             server.sendToClients(json)
         }
 
@@ -96,20 +97,18 @@ class ServerFragment : Fragment() {
             (ip shr 24) and 0xff
         )
 
+        server.startServer(strIPAddress)
+
         binding.ipAddress.text = getString(R.string.ip_address, strIPAddress)
 
         binding.btnCancel.setOnClickListener {
             server.closeServer()
             actBase!!.cancel()
         }
-
-        server.startServer(strIPAddress)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-//        println("OnDestroy!!")
-//        server.closeServer()
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) : RecyclerView.Adapter<PlayerListAdapter.MyViewHolder>(){
