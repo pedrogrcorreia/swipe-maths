@@ -62,20 +62,11 @@ class ServerFragment : Fragment() {
 
         server.players.observe(viewLifecycleOwner){
             listAdapter.notifyDataSetChanged()
-            val json = JSONObject()
-            json.put("state", ConnectionStates.UPDATE_PLAYERS_LIST)
-            json.put("players", Player.playersToJson(players.value!!))
-            server.sendToClients(json)
         }
 
         binding.btnStartGame.setOnClickListener {
             if(server.players.value?.size!! >= 2){
                 startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
-                val json = JSONObject().apply {
-                    put("state", ConnectionStates.START_GAME)
-                    put("board", server.model.board.value!!.printBoard())
-                }
-                server.sendToClients(json)
             } else {
                 Toast.makeText(activity?.applicationContext, "Not enough players", Toast.LENGTH_LONG).show()
             }

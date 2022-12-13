@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.network
 
 import androidx.lifecycle.MutableLiveData
+import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Player
@@ -45,6 +46,7 @@ object Client : Serializable {
                 val serverSocket = Socket()
                 serverSocket.connect(InetSocketAddress(serverIP, serverPort), 5000)
                 serverThread(serverSocket)
+                state.postValue(ConnectionStates.CONNECTION_ESTABLISHED)
             } catch (e: Exception) {
                 println("Start Client Thread: " + e.message)
                 state.postValue(ConnectionStates.CONNECTION_ERROR)
@@ -65,22 +67,9 @@ object Client : Serializable {
 
                 val bufI = socketI!!.bufferedReader()
                 while (state.value != ConnectionStates.CONNECTION_ENDED) {
-                    println("Waiting for server requests...")
                     val message = bufI.readLine()
                     val json = JSONObject(message)
-                    val rState = json.getString("state")
-                    println(json)
-                    if (rState == ConnectionStates.UPDATE_PLAYERS_LIST.toString()) {
-                        val rPlayers = json.getJSONArray("players")
-                        val newPlayers = players.value!!
-                        newPlayers.clear()
-                        for (i in 0 until rPlayers.length()) {
-                            val player = rPlayers.getJSONObject(i)
-                            newPlayers.add(Player.fromJson(player))
-                        }
-                        players.postValue(newPlayers)
-                    }
-                    state.postValue(ConnectionStates.valueOf(rState))
+                    parseRequest(json)
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
@@ -150,6 +139,34 @@ object Client : Serializable {
                     // TODO this exception
                 }
             }
+        }
+    }
+
+    private fun parseRequest(json: JSONObject) {
+        when (json.getString("request")) {
+            Requests.UPDATE_PLAYERS_LIST.toString() ->
+                updatePlayersList(json.getJSONArray("players"))
+
+        }
+    }
+
+    fun newPlayer(player: Player) {
+        val json = JSONObject().apply {
+            put("request", Requests.NEW_PLAYER)
+            put("player", player.toJson())
+        }
+        sendToServer(json)
+    }
+
+    private fun updatePlayersList(jsonArray: JSONArray) {
+        try {
+            val newPlayers = players.value!!
+            for (i in 0 until jsonArray.length()) {
+                newPlayers.add(Player.fromJson(jsonArray.getJSONObject(i)))
+            }
+            players.postValue(newPlayers)
+        } catch (e: Exception) {
+            println(e.message)
         }
     }
 }

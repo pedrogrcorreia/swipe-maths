@@ -120,29 +120,12 @@ object Server {
                 if (socketI == null) {
                     return@thread
                 }
-                socketO?.run {
-                    thread {
-                        try {
-                            val printStream = PrintStream(this)
-                            val json = JSONObject()
-                            json.put("state", ConnectionStates.CONNECTION_ESTABLISHED)
-                            printStream.println(json)
-                            printStream.flush()
-                        } catch (e: Exception) {
-                            println(e.message)
-                        }
-                    }
-                }
-
                 while (true) {
                     println("Waiting for messages from client...")
                     val bufI = socketI!!.bufferedReader()
                     val message = bufI.readLine()
                     val json = JSONObject(message)
-                    val rState = json.getString("state")
-                    if (rState == ConnectionStates.RETRIEVING_CLIENT_INFO.toString()) {
-                        addPlayer(json, thisClient)
-                    }
+                    parseRequest(json, thisClient)
                 }
             } catch (e: Exception) {
                 println(e.message)
@@ -224,5 +207,22 @@ object Server {
                 println(e.message)
             }
         }
+    }
+
+    private fun parseRequest(json: JSONObject, socket: Socket){
+        when(json.getString("request")){
+            Requests.NEW_PLAYER.toString() -> {
+                addPlayer(json, socket)
+                broadcastPlayers()
+            }
+        }
+    }
+
+    private fun broadcastPlayers(){
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_PLAYERS_LIST)
+            put("players", Player.playersToJson(players.value!!))
+        }
+        sendToClients(json)
     }
 }

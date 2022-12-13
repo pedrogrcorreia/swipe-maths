@@ -64,13 +64,7 @@ class ClientFragment : Fragment() {
         client.state.observe(viewLifecycleOwner) {
             when (it) {
                 ConnectionStates.CONNECTION_ESTABLISHED -> {
-                    thread {
-                        val json = JSONObject().run {
-                            put("state", ConnectionStates.RETRIEVING_CLIENT_INFO)
-                            put("player", Player(user?.displayName!!, user?.photoUrl!!).toJson())
-                        }
-                        client.sendToServer(json)
-                    }
+                    client.newPlayer(Player(user?.displayName!!, user.photoUrl!!))
                     binding.btnSearch.visibility = View.GONE
                     binding.btnConnect.visibility = View.GONE
                     binding.btnEmulator.visibility = View.GONE
