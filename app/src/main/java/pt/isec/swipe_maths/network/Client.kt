@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
+import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.Player
 import java.io.InputStream
 import java.io.OutputStream
@@ -146,7 +147,7 @@ object Client : Serializable {
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
-
+            Requests.START_GAME.toString() -> state.postValue(ConnectionStates.START_GAME)
         }
     }
 

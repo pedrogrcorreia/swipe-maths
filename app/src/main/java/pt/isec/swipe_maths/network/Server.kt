@@ -225,4 +225,11 @@ object Server {
         }
         sendToClients(json)
     }
+
+    fun startGame(){
+        val json = JSONObject().apply{
+            put("request", Requests.START_GAME)
+        }
+        sendToClients(json)
+    }
 }

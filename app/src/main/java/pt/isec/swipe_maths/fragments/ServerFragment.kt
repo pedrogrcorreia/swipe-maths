@@ -67,6 +67,7 @@ class ServerFragment : Fragment() {
         binding.btnStartGame.setOnClickListener {
             if(server.players.value?.size!! >= 2){
                 startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
+                server.startGame()
             } else {
                 Toast.makeText(activity?.applicationContext, "Not enough players", Toast.LENGTH_LONG).show()
             }
