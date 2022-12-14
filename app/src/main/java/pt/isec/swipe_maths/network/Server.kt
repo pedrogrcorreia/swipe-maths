@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
@@ -25,7 +27,13 @@ object Server {
 
     val SERVER_PORT = 9999
 
-    val model: GameViewModel = GameViewModel(Game())
+    val game = Game()
+
+    val model: GameViewModel = GameViewModel(game)
+
+    val gson = GsonBuilder()
+//            .registerTypeAdapter(Game::class.java, GameSerializer())
+        .create()
 
     private var socket: Socket? = null
     private val socketI: InputStream?
@@ -227,9 +235,18 @@ object Server {
     }
 
     fun startGame(){
-        val json = JSONObject().apply{
-            put("request", Requests.START_GAME)
+
+        try {
+            val json = JSONObject().apply {
+                put("request", Requests.START_GAME)
+                put("game", gson.toJson(game, Game::class.java))
+            }
+            sendToClients(json)
+
+            val sentGame = gson.fromJson(json.getString("game"), Game::class.java)
+            println("sent game board: " + sentGame.boardData.printBoard())
+        } catch(e : Exception){
+            println(e.message)
         }
-        sendToClients(json)
     }
 }

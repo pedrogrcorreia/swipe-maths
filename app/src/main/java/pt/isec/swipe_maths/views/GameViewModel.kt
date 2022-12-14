@@ -33,10 +33,16 @@ class GameViewModel() : ViewModel() {
     }
 
     constructor(game: Game) : this() {
-        println(game.level)
+        this.game = game
     }
 
-    private val game : Game = Game()
+    private var game : Game = Game()
+
+    var changeGame : Game = game
+        set(value) {
+            field = value
+            game = value
+        }
 
     val state: LiveData<GameStates>
         get() {

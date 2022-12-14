@@ -4,12 +4,14 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.InstanceCreator
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
+import java.lang.reflect.Type
 
-class Game {
+class Game() : InstanceCreator<Game> {
     var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
     @Transient
@@ -49,7 +51,7 @@ class Game {
     }
 
     init {
-        board.value = boardData
+        board.postValue(boardData)
     }
 
     fun startTime(){
@@ -119,5 +121,9 @@ class Game {
 
     fun gameOver(){
         gameState.value = GameStates.GAME_OVER
+    }
+
+    override fun createInstance(type: Type?): Game {
+        return Game()
     }
 }

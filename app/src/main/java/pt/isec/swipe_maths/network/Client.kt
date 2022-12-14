@@ -1,11 +1,14 @@
 package pt.isec.swipe_maths.network
 
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.Player
+import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
@@ -30,6 +33,13 @@ object Client : Serializable {
     var isConnected: Boolean = false
         get() = socket != null
 
+    var game : Game = Game()
+
+    val model: GameViewModel = GameViewModel(game)
+
+    val gson = GsonBuilder()
+            .registerTypeAdapter(Game::class.java, Game())
+        .create()
 
     fun startClient(serverIP: String, serverPort: Int = SERVER_PORT) {
 
@@ -147,7 +157,14 @@ object Client : Serializable {
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
-            Requests.START_GAME.toString() -> state.postValue(ConnectionStates.START_GAME)
+            Requests.START_GAME.toString() -> {
+                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                    board.postValue(boardData)
+                }
+//                println("received game board " + game.boardData.printBoard())
+                model.changeGame = game
+                state.postValue(ConnectionStates.START_GAME)
+            }
         }
     }
 

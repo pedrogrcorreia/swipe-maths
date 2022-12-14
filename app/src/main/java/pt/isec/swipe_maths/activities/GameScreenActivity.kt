@@ -85,10 +85,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
             CLIENT_MODE -> {
                 client = Client
-                viewModel = GameViewModel(Game())
+                viewModel = client.model
             }
             SINGLE_MODE -> viewModel = ViewModelProvider(this)[GameViewModel::class.java]
         }
+
+        println("\n\nBoard on activity \n" + viewModel.board.value?.printBoard())
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
