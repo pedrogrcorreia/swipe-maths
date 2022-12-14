@@ -84,7 +84,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
         auth = Firebase.auth
 
-        mode = intent.getIntExtra("mode", SINGLE_MODE)
+        mode = GameScreenActivity.mode
 
         when(mode){
             SERVER_MODE -> {
@@ -98,7 +98,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
             SINGLE_MODE -> {
-                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game)
+                val viewModelFactory = GameViewModel.GameViewModelFactory(game)
                 viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
         }

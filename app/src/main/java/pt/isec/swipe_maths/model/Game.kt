@@ -160,7 +160,7 @@ class Game() : InstanceCreator<Game> {
     }
 
     private fun nextBoard(){
-        board.value = Board(level.value!!)
+        boardData = Board(level.value!!)
     }
 
     fun newLevel(){
@@ -177,7 +177,7 @@ class Game() : InstanceCreator<Game> {
     }
 
     override fun toString(): String {
-        return boardData.printBoard() + levelData.toString() + gameStateData.toString()
+        return board.value?.printBoard() + levelData.toString() + gameStateData.toString() + timer.toString()
     }
 
     override fun createInstance(type: Type?): Game {

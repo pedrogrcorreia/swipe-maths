@@ -32,18 +32,6 @@ class GameViewModel(var game: Game = Game()) : ViewModel() {
         }
     }
 
-//    constructor(game: Game) : this() {
-//        this.game = game
-//    }
-//
-//    private var game : Game = Game()
-
-    var changeGame : Game = game
-        set(value) {
-            field = value
-            game = value
-        }
-
     val state: LiveData<GameStates>
         get() {
             return game.gameState
