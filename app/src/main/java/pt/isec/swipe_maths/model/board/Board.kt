@@ -20,9 +20,9 @@ class Board(level: Levels = Levels.Easy) {
             ))
         }
         maxOperation()
-        println(printBoard())
-        println("maxValue = $maxValue")
-        println("secMaxValue = $secMaxValue")
+//        println(printBoard())
+//        println("maxValue = $maxValue")
+//        println("secMaxValue = $secMaxValue")
     }
 
     fun printBoard() : String {
