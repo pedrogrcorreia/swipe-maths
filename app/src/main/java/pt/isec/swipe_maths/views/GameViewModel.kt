@@ -17,7 +17,7 @@ import pt.isec.swipe_maths.model.board.Line
 import pt.isec.swipe_maths.model.levels.Levels
 import pt.isec.swipe_maths.utils.NetUtils
 
-class GameViewModel() : ViewModel() {
+class GameViewModel(var game: Game = Game()) : ViewModel() {
 
     class GameViewModelFactory(private var game: Game)
         : ViewModelProvider.NewInstanceFactory() {
@@ -32,11 +32,11 @@ class GameViewModel() : ViewModel() {
         }
     }
 
-    constructor(game: Game) : this() {
-        this.game = game
-    }
-
-    private var game : Game = Game()
+//    constructor(game: Game) : this() {
+//        this.game = game
+//    }
+//
+//    private var game : Game = Game()
 
     var changeGame : Game = game
         set(value) {

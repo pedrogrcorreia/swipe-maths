@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentLevelInfoBinding
 import pt.isec.swipe_maths.views.GameViewModel
 
@@ -17,7 +19,7 @@ class LevelInfoFragment : Fragment() {
 
     lateinit var binding: FragmentLevelInfoBinding
 
-    private val viewModel : GameViewModel by activityViewModels()
+    private lateinit var viewModel : GameViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,11 @@ class LevelInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLevelInfoBinding.inflate(inflater)
-        // Inflate the layout for this fragment
+
+        val game = (requireActivity() as GameScreenActivity).getGame()
+        val viewModelFactory = GameViewModel.GameViewModelFactory(game)
+        viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
+
         return binding.root
     }
 

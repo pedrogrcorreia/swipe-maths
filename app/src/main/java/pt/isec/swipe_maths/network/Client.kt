@@ -35,8 +35,6 @@ object Client : Serializable {
 
     var game : Game = Game()
 
-    val model: GameViewModel = GameViewModel(game)
-
     val gson = GsonBuilder()
             .registerTypeAdapter(Game::class.java, Game())
         .create()
@@ -158,11 +156,15 @@ object Client : Serializable {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
             Requests.START_GAME.toString() -> {
-                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                game = gson.fromJson(json.getString("game"), Game::class.java).apply{
                     board.postValue(boardData)
+                    gameState.postValue(gameStateData)
+                    level.postValue(levelData)
+                    remainingTime.postValue(remainingTimeData)
+                    nextLevelProgress.postValue(nextLevelProgressData)
+                    points.postValue(pointsData)
                 }
 //                println("received game board " + game.boardData.printBoard())
-                model.changeGame = game
                 state.postValue(ConnectionStates.START_GAME)
             }
         }

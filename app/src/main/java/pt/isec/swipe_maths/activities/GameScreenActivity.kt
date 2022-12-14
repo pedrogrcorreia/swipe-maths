@@ -9,7 +9,9 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -18,6 +20,7 @@ import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
+import pt.isec.swipe_maths.fragments.GamePass
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.network.Client
@@ -25,22 +28,25 @@ import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
-class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
+class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment, GamePass {
     companion object {
         private const val SINGLE_MODE = 0
         private const val ERROR_MODE = 1
         private const val SERVER_MODE = 1
         private const val CLIENT_MODE = 2
+        private var mode = 0
 
         fun getSingleModeIntent(context: Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", SINGLE_MODE)
+                mode = SINGLE_MODE
             }
         }
 
         fun getServerModeIntent(context : Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", SERVER_MODE)
+                mode = SERVER_MODE
             }
         }
 
@@ -65,9 +71,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private var mode : Int = 0
 
-    private lateinit var server : Server
+    private var server = Server
 
-    private lateinit var client : Client
+    private  var client = Client
+
+    private val game = Game()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,16 +89,21 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         when(mode){
             SERVER_MODE -> {
                 server = Server
-                viewModel = server.model
+                val viewModelFactory = GameViewModel.GameViewModelFactory(server.game)
+                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
             CLIENT_MODE -> {
                 client = Client
-                viewModel = client.model
+                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game)
+                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
-            SINGLE_MODE -> viewModel = ViewModelProvider(this)[GameViewModel::class.java]
+            SINGLE_MODE -> {
+                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game)
+                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
+            }
         }
 
-        println("\n\nBoard on activity \n" + viewModel.board.value?.printBoard())
+        println("\n\ngame on activity \n" + viewModel.game.toString())
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -182,5 +195,19 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    override fun onGamePass(data: Game) : Game{
+        return viewModel.game
+    }
+
+    fun getGame() : Game{
+        return if(GameScreenActivity.mode == SERVER_MODE) {
+            server.game
+        }else if(GameScreenActivity.mode == CLIENT_MODE){
+            client.game
+        } else {
+            game
+        }
     }
 }

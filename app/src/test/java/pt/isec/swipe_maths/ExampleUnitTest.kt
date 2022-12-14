@@ -34,6 +34,11 @@ class ExampleUnitTest {
 //            .registerTypeAdapter(Game::class.java, GameSerializer())
             .create()
 
+        game.gameStateData = GameStates.PLAYING
+
+        println(game.gameState.value)
+        println(game.gameStateData)
+
         val json = gson.toJson(game, Game::class.java)
 
 
@@ -43,13 +48,8 @@ class ExampleUnitTest {
 
 
 //        gameFromJson.boards()
-        println(json)
-        println("game board " + game.board.value?.printBoard())
-        println("json game board " + gameFromJson.board.value?.printBoard())
-        println("game level " + game.level.value)
-        println("json game level " + gameFromJson.level.value )
-        println("game board " + game.boardData?.printBoard())
-        println("json game board " + gameFromJson.boardData?.printBoard())
+        println("sent game $game")
+        println("json game $gameFromJson")
     }
 
     @Test

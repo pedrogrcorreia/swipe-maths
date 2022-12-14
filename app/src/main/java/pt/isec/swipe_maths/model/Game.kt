@@ -12,7 +12,14 @@ import pt.isec.swipe_maths.model.levels.Levels
 import java.lang.reflect.Type
 
 class Game() : InstanceCreator<Game> {
+    @Transient
     var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
+
+    var levelData : Levels = Levels.Easy
+        set(value){
+            field = value
+            level.value = value
+        }
 
     @Transient
     var board : MutableLiveData<Board> = MutableLiveData(level.value?.let { Board(it) })
@@ -23,16 +30,56 @@ class Game() : InstanceCreator<Game> {
             board.value = boardData
         }
 
+    @Transient
     var remainingTime : MutableLiveData<Int> = MutableLiveData(level.value!!.timer)
 
+    var remainingTimeData : Int = level.value!!.timer
+        set(value) {
+            field = value
+            remainingTime.value = value
+        }
+
+    @Transient
     var correctAnswers : MutableLiveData<Int> = MutableLiveData(0)
 
-    var gameState : MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
+    var correctAnswersData : Int = 0
+        set(value) {
+            field = value
+            correctAnswers.value = value
+        }
 
+    @Transient
+    var gameState : MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
+        set(value){
+            field = value
+            gameStateData = value.value!!
+        }
+
+    var gameStateData : GameStates = GameStates.WAITING_FOR_START
+        set(value) {
+            field = value
+            gameState.value = value
+        }
+
+    @Transient
     var nextLevelProgress : MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
 
+    var nextLevelProgressData : Int = level.value!!.correctAnswers
+        set(value) {
+            field = value
+            nextLevelProgress.value = value
+        }
+
+    @Transient
     var points : MutableLiveData<Int> = MutableLiveData(0)
 
+    var pointsData : Int = 0
+        set(value) {
+            field = value
+            points.value = value
+        }
+
+    @Transient
     private var timer: CountDownTimer? = null
 
     var totalTime : Int = 0
@@ -51,11 +98,17 @@ class Game() : InstanceCreator<Game> {
     }
 
     init {
+        level.postValue(levelData)
         board.postValue(boardData)
+        remainingTime.postValue(remainingTimeData)
+        gameState.postValue(gameStateData)
+        nextLevelProgress.postValue(nextLevelProgressData)
+        points.postValue(pointsData)
     }
 
     fun startTime(){
         gameState.value = GameStates.PLAYING
+        gameStateData = GameStates.PLAYING
         startTimer()
     }
 
@@ -121,6 +174,10 @@ class Game() : InstanceCreator<Game> {
 
     fun gameOver(){
         gameState.value = GameStates.GAME_OVER
+    }
+
+    override fun toString(): String {
+        return boardData.printBoard() + levelData.toString() + gameStateData.toString()
     }
 
     override fun createInstance(type: Type?): Game {

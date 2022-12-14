@@ -29,8 +29,6 @@ object Server {
 
     val game = Game()
 
-    val model: GameViewModel = GameViewModel(game)
-
     val gson = GsonBuilder()
 //            .registerTypeAdapter(Game::class.java, GameSerializer())
         .create()
@@ -52,8 +50,6 @@ object Server {
             return
 
         println("Server is starting...")
-
-        println(model.board.value!!.printBoard())
 
         players.value!!.clear()
 
@@ -237,6 +233,7 @@ object Server {
     fun startGame(){
 
         try {
+            game.startTime()
             val json = JSONObject().apply {
                 put("request", Requests.START_GAME)
                 put("game", gson.toJson(game, Game::class.java))
@@ -244,7 +241,7 @@ object Server {
             sendToClients(json)
 
             val sentGame = gson.fromJson(json.getString("game"), Game::class.java)
-            println("sent game board: " + sentGame.boardData.printBoard())
+            println("sent game: $sentGame")
         } catch(e : Exception){
             println(e.message)
         }
