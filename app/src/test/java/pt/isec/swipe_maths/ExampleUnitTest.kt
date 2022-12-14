@@ -7,7 +7,6 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import pt.isec.swipe_maths.model.Game
-import pt.isec.swipe_maths.model.GameSerializer
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Column
 import pt.isec.swipe_maths.model.board.Line
@@ -38,7 +37,11 @@ class ExampleUnitTest {
         val json = gson.toJson(game, Game::class.java)
 
 
-        val gameFromJson = gson.fromJson(json, Game::class.java)
+        val gameFromJson = gson.fromJson(json, Game::class.java).apply {
+            board.value = boardData
+        }
+
+
 //        gameFromJson.boards()
         println(json)
         println("game board " + game.board.value?.printBoard())

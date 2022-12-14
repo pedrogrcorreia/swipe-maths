@@ -12,7 +12,14 @@ import pt.isec.swipe_maths.model.levels.Levels
 class Game {
     var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
+    @Transient
     var board : MutableLiveData<Board> = MutableLiveData(level.value?.let { Board(it) })
+
+    var boardData : Board = Board()
+        set(value) {
+            field = value
+            board.value = boardData
+        }
 
     var remainingTime : MutableLiveData<Int> = MutableLiveData(level.value!!.timer)
 
@@ -39,6 +46,10 @@ class Game {
                 gameOver()
             }
         }.start()
+    }
+
+    init {
+        board.value = boardData
     }
 
     fun startTime(){
