@@ -7,12 +7,14 @@ class Column(firstNumber: Int,
              secondNumber: Int,
              thirdNumber: Int,
              level: Levels = Levels.Easy) {
+
+    companion object{
+        private val random : Random = Random(System.currentTimeMillis())
+    }
+    
     var numbers : Array<Int> = arrayOf()
     var operators : Array<String>
     val colValue : Int
-
-    private val random : Random = Random(System.currentTimeMillis())
-
 
     init {
         numbers = arrayOf(firstNumber, secondNumber, thirdNumber)
