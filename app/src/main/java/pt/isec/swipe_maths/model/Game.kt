@@ -97,15 +97,15 @@ class Game() : InstanceCreator<Game> {
         }.start()
     }
 
-//    init {
-//        level.postValue(levelData)
-//        board.postValue(boardData)
-//        remainingTime.postValue(remainingTimeData)
-//        gameState.postValue(gameStateData)
-//        nextLevelProgress.postValue(nextLevelProgressData)
-//        correctAnswers.postValue(correctAnswersData)
-//        points.postValue(pointsData)
-//    }
+    init {
+        level.postValue(levelData)
+        board.postValue(boardData)
+        remainingTime.postValue(remainingTimeData)
+        gameState.postValue(gameStateData)
+        nextLevelProgress.postValue(nextLevelProgressData)
+        correctAnswers.postValue(correctAnswersData)
+        points.postValue(pointsData)
+    }
 
     fun startTime(){
 //        gameState.value = GameStates.PLAYING
@@ -114,6 +114,7 @@ class Game() : InstanceCreator<Game> {
     }
 
     fun isCorrectLine(line: Int): Boolean{
+        println("Correct line: ${boardData.printBoard()}")
         if (boardData.lines[line].lineValue == boardData.maxValue) {
             correctPlay()
             return true
