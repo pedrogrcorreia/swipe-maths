@@ -222,6 +222,14 @@ object Server {
             }
             Requests.ROW_PLAY.toString() -> {
                 val selectedRow = json.getInt("rowNumber")
+                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                    board.postValue(boardData)
+                    gameState.postValue(gameStateData)
+                    level.postValue(levelData)
+                    remainingTime.postValue(remainingTimeData)
+                    nextLevelProgress.postValue(nextLevelProgressData)
+                    points.postValue(pointsData)
+                }
                 val result = game.isCorrectLine(selectedRow)
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.ROW_PLAY)

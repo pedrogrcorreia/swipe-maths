@@ -184,6 +184,7 @@ object Client : Serializable {
         val json = JSONObject().apply{
             put("request", Requests.ROW_PLAY)
             put("rowNumber", selectedRow)
+            put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)
     }
