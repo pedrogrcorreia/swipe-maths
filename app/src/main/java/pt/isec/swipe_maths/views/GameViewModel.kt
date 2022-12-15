@@ -32,10 +32,6 @@ class GameViewModel(var game: Game = Game()) : ViewModel() {
         }
     }
 
-    fun changeGame(game: Game){
-        this.game = game
-    }
-
     val state: LiveData<GameStates>
         get() {
             return game.gameState
@@ -77,8 +73,6 @@ class GameViewModel(var game: Game = Game()) : ViewModel() {
     fun startGame(){
         game.startTime()
     }
-
-
 
     fun linePlay(selectedLine: Int): Boolean = game.isCorrectLine(selectedLine)
 
