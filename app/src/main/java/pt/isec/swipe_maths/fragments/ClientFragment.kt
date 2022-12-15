@@ -150,6 +150,10 @@ class ClientFragment : Fragment() {
             }
         }
 
+        binding.btnEmulator.setOnClickListener {
+            client.startClient(serverPort = client.SERVER_PORT_EMULATOR)
+        }
+
 
         return binding.root
     }

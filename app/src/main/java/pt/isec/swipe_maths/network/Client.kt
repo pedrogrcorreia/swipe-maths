@@ -23,6 +23,8 @@ object Client : Serializable {
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
     val SERVER_PORT = 9999
+    val SERVER_PORT_EMULATOR = 9998
+    val IP_ADDRESS = "10.0.2.2"
 
     private var socket: Socket? = null
     private val socketI: InputStream?
@@ -33,13 +35,19 @@ object Client : Serializable {
     var isConnected: Boolean = false
         get() = socket != null
 
-    var game : Game = Game()
+    var game : Game? = null
+
+    var gameData : MutableLiveData<Game> = MutableLiveData(game)
+        set(value) {
+            field = value
+            game = value.value!!
+        }
 
     val gson = GsonBuilder()
             .registerTypeAdapter(Game::class.java, Game())
         .create()
 
-    fun startClient(serverIP: String, serverPort: Int = SERVER_PORT) {
+    fun startClient(serverIP: String = IP_ADDRESS, serverPort: Int = SERVER_PORT) {
 
         if (socket != null) {
             return
@@ -82,13 +90,13 @@ object Client : Serializable {
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
-                println("Thread: " + e)
+                println("Thread: " + e.message)
                 state.postValue(ConnectionStates.SERVER_ERROR)
             } catch (e: SocketException) {
                 // TODO Exception here, client closed
                 state.postValue(ConnectionStates.NO_CONNECTION)
 
-                println("Thread " + e)
+                println("Thread " + e.message)
             } finally {
                 println("Closing from server socket!")
                 closeClient()
@@ -155,7 +163,7 @@ object Client : Serializable {
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
-            Requests.START_GAME.toString() -> {
+            Requests.START_GAME.toString(), Requests.ROW_PLAY.toString() -> {
                 game = gson.fromJson(json.getString("game"), Game::class.java).apply{
                     board.postValue(boardData)
                     gameState.postValue(gameStateData)
@@ -164,7 +172,7 @@ object Client : Serializable {
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
                 }
-//                println("received game board " + game.boardData.printBoard())
+                println("received game " + game.toString())
                 state.postValue(ConnectionStates.START_GAME)
             }
         }
@@ -174,6 +182,14 @@ object Client : Serializable {
         val json = JSONObject().apply {
             put("request", Requests.NEW_PLAYER)
             put("player", player.toJson())
+        }
+        sendToServer(json)
+    }
+
+    fun rowPlay(selectedRow: Int){
+        val json = JSONObject().apply{
+            put("request", Requests.ROW_PLAY)
+            put("rowNumber", selectedRow)
         }
         sendToServer(json)
     }
