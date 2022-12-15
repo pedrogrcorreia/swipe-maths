@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
@@ -27,7 +28,7 @@ object Server {
 
     val SERVER_PORT = 9999
 
-    val game = Game()
+    val game = GameManager.game
 
     val gson = GsonBuilder()
 //            .registerTypeAdapter(Game::class.java, GameSerializer())
@@ -249,9 +250,6 @@ object Server {
                 put("game", gson.toJson(game, Game::class.java))
             }
             sendToClients(json)
-
-            val sentGame = gson.fromJson(json.getString("game"), Game::class.java)
-            println("sent game: $sentGame")
         } catch(e : Exception){
             println(e.message)
         }

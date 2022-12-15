@@ -7,6 +7,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
@@ -36,12 +37,6 @@ object Client : Serializable {
         get() = socket != null
 
     var game : Game? = null
-
-    var gameData : MutableLiveData<Game> = MutableLiveData(game)
-        set(value) {
-            field = value
-            game = value.value!!
-        }
 
     val gson = GsonBuilder()
             .registerTypeAdapter(Game::class.java, Game())
@@ -164,7 +159,7 @@ object Client : Serializable {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
             Requests.START_GAME.toString(), Requests.ROW_PLAY.toString() -> {
-                game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
                     board.postValue(boardData)
                     gameState.postValue(gameStateData)
                     level.postValue(levelData)
@@ -172,7 +167,6 @@ object Client : Serializable {
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
                 }
-                println("received game " + game.toString())
                 state.postValue(ConnectionStates.START_GAME)
             }
         }
