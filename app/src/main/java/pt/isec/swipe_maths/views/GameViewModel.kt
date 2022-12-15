@@ -12,12 +12,13 @@ import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameBoard
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Line
 import pt.isec.swipe_maths.model.levels.Levels
 import pt.isec.swipe_maths.utils.NetUtils
 
-class GameViewModel(var game: Game = Game()) : ViewModel() {
+class GameViewModel(var game: Game = GameManager.game) : ViewModel() {
 
     class GameViewModelFactory(private var game: Game)
         : ViewModelProvider.NewInstanceFactory() {
