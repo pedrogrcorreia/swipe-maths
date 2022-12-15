@@ -57,6 +57,7 @@ class StartGameFragment : Fragment() {
 
         binding.btnStartGame.setOnClickListener{
             findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
+            viewModel.startGame()
         }
     }
 }

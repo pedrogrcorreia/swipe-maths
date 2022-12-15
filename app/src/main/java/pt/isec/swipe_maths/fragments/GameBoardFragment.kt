@@ -80,7 +80,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
 
         fillSquares()
 
-        viewModel.startGame()
     }
 
     private val gestureDetector : GestureDetector by lazy {

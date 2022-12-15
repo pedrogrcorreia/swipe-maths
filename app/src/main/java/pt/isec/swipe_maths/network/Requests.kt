@@ -9,5 +9,7 @@ enum class Requests {
 
 
     // Client Requests
-    NEW_PLAYER
+    NEW_PLAYER,
+    ROW_PLAY,
+    COL_PLAY
 }

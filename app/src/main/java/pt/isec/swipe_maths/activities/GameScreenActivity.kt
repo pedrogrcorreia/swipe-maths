@@ -53,6 +53,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         fun getClientModeIntent(context : Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {
                 putExtra("mode", CLIENT_MODE)
+                mode = CLIENT_MODE
             }
         }
 
@@ -94,8 +95,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
             CLIENT_MODE -> {
                 client = Client
-                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game)
+                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game!!)
                 viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
+//                client.gameData.observe(this){
+//                    viewModel.changeGame(it)
+//                }
             }
             SINGLE_MODE -> {
                 val viewModelFactory = GameViewModel.GameViewModelFactory(game)
@@ -150,28 +154,52 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-        if(viewModel.columnPlay(selectedColumn)){
-            Snackbar.make(binding.root, getString(R.string.correct_col, selectedColumn+1), Snackbar.LENGTH_SHORT).apply{
-                setTextColor(Color.GREEN)
-            }.show()
+        if(mode == SINGLE_MODE) {
+            if (viewModel.columnPlay(selectedColumn)) {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.correct_col, selectedColumn + 1),
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setTextColor(Color.GREEN)
+                }.show()
+            } else {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.incorrect_col, selectedColumn + 1),
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setTextColor(Color.RED)
+                }.show()
+            }
         } else {
-            Snackbar.make(binding.root, getString(R.string.incorrect_col, selectedColumn+1), Snackbar.LENGTH_SHORT).apply{
-                setTextColor(Color.RED)
-            }.show()
+
         }
 
         return true
     }
 
     override fun swipeHorizontal(selectedLine: Int): Boolean {
-        if(viewModel.linePlay(selectedLine)){
-            Snackbar.make(binding.root, getString(R.string.correct_row, selectedLine+1), Snackbar.LENGTH_SHORT).apply{
-                setTextColor(Color.GREEN)
-            }.show()
-        } else{
-            Snackbar.make(binding.root, getString(R.string.incorrect_row, selectedLine+1), Snackbar.LENGTH_SHORT).apply{
-                setTextColor(Color.RED)
-            }.show()
+        if(mode == SINGLE_MODE || mode == ERROR_MODE) {
+            if (viewModel.linePlay(selectedLine)) {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.correct_row, selectedLine + 1),
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setTextColor(Color.GREEN)
+                }.show()
+            } else {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.incorrect_row, selectedLine + 1),
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setTextColor(Color.RED)
+                }.show()
+            }
+        } else if(mode == CLIENT_MODE){
+            client.rowPlay(selectedLine)
         }
         return true
     }
@@ -205,7 +233,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         return if(GameScreenActivity.mode == SERVER_MODE) {
             server.game
         }else if(GameScreenActivity.mode == CLIENT_MODE){
-            client.game
+            client.game!!
         } else {
             game
         }

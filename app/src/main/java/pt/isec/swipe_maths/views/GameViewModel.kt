@@ -32,6 +32,10 @@ class GameViewModel(var game: Game = Game()) : ViewModel() {
         }
     }
 
+    fun changeGame(game: Game){
+        this.game = game
+    }
+
     val state: LiveData<GameStates>
         get() {
             return game.gameState

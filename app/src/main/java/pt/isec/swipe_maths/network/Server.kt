@@ -132,7 +132,7 @@ object Server {
                     parseRequest(json, thisClient)
                 }
             } catch (e: Exception) {
-                println(e.message)
+                println("Client thread: " + e.message)
             } finally {
                 // TODO exception here?
                 println("Closing client socket!")
@@ -183,7 +183,7 @@ object Server {
         }
     }
 
-    fun sendToClient(json: String, clientSocket: Socket) {
+    fun sendToClient(json: JSONObject, clientSocket: Socket) {
         thread {
             socket = clientSocket
             socketO!!.run {
@@ -218,6 +218,16 @@ object Server {
             Requests.NEW_PLAYER.toString() -> {
                 addPlayer(json, socket)
                 broadcastPlayers()
+            }
+            Requests.ROW_PLAY.toString() -> {
+                val selectedRow = json.getInt("rowNumber")
+                val result = game.isCorrectLine(selectedRow)
+                val jsonToSend = JSONObject().apply {
+                    put("request", Requests.ROW_PLAY)
+                    put("game", gson.toJson(game, Game::class.java))
+                    put("result", result)
+                }
+                sendToClients(jsonToSend)
             }
         }
     }

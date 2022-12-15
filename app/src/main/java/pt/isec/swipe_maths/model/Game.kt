@@ -18,7 +18,7 @@ class Game() : InstanceCreator<Game> {
     var levelData : Levels = Levels.Easy
         set(value){
             field = value
-            level.value = value
+            level.postValue(value)
         }
 
     @Transient
@@ -27,7 +27,7 @@ class Game() : InstanceCreator<Game> {
     var boardData : Board = Board()
         set(value) {
             field = value
-            board.value = boardData
+            board.postValue(value)
         }
 
     @Transient
@@ -36,7 +36,7 @@ class Game() : InstanceCreator<Game> {
     var remainingTimeData : Int = level.value!!.timer
         set(value) {
             field = value
-            remainingTime.value = value
+            remainingTime.postValue(value)
         }
 
     @Transient
@@ -45,7 +45,7 @@ class Game() : InstanceCreator<Game> {
     var correctAnswersData : Int = 0
         set(value) {
             field = value
-            correctAnswers.value = value
+            correctAnswers.postValue(value)
         }
 
     @Transient
@@ -58,7 +58,7 @@ class Game() : InstanceCreator<Game> {
     var gameStateData : GameStates = GameStates.WAITING_FOR_START
         set(value) {
             field = value
-            gameState.value = value
+            gameState.postValue(value)
         }
 
     @Transient
@@ -67,7 +67,7 @@ class Game() : InstanceCreator<Game> {
     var nextLevelProgressData : Int = level.value!!.correctAnswers
         set(value) {
             field = value
-            nextLevelProgress.value = value
+            nextLevelProgress.postValue(value)
         }
 
     @Transient
@@ -76,7 +76,7 @@ class Game() : InstanceCreator<Game> {
     var pointsData : Int = 0
         set(value) {
             field = value
-            points.value = value
+            points.postValue(value)
         }
 
     @Transient
@@ -103,11 +103,12 @@ class Game() : InstanceCreator<Game> {
         remainingTime.postValue(remainingTimeData)
         gameState.postValue(gameStateData)
         nextLevelProgress.postValue(nextLevelProgressData)
+        correctAnswers.postValue(correctAnswersData)
         points.postValue(pointsData)
     }
 
     fun startTime(){
-        gameState.value = GameStates.PLAYING
+//        gameState.value = GameStates.PLAYING
         gameStateData = GameStates.PLAYING
         startTimer()
     }
@@ -117,7 +118,7 @@ class Game() : InstanceCreator<Game> {
             correctPlay()
             return true
         } else if(board.value?.lines?.get(line)?.lineValue == board.value?.secMaxValue){
-            points.value = points.value!! + 1
+            points.postValue(points.value!! + 1)
         }
         nextBoard()
         return false
@@ -136,18 +137,18 @@ class Game() : InstanceCreator<Game> {
 
     private fun addTime(){
         if(remainingTime.value!! > level.value!!.timer - level.value!!.bonusTime){
-            remainingTime.value = (level.value!!.timer)
+            remainingTime.postValue(level.value!!.timer)
         } else {
-            remainingTime.value = (remainingTime.value!! + level.value!!.bonusTime)
+            remainingTime.postValue(remainingTime.value!! + level.value!!.bonusTime)
         }
     }
 
     private fun correctPlay(){
-        points.value = points.value!! + 2
-        correctAnswers.value = correctAnswers.value!! + 1
-        nextLevelProgress.value = level.value!!.correctAnswers - correctAnswers.value!!
+        points.postValue(points.value!! + 2)
+        correctAnswers.postValue(correctAnswers.value!! + 1)
+        nextLevelProgress.postValue(level.value!!.correctAnswers - correctAnswers.value!!)
         if(correctAnswers.value!! == level.value!!.correctAnswers){
-            gameState.value = GameStates.WAITING_FOR_LEVEL
+            gameState.postValue(GameStates.WAITING_FOR_LEVEL)
             timer!!.cancel()
             println("totalTime: $totalTime")
         }
