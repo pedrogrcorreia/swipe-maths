@@ -85,11 +85,11 @@ class Game() : InstanceCreator<Game> {
     var totalTime : Int = 0
 
     private fun startTimer(){
-        println(remainingTime.value!!)
-        timer = object: CountDownTimer((remainingTime.value!! * 1000).toLong(), 1000) {
+//        println(remainingTime.value!!)
+        timer = object: CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 totalTime++
-                remainingTime.postValue((millisUntilFinished/1000).toInt())
+                remainingTimeData = (millisUntilFinished/1000).toInt()
             }
             override fun onFinish() {
                 gameOver()
@@ -97,15 +97,15 @@ class Game() : InstanceCreator<Game> {
         }.start()
     }
 
-    init {
-        level.postValue(levelData)
-        board.postValue(boardData)
-        remainingTime.postValue(remainingTimeData)
-        gameState.postValue(gameStateData)
-        nextLevelProgress.postValue(nextLevelProgressData)
-        correctAnswers.postValue(correctAnswersData)
-        points.postValue(pointsData)
-    }
+//    init {
+//        level.postValue(levelData)
+//        board.postValue(boardData)
+//        remainingTime.postValue(remainingTimeData)
+//        gameState.postValue(gameStateData)
+//        nextLevelProgress.postValue(nextLevelProgressData)
+//        correctAnswers.postValue(correctAnswersData)
+//        points.postValue(pointsData)
+//    }
 
     fun startTime(){
 //        gameState.value = GameStates.PLAYING
@@ -114,41 +114,41 @@ class Game() : InstanceCreator<Game> {
     }
 
     fun isCorrectLine(line: Int): Boolean{
-        if (board.value?.lines?.get(line)?.lineValue == board.value?.maxValue) {
+        if (boardData.lines[line].lineValue == boardData.maxValue) {
             correctPlay()
             return true
-        } else if(board.value?.lines?.get(line)?.lineValue == board.value?.secMaxValue){
-            points.postValue(points.value!! + 1)
+        } else if(boardData.lines[line].lineValue == boardData.secMaxValue){
+            pointsData = (pointsData + 1)
         }
         nextBoard()
         return false
     }
 
     fun isCorrectColumn(col: Int): Boolean{
-        if(board.value?.cols?.get(col)?.colValue == board.value?.maxValue) {
+        if(boardData.cols[col].colValue == boardData.maxValue) {
             correctPlay()
             return true
-        } else if(board.value?.cols?.get(col)?.colValue == board.value?.secMaxValue){
-            points.value = points.value!! + 1
+        } else if(boardData.cols[col].colValue == boardData.secMaxValue){
+            pointsData = (pointsData + 1)
         }
         nextBoard()
         return false
     }
 
     private fun addTime(){
-        if(remainingTime.value!! > level.value!!.timer - level.value!!.bonusTime){
-            remainingTime.postValue(level.value!!.timer)
+        if(remainingTimeData > levelData.timer - levelData.bonusTime){
+            remainingTimeData = (levelData.timer)
         } else {
-            remainingTime.postValue(remainingTime.value!! + level.value!!.bonusTime)
+            remainingTimeData = (remainingTimeData + levelData.bonusTime)
         }
     }
 
     private fun correctPlay(){
-        points.postValue(points.value!! + 2)
-        correctAnswers.postValue(correctAnswers.value!! + 1)
-        nextLevelProgress.postValue(level.value!!.correctAnswers - correctAnswers.value!!)
-        if(correctAnswers.value!! == level.value!!.correctAnswers){
-            gameState.postValue(GameStates.WAITING_FOR_LEVEL)
+        pointsData = points.value!! + 2
+        correctAnswersData = (correctAnswers.value!! + 1)
+        nextLevelProgressData = (level.value!!.correctAnswers - correctAnswers.value!!)
+        if(correctAnswersData == levelData.correctAnswers){
+            gameStateData = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
             println("totalTime: $totalTime")
         }
@@ -161,20 +161,20 @@ class Game() : InstanceCreator<Game> {
     }
 
     private fun nextBoard(){
-        boardData = Board(level.value!!)
+        boardData = Board(levelData)
     }
 
     fun newLevel(){
-        level.value = level.value!!.nextLevel
-        correctAnswers.value = 0
-        nextLevelProgress.value = level.value!!.correctAnswers
-        remainingTime.value = level.value!!.timer
+        levelData = levelData.nextLevel
+        correctAnswersData = 0
+        nextLevelProgressData = levelData.correctAnswers
+        remainingTimeData = levelData.timer
         nextBoard()
-        gameState.value = GameStates.PLAYING
+        gameStateData = GameStates.PLAYING
     }
 
     fun gameOver(){
-        gameState.value = GameStates.GAME_OVER
+        gameStateData = GameStates.GAME_OVER
     }
 
     override fun toString(): String {
