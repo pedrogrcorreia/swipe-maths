@@ -9,9 +9,6 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -20,15 +17,13 @@ import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
-import pt.isec.swipe_maths.fragments.GamePass
 import pt.isec.swipe_maths.fragments.INewLevelFragment
-import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
-class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment, GamePass {
+class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
         private const val SINGLE_MODE = 0
         private const val ERROR_MODE = 1
@@ -68,15 +63,13 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     private lateinit var binding: ActivityGameScreenBinding
 
-    private lateinit var viewModel : GameViewModel
+    private val viewModel : GameViewModel by viewModels()
 
     private var mode : Int = 0
 
     private var server = Server
 
     private  var client = Client
-
-    private val game = Game()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,24 +83,11 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         when(mode){
             SERVER_MODE -> {
                 server = Server
-                val viewModelFactory = GameViewModel.GameViewModelFactory(server.game)
-                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
             CLIENT_MODE -> {
                 client = Client
-                val viewModelFactory = GameViewModel.GameViewModelFactory(client.game!!)
-                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
-//                client.gameData.observe(this){
-//                    viewModel.changeGame(it)
-//                }
-            }
-            SINGLE_MODE -> {
-                val viewModelFactory = GameViewModel.GameViewModelFactory(game)
-                viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
             }
         }
-
-        println("\n\ngame on activity \n" + viewModel.game.toString())
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -225,17 +205,4 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         super.onDestroy()
     }
 
-    override fun onGamePass(data: Game) : Game{
-        return viewModel.game
-    }
-
-    fun getGame() : Game{
-        return if(GameScreenActivity.mode == SERVER_MODE) {
-            server.game
-        }else if(GameScreenActivity.mode == CLIENT_MODE){
-            client.game!!
-        } else {
-            game
-        }
-    }
 }
