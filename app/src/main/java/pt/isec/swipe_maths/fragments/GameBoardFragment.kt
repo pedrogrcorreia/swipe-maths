@@ -27,7 +27,7 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
 
     lateinit var binding: FragmentGameBoardBinding
 
-    private lateinit var viewModel : GameViewModel
+    private val viewModel : GameViewModel by activityViewModels()
 
     var colWidth : Int = 0
     var rowHeight : Int = 0
@@ -42,9 +42,6 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val game = (requireActivity() as GameScreenActivity).getGame()
-        val viewModelFactory = GameViewModel.GameViewModelFactory(game)
-        viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
     }
 
     override fun onCreateView(

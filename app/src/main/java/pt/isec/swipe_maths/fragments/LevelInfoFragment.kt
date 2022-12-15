@@ -19,7 +19,7 @@ class LevelInfoFragment : Fragment() {
 
     lateinit var binding: FragmentLevelInfoBinding
 
-    private lateinit var viewModel : GameViewModel
+    private val viewModel : GameViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +30,6 @@ class LevelInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLevelInfoBinding.inflate(inflater)
-
-        val game = (requireActivity() as GameScreenActivity).getGame()
-        val viewModelFactory = GameViewModel.GameViewModelFactory(game)
-        viewModel = ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
-
         return binding.root
     }
 
