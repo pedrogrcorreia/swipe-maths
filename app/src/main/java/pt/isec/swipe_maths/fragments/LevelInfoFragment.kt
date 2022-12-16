@@ -19,7 +19,9 @@ class LevelInfoFragment : Fragment() {
 
     lateinit var binding: FragmentLevelInfoBinding
 
-    private val viewModel : GameViewModel by activityViewModels()
+    private val viewModel by lazy{
+        ViewModelProvider(requireActivity())[GameViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

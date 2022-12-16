@@ -52,6 +52,8 @@ object Server {
 
         println("Server is starting...")
 
+        println(GameManager.games)
+
         players.value!!.clear()
 
         state.value = ConnectionStates.SERVER_CONNECTING
@@ -129,7 +131,7 @@ object Server {
                     println("Waiting for messages from client...")
                     val bufI = socketI!!.bufferedReader()
                     val message = bufI.readLine()
-                    if(message != null) {
+                    if (message != null) {
                         val json = JSONObject(message)
                         parseRequest(json, thisClient)
                     }
@@ -151,9 +153,9 @@ object Server {
             println(playerJSON)
             val name = playerJSON.getString("name")
             val photo = Uri.parse(playerJSON.getString("photoUrl"))
-
             val newPlayers = players.value!!
             newPlayers.add(Player(name, photo, socket))
+            GameManager.addNewPlayer(Player(name, photo))
             players.postValue(newPlayers)
         } catch (e: Exception) {
             println(e.message)
@@ -216,33 +218,28 @@ object Server {
         }
     }
 
-    private fun parseRequest(json: JSONObject, socket: Socket){
-        when(json.getString("request")){
+    private fun parseRequest(json: JSONObject, socket: Socket) {
+        when (json.getString("request")) {
             Requests.NEW_PLAYER.toString() -> {
                 addPlayer(json, socket)
                 broadcastPlayers()
             }
             Requests.ROW_PLAY.toString() -> {
                 val selectedRow = json.getInt("rowNumber")
-                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
-                    board.postValue(boardData)
-                    gameState.postValue(gameStateData)
-                    level.postValue(levelData)
-                    remainingTime.postValue(remainingTimeData)
-                    nextLevelProgress.postValue(nextLevelProgressData)
-                    points.postValue(pointsData)
-                }
-                val result = game.isCorrectLine(selectedRow, true)
+                val result =
+                    GameManager.games.getValue(Player.fromJson(json.getJSONObject("player")))
+                        .isCorrectLine(selectedRow, true)
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.ROW_PLAYED)
-                    put("game", gson.toJson(game, Game::class.java))
+                    put("game", gson.toJson(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))), Game::class.java))
                     put("result", result)
                 }
+                println("Game sent after row play: " + GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))))
                 sendToClients(jsonToSend)
             }
             Requests.COL_PLAY.toString() -> {
                 val selectedCol = json.getInt("colNumber")
-                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                val game = gson.fromJson(json.getString("game"), Game::class.java).apply {
                     board.postValue(boardData)
                     gameState.postValue(gameStateData)
                     level.postValue(levelData)
@@ -261,7 +258,7 @@ object Server {
         }
     }
 
-    private fun broadcastPlayers(){
+    private fun broadcastPlayers() {
         val json = JSONObject().apply {
             put("request", Requests.UPDATE_PLAYERS_LIST)
             put("players", Player.playersToJson(players.value!!))
@@ -269,7 +266,10 @@ object Server {
         sendToClients(json)
     }
 
-    fun startGame(){
+    fun startGame() {
+        for(player in GameManager.games){
+            player.value.startTime()
+        }
         GameManager.game.startTime()
         try {
             val json = JSONObject().apply {
@@ -277,7 +277,7 @@ object Server {
                 put("game", gson.toJson(GameManager.game, Game::class.java))
             }
             sendToClients(json)
-        } catch(e : Exception){
+        } catch (e: Exception) {
             println(e.message)
         }
     }

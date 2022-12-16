@@ -208,11 +208,11 @@ class Game {
 
     override fun toString(): String {
         var string = ""
-        string += "Board: ${board.value?.printBoard()}\n"
-        string += "Level: ${level.value}\n"
-        string += "Points: ${points.value}\n"
-        string += "Remaining Time: ${remainingTime.value}\n"
-        string += "Correct answers: ${correctAnswers.value}\n"
+        string += "Board: ${board.value?.printBoard()} BoardData: ${boardData.printBoard()}\n "
+        string += "Level: ${level.value}\n LevelData: $levelData"
+        string += "Points: ${points.value}\n PointsData: $pointsData"
+        string += "Remaining Time: ${remainingTime.value} Remaining Time Data: $remainingTimeData\n"
+        string += "Correct answers: ${correctAnswers.value} Correct Answers Data: $correctAnswersData\n"
         return string
     }
 }

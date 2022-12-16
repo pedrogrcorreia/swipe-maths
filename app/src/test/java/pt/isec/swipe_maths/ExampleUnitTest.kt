@@ -25,7 +25,6 @@ import pt.isec.swipe_maths.network.Server
 class ExampleUnitTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()
-
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)

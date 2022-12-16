@@ -184,6 +184,7 @@ object Client : Serializable {
                     points.postValue(pointsData)
                     correctAnswers.postValue(correctAnswersData)
                 }
+                println("Game received on row played: " + GameManager.game)
                 requestState.postValue(Requests.ROW_PLAYED)
             }
             Requests.COL_PLAYED.toString() -> {
@@ -213,7 +214,8 @@ object Client : Serializable {
         val json = JSONObject().apply{
             put("request", Requests.ROW_PLAY)
             put("rowNumber", selectedRow)
-            put("game", gson.toJson(GameManager.game, Game::class.java))
+            put("player", Player.mySelf.toJson())
+            //put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)
     }
@@ -222,7 +224,8 @@ object Client : Serializable {
         val json = JSONObject().apply{
             put("request", Requests.COL_PLAY)
             put("colNumber", selectedCol)
-            put("game", gson.toJson(GameManager.game, Game::class.java))
+            put("player", Player.mySelf.toJson())
+            //put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)
     }
