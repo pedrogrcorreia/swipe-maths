@@ -238,6 +238,25 @@ object Server {
                 }
                 sendToClients(jsonToSend)
             }
+            Requests.COL_PLAY.toString() -> {
+                val selectedCol = json.getInt("colNumber")
+                val game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                    board.postValue(boardData)
+                    gameState.postValue(gameStateData)
+                    level.postValue(levelData)
+                    remainingTime.postValue(remainingTimeData)
+                    nextLevelProgress.postValue(nextLevelProgressData)
+                    points.postValue(pointsData)
+                }
+                val result = game.isCorrectColumn(selectedCol)
+                val jsonToSend = JSONObject().apply {
+                    put("request", Requests.COL_PLAYED)
+                    put("game", gson.toJson(game, Game::class.java))
+                    put("result", result)
+                }
+                sendToClients(jsonToSend)
+            }
+
         }
     }
 

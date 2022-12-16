@@ -183,6 +183,17 @@ object Client : Serializable {
                 }
                 requestState.postValue(Requests.ROW_PLAYED)
             }
+            Requests.COL_PLAYED.toString() -> {
+                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                    board.postValue(boardData)
+                    gameState.postValue(gameStateData)
+                    level.postValue(levelData)
+                    remainingTime.postValue(remainingTimeData)
+                    nextLevelProgress.postValue(nextLevelProgressData)
+                    points.postValue(pointsData)
+                }
+                requestState.postValue(Requests.COL_PLAYED)
+            }
         }
     }
 
@@ -198,6 +209,15 @@ object Client : Serializable {
         val json = JSONObject().apply{
             put("request", Requests.ROW_PLAY)
             put("rowNumber", selectedRow)
+            put("game", gson.toJson(GameManager.game, Game::class.java))
+        }
+        sendToServer(json)
+    }
+
+    fun colPlay(selectedCol: Int){
+        val json = JSONObject().apply{
+            put("request", Requests.COL_PLAY)
+            put("colNumber", selectedCol)
             put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)

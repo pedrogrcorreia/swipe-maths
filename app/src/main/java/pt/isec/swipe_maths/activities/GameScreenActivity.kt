@@ -91,7 +91,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 client.requestState.observe(this){
                     when(it){
                         Requests.START_GAME -> viewModel.updateGame(GameManager.game)
-                        Requests.ROW_PLAYED -> viewModel.updateGame(GameManager.game)
+                        Requests.ROW_PLAYED, Requests.COL_PLAYED -> viewModel.updateGame(GameManager.game)
                     }
                 }
             }
@@ -160,8 +160,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                     setTextColor(Color.RED)
                 }.show()
             }
-        } else {
-
+        } else if(mode == CLIENT_MODE){
+            client.colPlay(selectedColumn)
         }
 
         return true
