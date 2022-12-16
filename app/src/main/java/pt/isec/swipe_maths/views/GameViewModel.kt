@@ -1,22 +1,14 @@
 package pt.isec.swipe_maths.views
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.Game
-import pt.isec.swipe_maths.model.GameBoard
 import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.board.Board
-import pt.isec.swipe_maths.model.board.Line
 import pt.isec.swipe_maths.model.levels.Levels
-import pt.isec.swipe_maths.utils.NetUtils
+import pt.isec.swipe_maths.network.Client
 
 class GameViewModel(var game: Game = GameManager.game) : ViewModel() {
 
@@ -81,5 +73,16 @@ class GameViewModel(var game: Game = GameManager.game) : ViewModel() {
 
     fun nextLevelTimerUp(){
         game.newLevel()
+    }
+
+    fun updateGame(newGame: Game) {
+        game.apply {
+            board.postValue(newGame.boardData)
+            gameState.postValue(newGame.gameStateData)
+            level.postValue(newGame.levelData)
+            remainingTime.postValue(newGame.remainingTimeData)
+            nextLevelProgress.postValue(newGame.nextLevelProgressData)
+            points.postValue(pointsData)
+        }
     }
 }

@@ -11,7 +11,7 @@ import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
 import java.lang.reflect.Type
 
-class Game() : InstanceCreator<Game> {
+class Game {
     @Transient
     var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
@@ -179,10 +179,12 @@ class Game() : InstanceCreator<Game> {
     }
 
     override fun toString(): String {
-        return board.value?.printBoard() + levelData.toString() + gameStateData.toString() + timer.toString()
-    }
-
-    override fun createInstance(type: Type?): Game {
-        return Game()
+        var string = ""
+        string += "Board: ${board.value?.printBoard()}\n"
+        string += "Level: ${level.value}\n"
+        string += "Points: ${points.value}\n"
+        string += "Remaining Time: ${remainingTime.value}\n"
+        string += "Correct answers: ${correctAnswers.value}\n"
+        return string
     }
 }

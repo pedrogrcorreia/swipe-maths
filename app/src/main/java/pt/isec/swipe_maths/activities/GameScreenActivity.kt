@@ -18,7 +18,9 @@ import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.fragments.INewLevelFragment
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
@@ -86,6 +88,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
             CLIENT_MODE -> {
                 client = Client
+                client.requestState.observe(this){
+                    when(it){
+                        Requests.START_GAME -> viewModel.updateGame(GameManager.game)
+                        Requests.ROW_PLAYED -> viewModel.updateGame(GameManager.game)
+                    }
+                }
             }
         }
 

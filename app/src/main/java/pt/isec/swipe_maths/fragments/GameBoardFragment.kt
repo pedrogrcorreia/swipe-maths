@@ -7,6 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras.Empty.get
 import androidx.navigation.fragment.findNavController
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
@@ -27,8 +28,10 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
 
     lateinit var binding: FragmentGameBoardBinding
 
-    private val viewModel : GameViewModel by activityViewModels()
-
+//    private val viewModel : GameViewModel by activityViewModels()
+private val viewModel by lazy{
+    ViewModelProvider(requireActivity())[GameViewModel::class.java]
+}
     var colWidth : Int = 0
     var rowHeight : Int = 0
 
@@ -73,6 +76,10 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             if(it == GameStates.WAITING_FOR_LEVEL){
                 findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
             }
+        }
+
+        viewModel.board.observe(viewLifecycleOwner){
+            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
         }
 
         fillSquares()
@@ -136,36 +143,40 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
     }
 
     private fun fillSquares(){
-        viewModel.board.observe(viewLifecycleOwner){
-            // Lines
-            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
-            binding.sq01.text = viewModel.board.value?.lines?.get(0)?.operators?.get(0)
-            binding.sq02.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(1).toString()
-            binding.sq03.text = viewModel.board.value?.lines?.get(0)?.operators?.get(1)
-            binding.sq04.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(2).toString()
+        try {
+            viewModel.board.observeForever {
+                // Lines
+                binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
+                binding.sq01.text = viewModel.board.value?.lines?.get(0)?.operators?.get(0)
+                binding.sq02.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(1).toString()
+                binding.sq03.text = viewModel.board.value?.lines?.get(0)?.operators?.get(1)
+                binding.sq04.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(2).toString()
 
-            binding.sq20.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(0).toString()
-            binding.sq21.text = viewModel.board.value?.lines?.get(1)?.operators?.get(0)
-            binding.sq22.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(1).toString()
-            binding.sq23.text = viewModel.board.value?.lines?.get(1)?.operators?.get(1)
-            binding.sq24.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(2).toString()
+                binding.sq20.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(0).toString()
+                binding.sq21.text = viewModel.board.value?.lines?.get(1)?.operators?.get(0)
+                binding.sq22.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(1).toString()
+                binding.sq23.text = viewModel.board.value?.lines?.get(1)?.operators?.get(1)
+                binding.sq24.text = viewModel.board.value?.lines?.get(1)?.numbers?.get(2).toString()
 
-            binding.sq40.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(0).toString()
-            binding.sq41.text = viewModel.board.value?.lines?.get(2)?.operators?.get(0)
-            binding.sq42.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(1).toString()
-            binding.sq43.text = viewModel.board.value?.lines?.get(2)?.operators?.get(1)
-            binding.sq44.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(2).toString()
+                binding.sq40.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(0).toString()
+                binding.sq41.text = viewModel.board.value?.lines?.get(2)?.operators?.get(0)
+                binding.sq42.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(1).toString()
+                binding.sq43.text = viewModel.board.value?.lines?.get(2)?.operators?.get(1)
+                binding.sq44.text = viewModel.board.value?.lines?.get(2)?.numbers?.get(2).toString()
 
 
-            // Column operators
-            binding.sq10.text = viewModel.board.value?.cols?.get(0)?.operators?.get(0)
-            binding.sq30.text = viewModel.board.value?.cols?.get(0)?.operators?.get(1)
+                // Column operators
+                binding.sq10.text = viewModel.board.value?.cols?.get(0)?.operators?.get(0)
+                binding.sq30.text = viewModel.board.value?.cols?.get(0)?.operators?.get(1)
 
-            binding.sq12.text = viewModel.board.value?.cols?.get(1)?.operators?.get(0)
-            binding.sq32.text = viewModel.board.value?.cols?.get(1)?.operators?.get(1)
+                binding.sq12.text = viewModel.board.value?.cols?.get(1)?.operators?.get(0)
+                binding.sq32.text = viewModel.board.value?.cols?.get(1)?.operators?.get(1)
 
-            binding.sq14.text = viewModel.board.value?.cols?.get(2)?.operators?.get(0)
-            binding.sq34.text = viewModel.board.value?.cols?.get(2)?.operators?.get(1)
+                binding.sq14.text = viewModel.board.value?.cols?.get(2)?.operators?.get(0)
+                binding.sq34.text = viewModel.board.value?.cols?.get(2)?.operators?.get(1)
+            }
+        } catch (e: Exception){
+            println("Exception on Fragment ${e.message}")
         }
     }
 
@@ -189,5 +200,10 @@ class GameBoardFragment : Fragment(), GestureDetector.OnGestureListener{
             in (rowHeight * 4) + 1 until rowHeight * 5 -> return 2
         }
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("\n\n\n Fragment Game Board is being destroyed \n\n\n")
     }
 }

@@ -23,6 +23,8 @@ object Client : Serializable {
 
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
+    val requestState: MutableLiveData<Requests> = MutableLiveData(Requests.NONE)
+
     val SERVER_PORT = 9999
     val SERVER_PORT_EMULATOR = 9998
     val IP_ADDRESS = "10.0.2.2"
@@ -36,10 +38,10 @@ object Client : Serializable {
     var isConnected: Boolean = false
         get() = socket != null
 
-    var game : Game? = null
+    var game : Game = GameManager.game
 
     val gson = GsonBuilder()
-            .registerTypeAdapter(Game::class.java, Game())
+//            .registerTypeAdapter(Game::class.java, GameManager.game)
         .create()
 
     fun startClient(serverIP: String = IP_ADDRESS, serverPort: Int = SERVER_PORT) {
@@ -158,7 +160,7 @@ object Client : Serializable {
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json.getJSONArray("players"))
-            Requests.START_GAME.toString(), Requests.ROW_PLAY.toString() -> {
+            Requests.START_GAME.toString() -> {
                 GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
                     board.postValue(boardData)
                     gameState.postValue(gameStateData)
@@ -167,7 +169,19 @@ object Client : Serializable {
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
                 }
+                requestState.postValue(Requests.START_GAME)
                 state.postValue(ConnectionStates.START_GAME)
+            }
+            Requests.ROW_PLAYED.toString() -> {
+                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+                    board.postValue(boardData)
+                    gameState.postValue(gameStateData)
+                    level.postValue(levelData)
+                    remainingTime.postValue(remainingTimeData)
+                    nextLevelProgress.postValue(nextLevelProgressData)
+                    points.postValue(pointsData)
+                }
+                requestState.postValue(Requests.ROW_PLAYED)
             }
         }
     }

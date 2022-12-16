@@ -232,7 +232,7 @@ object Server {
                 }
                 val result = game.isCorrectLine(selectedRow)
                 val jsonToSend = JSONObject().apply {
-                    put("request", Requests.ROW_PLAY)
+                    put("request", Requests.ROW_PLAYED)
                     put("game", gson.toJson(game, Game::class.java))
                     put("result", result)
                 }
@@ -250,12 +250,11 @@ object Server {
     }
 
     fun startGame(){
-
+        GameManager.game.startTime()
         try {
-            game.startTime()
             val json = JSONObject().apply {
                 put("request", Requests.START_GAME)
-                put("game", gson.toJson(game, Game::class.java))
+                put("game", gson.toJson(GameManager.game, Game::class.java))
             }
             sendToClients(json)
         } catch(e : Exception){
