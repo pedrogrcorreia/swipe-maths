@@ -84,6 +84,8 @@ class Game {
 
     var totalTime : Int = 0
 
+    var plays : Int = 0
+
     private fun startTimer(){
 //        println(remainingTime.value!!)
         timer = object: CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
@@ -113,7 +115,8 @@ class Game {
         startTimer()
     }
 
-    fun isCorrectLine(line: Int, fromServer: Boolean = false): Boolean{
+    fun isCorrectLine(line: Int, fromServer: Boolean = false, nextBoard: Board = Board(levelData)): Boolean{
+//        plays++
         if (boardData.lines[line].lineValue == boardData.maxValue) {
             if(!fromServer) {
                 correctPlay()
@@ -124,22 +127,23 @@ class Game {
         } else if(boardData.lines[line].lineValue == boardData.secMaxValue){
             pointsData = (pointsData + 1)
         }
-        nextBoard()
+        nextBoard(nextBoard)
         return false
     }
 
-    fun isCorrectColumn(col: Int, fromServer: Boolean = false): Boolean{
+    fun isCorrectColumn(col: Int, fromServer: Boolean = false, nextBoard: Board = Board(levelData)): Boolean{
         if(boardData.cols[col].colValue == boardData.maxValue) {
             if(!fromServer) {
                 correctPlay()
             } else {
                 correctPlayServer()
             }
+            nextBoard(nextBoard)
             return true
         } else if(boardData.cols[col].colValue == boardData.secMaxValue){
             pointsData = (pointsData + 1)
         }
-        nextBoard()
+        nextBoard(nextBoard)
         return false
     }
 
@@ -172,7 +176,7 @@ class Game {
             addTime()
             timer!!.cancel()
             startTimer()
-            nextBoard()
+//            nextBoard()
         }
     }
 
@@ -185,12 +189,12 @@ class Game {
         }
         else {
             addTimeServer()
-            nextBoard()
+            //nextBoard()
         }
     }
 
-    private fun nextBoard(){
-        boardData = Board(levelData)
+    private fun nextBoard(board: Board){
+        boardData = board
     }
 
     fun newLevel(){
@@ -198,7 +202,7 @@ class Game {
         correctAnswersData = 0
         nextLevelProgressData = levelData.correctAnswers
         remainingTimeData = levelData.timer
-        nextBoard()
+        nextBoard(Board(levelData))
         gameStateData = GameStates.PLAYING
     }
 

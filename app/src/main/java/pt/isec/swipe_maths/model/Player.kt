@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.net.Socket
 import java.net.URL
 
-data class Player(val name: String, val photoUrl: Uri, val socket: Socket? = null) {
+data class Player(val name: String, val photoUrl: Uri, val socket: Socket? = null, var plays: Int = 0) {
     fun toJson(): JSONObject {
         val json = JSONObject()
         json.put("name", name)

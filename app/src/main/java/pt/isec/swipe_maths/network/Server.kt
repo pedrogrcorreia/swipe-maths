@@ -11,6 +11,7 @@ import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.Player
+import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
 import java.io.OutputStream
@@ -226,9 +227,14 @@ object Server {
             }
             Requests.ROW_PLAY.toString() -> {
                 val selectedRow = json.getInt("rowNumber")
-                val result =
-                    GameManager.games.getValue(Player.fromJson(json.getJSONObject("player")))
-                        .isCorrectLine(selectedRow, true)
+//                if(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays == GameManager.boardsList.size - 1){
+//                    GameManager.newBoard(Board(GameManager.game.levelData))
+//                }
+//                GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays++
+//                val result =
+//                    GameManager.games.getValue(Player.fromJson(json.getJSONObject("player")))
+//                        .isCorrectLine(selectedRow, true, GameManager.boardsList[GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays])
+                val result = GameManager.rowPlay(selectedRow, Player.fromJson(json.getJSONObject("player")))
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.ROW_PLAYED)
                     put("game", gson.toJson(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))), Game::class.java))
@@ -270,6 +276,7 @@ object Server {
         for(player in GameManager.games){
             player.value.startTime()
         }
+        GameManager.newBoard(GameManager.game.boardData)
         GameManager.game.startTime()
         try {
             val json = JSONObject().apply {
@@ -280,5 +287,11 @@ object Server {
         } catch (e: Exception) {
             println(e.message)
         }
+    }
+
+    // GAME FUNCTIONS
+
+    fun rowPlay(row: Int){
+        GameManager.rowPlayServer(row, Player.mySelf)
     }
 }

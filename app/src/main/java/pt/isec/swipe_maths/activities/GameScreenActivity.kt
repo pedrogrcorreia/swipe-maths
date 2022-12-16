@@ -28,7 +28,7 @@ import pt.isec.swipe_maths.views.GameViewModel
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
         private const val SINGLE_MODE = 0
-        private const val ERROR_MODE = 1
+        private const val ERROR_MODE = 400
         private const val SERVER_MODE = 1
         private const val CLIENT_MODE = 2
         private var mode = 0
@@ -188,6 +188,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         } else if(mode == CLIENT_MODE){
             client.rowPlay(selectedLine)
+        } else if(mode == SERVER_MODE){
+            server.rowPlay(selectedLine)
         }
         return true
     }
