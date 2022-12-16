@@ -3,13 +3,18 @@ package pt.isec.swipe_maths
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import pt.isec.swipe_maths.model.Game
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.board.Column
 import pt.isec.swipe_maths.model.board.Line
+import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.Requests
+import pt.isec.swipe_maths.network.Server
 
 
 /**
@@ -24,6 +29,24 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun gameTime(){
+        val json = JSONObject().apply{
+            put("request", Requests.ROW_PLAY)
+            put("rowNumber", 2)
+            put("game", Client.gson.toJson(GameManager.game, Game::class.java))
+        }
+        val game = Server.gson.fromJson(json.getString("game"), Game::class.java).apply{
+            board.postValue(boardData)
+            gameState.postValue(gameStateData)
+            level.postValue(levelData)
+            remainingTime.postValue(55)
+            nextLevelProgress.postValue(nextLevelProgressData)
+            points.postValue(pointsData)
+        }
+        println(game.remainingTimeData)
     }
 
     @Test

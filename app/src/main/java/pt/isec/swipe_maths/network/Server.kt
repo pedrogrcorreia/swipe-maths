@@ -129,11 +129,13 @@ object Server {
                     println("Waiting for messages from client...")
                     val bufI = socketI!!.bufferedReader()
                     val message = bufI.readLine()
-                    val json = JSONObject(message)
-                    parseRequest(json, thisClient)
+                    if(message != null) {
+                        val json = JSONObject(message)
+                        parseRequest(json, thisClient)
+                    }
                 }
             } catch (e: Exception) {
-                println("Client thread: " + e.message)
+                println("Client thread: " + e.printStackTrace())
             } finally {
                 // TODO exception here?
                 println("Closing client socket!")
@@ -230,7 +232,7 @@ object Server {
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
                 }
-                val result = game.isCorrectLine(selectedRow)
+                val result = game.isCorrectLine(selectedRow, true)
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.ROW_PLAYED)
                     put("game", gson.toJson(game, Game::class.java))
@@ -248,7 +250,7 @@ object Server {
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
                 }
-                val result = game.isCorrectColumn(selectedCol)
+                val result = game.isCorrectColumn(selectedCol, true)
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.COL_PLAYED)
                     put("game", gson.toJson(game, Game::class.java))
@@ -256,7 +258,6 @@ object Server {
                 }
                 sendToClients(jsonToSend)
             }
-
         }
     }
 

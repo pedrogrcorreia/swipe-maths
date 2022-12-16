@@ -82,7 +82,8 @@ class GameViewModel(var game: Game = GameManager.game) : ViewModel() {
             level.postValue(newGame.levelData)
             remainingTime.postValue(newGame.remainingTimeData)
             nextLevelProgress.postValue(newGame.nextLevelProgressData)
-            points.postValue(pointsData)
+            points.postValue(newGame.pointsData)
+            correctAnswers.postValue(newGame.correctAnswersData)
         }
     }
 }

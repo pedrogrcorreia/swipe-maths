@@ -82,8 +82,10 @@ object Client : Serializable {
                 val bufI = socketI!!.bufferedReader()
                 while (state.value != ConnectionStates.CONNECTION_ENDED) {
                     val message = bufI.readLine()
-                    val json = JSONObject(message)
-                    parseRequest(json)
+                    if(message != null) {
+                        val json = JSONObject(message)
+                        parseRequest(json)
+                    }
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
@@ -180,6 +182,7 @@ object Client : Serializable {
                     remainingTime.postValue(remainingTimeData)
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
+                    correctAnswers.postValue(correctAnswersData)
                 }
                 requestState.postValue(Requests.ROW_PLAYED)
             }
@@ -191,6 +194,7 @@ object Client : Serializable {
                     remainingTime.postValue(remainingTimeData)
                     nextLevelProgress.postValue(nextLevelProgressData)
                     points.postValue(pointsData)
+                    correctAnswers.postValue(correctAnswersData)
                 }
                 requestState.postValue(Requests.COL_PLAYED)
             }

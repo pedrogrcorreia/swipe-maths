@@ -113,10 +113,13 @@ class Game {
         startTimer()
     }
 
-    fun isCorrectLine(line: Int): Boolean{
-        println("Correct line: ${boardData.printBoard()}")
+    fun isCorrectLine(line: Int, fromServer: Boolean = false): Boolean{
         if (boardData.lines[line].lineValue == boardData.maxValue) {
-            correctPlay()
+            if(!fromServer) {
+                correctPlay()
+            } else {
+                correctPlayServer()
+            }
             return true
         } else if(boardData.lines[line].lineValue == boardData.secMaxValue){
             pointsData = (pointsData + 1)
@@ -125,9 +128,13 @@ class Game {
         return false
     }
 
-    fun isCorrectColumn(col: Int): Boolean{
+    fun isCorrectColumn(col: Int, fromServer: Boolean = false): Boolean{
         if(boardData.cols[col].colValue == boardData.maxValue) {
-            correctPlay()
+            if(!fromServer) {
+                correctPlay()
+            } else {
+                correctPlayServer()
+            }
             return true
         } else if(boardData.cols[col].colValue == boardData.secMaxValue){
             pointsData = (pointsData + 1)
@@ -138,6 +145,14 @@ class Game {
 
     private fun addTime(){
         if(remainingTimeData > levelData.timer - levelData.bonusTime){
+            remainingTimeData = (levelData.timer)
+        } else {
+            remainingTimeData = (remainingTimeData + levelData.bonusTime)
+        }
+    }
+
+    private fun addTimeServer(){
+        if(GameManager.game.remainingTimeData > levelData.timer - levelData.bonusTime){
             remainingTimeData = (levelData.timer)
         } else {
             remainingTimeData = (remainingTimeData + levelData.bonusTime)
@@ -157,6 +172,19 @@ class Game {
             addTime()
             timer!!.cancel()
             startTimer()
+            nextBoard()
+        }
+    }
+
+    private fun correctPlayServer(){
+        pointsData = points.value!! + 2
+        correctAnswersData = (correctAnswers.value!! + 1)
+        nextLevelProgressData = (level.value!!.correctAnswers - correctAnswers.value!!)
+        if(correctAnswersData == levelData.correctAnswers){
+            gameStateData = GameStates.WAITING_FOR_LEVEL
+        }
+        else {
+            addTimeServer()
             nextBoard()
         }
     }
