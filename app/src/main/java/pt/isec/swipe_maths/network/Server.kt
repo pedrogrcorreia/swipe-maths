@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.network
 
 import android.net.Uri
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -136,6 +137,9 @@ object Server {
                         val json = JSONObject(message)
                         parseRequest(json, thisClient)
                     }
+                    if(message == null){
+                        break
+                    }
                 }
             } catch (e: Exception) {
                 println("Client thread: " + e.printStackTrace())
@@ -261,6 +265,7 @@ object Server {
         for(player in GameManager.games){
             player.value.startTime()
         }
+        GameManager.watchTimers()
         GameManager.newBoard(GameManager.game.boardData)
         GameManager.game.startTime()
         try {
@@ -272,6 +277,14 @@ object Server {
         } catch (e: Exception) {
             println(e.message)
         }
+    }
+
+    fun updateTime(player: Player, remainingTime: Int){
+        val json = JSONObject().apply{
+            put("request", Requests.UPDATE_TIMER)
+            put("time", remainingTime)
+        }
+        sendToClients(json)
     }
 
     // GAME FUNCTIONS

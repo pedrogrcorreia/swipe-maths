@@ -6,6 +6,7 @@ enum class Requests {
     START_GAME,
     ROW_PLAYED,
     COL_PLAYED,
+    UPDATE_TIMER,
 
 
     NONE,

@@ -86,4 +86,10 @@ class GameViewModel(var game: Game = GameManager.game) : ViewModel() {
             correctAnswers.postValue(newGame.correctAnswersData)
         }
     }
+
+    fun updateTime(remainingTimeServer: Int){
+        game.apply{
+            remainingTime.postValue(remainingTimeServer)
+        }
+    }
 }

@@ -199,6 +199,13 @@ object Client : Serializable {
                 }
                 requestState.postValue(Requests.COL_PLAYED)
             }
+            Requests.UPDATE_TIMER.toString() -> {
+                val timeLeft = json.getInt("time")
+                GameManager.game.apply {
+                    remainingTimeData = timeLeft
+                }
+                requestState.postValue(Requests.UPDATE_TIMER)
+            }
         }
     }
 

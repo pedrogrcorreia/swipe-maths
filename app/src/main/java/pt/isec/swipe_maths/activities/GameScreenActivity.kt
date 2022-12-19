@@ -92,6 +92,10 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                     when(it){
                         Requests.START_GAME -> viewModel.updateGame(GameManager.game)
                         Requests.ROW_PLAYED, Requests.COL_PLAYED -> viewModel.updateGame(GameManager.game)
+                        Requests.UPDATE_TIMER -> {
+                            viewModel.updateTime(GameManager.game.remainingTimeData)
+                            println(GameManager.game.remainingTimeData)
+                        }
                     }
                 }
             }

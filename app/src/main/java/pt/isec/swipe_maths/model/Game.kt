@@ -1,11 +1,14 @@
 package pt.isec.swipe_maths.model
 
+import android.app.Activity
 import android.os.CountDownTimer
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.InstanceCreator
 import pt.isec.swipe_maths.GameStates
+import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
@@ -120,7 +123,7 @@ class Game {
             if(!fromServer) {
                 correctPlay()
             } else {
-                correctPlayServer()
+                correctPlay()
             }
             return true
         } else if(boardData.lines[line].lineValue == boardData.secMaxValue){
@@ -135,7 +138,7 @@ class Game {
             if(!fromServer) {
                 correctPlay()
             } else {
-                correctPlayServer()
+                correctPlay()
             }
             nextBoard(nextBoard)
             return true
