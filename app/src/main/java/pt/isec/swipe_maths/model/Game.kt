@@ -116,7 +116,6 @@ class Game {
     }
 
     fun isCorrectLine(line: Int, fromServer: Boolean = false, nextBoard: Board = Board(levelData)): Boolean{
-//        plays++
         if (boardData.lines[line].lineValue == boardData.maxValue) {
             if(!fromServer) {
                 correctPlay()

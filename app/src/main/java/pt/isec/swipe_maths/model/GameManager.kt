@@ -26,7 +26,7 @@ object GameManager {
     }
 
     fun rowPlay(row: Int, player: Player): Boolean{
-        var result = false
+        var result : Boolean
         games[player]!!.apply { 
             plays++
         }
@@ -38,20 +38,47 @@ object GameManager {
         }
         return result
     }
+
+    fun colPlay(col: Int, player: Player): Boolean{
+        var result : Boolean
+        games[player]!!.apply {
+            plays++
+        }
+        if(games[player]!!.plays == boardsList.size){
+            newBoard(Board(game.levelData))
+            result = games[player]!!.isCorrectColumn(col, true, boardsList.last())
+        } else{
+            result = games[player]!!.isCorrectColumn(col, true, boardsList[games[player]!!.plays])
+        }
+        return result
+    }
+
+
     fun rowPlayServer(row: Int, player: Player): Boolean{
         var result: Boolean
         game.apply {
             plays++
         }
-        println("Board list size: ${boardsList.size}")
-        println("Game plays: ${game.plays}")
         if(game.plays == boardsList.size){
             newBoard(Board(game.levelData))
             result = game.isCorrectLine(row, true, boardsList.last())
         }else{
             result = game.isCorrectLine(row, true, boardsList[game.plays])
         }
-//        println(boardsList.last().printBoard())
+        return result
+    }
+
+    fun colPlayServer(col: Int, player: Player): Boolean{
+        var result: Boolean
+        game.apply {
+            plays++
+        }
+        if(game.plays == boardsList.size){
+            newBoard(Board(game.levelData))
+            result = game.isCorrectColumn(col, true, boardsList.last())
+        }else{
+            result = game.isCorrectColumn(col, true, boardsList[game.plays])
+        }
         return result
     }
 }

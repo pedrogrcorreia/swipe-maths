@@ -162,6 +162,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         } else if(mode == CLIENT_MODE){
             client.colPlay(selectedColumn)
+        } else if(mode == SERVER_MODE){
+            server.colPlay(selectedColumn)
         }
 
         return true

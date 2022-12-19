@@ -227,13 +227,6 @@ object Server {
             }
             Requests.ROW_PLAY.toString() -> {
                 val selectedRow = json.getInt("rowNumber")
-//                if(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays == GameManager.boardsList.size - 1){
-//                    GameManager.newBoard(Board(GameManager.game.levelData))
-//                }
-//                GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays++
-//                val result =
-//                    GameManager.games.getValue(Player.fromJson(json.getJSONObject("player")))
-//                        .isCorrectLine(selectedRow, true, GameManager.boardsList[GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))).plays])
                 val result = GameManager.rowPlay(selectedRow, Player.fromJson(json.getJSONObject("player")))
                 val jsonToSend = JSONObject().apply {
                     put("request", Requests.ROW_PLAYED)
@@ -245,18 +238,10 @@ object Server {
             }
             Requests.COL_PLAY.toString() -> {
                 val selectedCol = json.getInt("colNumber")
-                val game = gson.fromJson(json.getString("game"), Game::class.java).apply {
-                    board.postValue(boardData)
-                    gameState.postValue(gameStateData)
-                    level.postValue(levelData)
-                    remainingTime.postValue(remainingTimeData)
-                    nextLevelProgress.postValue(nextLevelProgressData)
-                    points.postValue(pointsData)
-                }
-                val result = game.isCorrectColumn(selectedCol, true)
+                val result = GameManager.colPlay(selectedCol, Player.fromJson(json.getJSONObject("player")))
                 val jsonToSend = JSONObject().apply {
-                    put("request", Requests.COL_PLAYED)
-                    put("game", gson.toJson(game, Game::class.java))
+                    put("request", Requests.ROW_PLAYED)
+                    put("game", gson.toJson(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))), Game::class.java))
                     put("result", result)
                 }
                 sendToClients(jsonToSend)
@@ -293,5 +278,9 @@ object Server {
 
     fun rowPlay(row: Int){
         GameManager.rowPlayServer(row, Player.mySelf)
+    }
+
+    fun colPlay(col: Int){
+        GameManager.colPlayServer(col, Player.mySelf)
     }
 }
