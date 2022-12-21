@@ -280,11 +280,13 @@ object Server {
     }
 
     fun updateTime(player: Player, remainingTime: Int){
+        println("$player $remainingTime")
         val json = JSONObject().apply{
             put("request", Requests.UPDATE_TIMER)
             put("time", remainingTime)
         }
-        sendToClients(json)
+        println("update time ${players.value}")
+        sendToClient(json, players.value?.find{ it.name == player.name }!!.socket!!)
     }
 
     // GAME FUNCTIONS

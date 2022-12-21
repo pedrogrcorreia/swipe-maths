@@ -86,6 +86,9 @@ object Client : Serializable {
                         val json = JSONObject(message)
                         parseRequest(json)
                     }
+                    if(message == null){
+                        break
+                    }
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing

@@ -86,7 +86,9 @@ object GameManager {
     fun watchTimers(){
         for(game in games){
             game.value.remainingTime.observeForever{
-                Server.updateTime(game.key, it)
+                if(game.key != Player.mySelf) {
+                    Server.updateTime(game.key, it)
+                }
             }
         }
     }

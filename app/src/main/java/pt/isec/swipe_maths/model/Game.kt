@@ -1,82 +1,76 @@
 package pt.isec.swipe_maths.model
 
-import android.app.Activity
 import android.os.CountDownTimer
+import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.InstanceCreator
 import pt.isec.swipe_maths.GameStates
-import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.model.board.Board
-import pt.isec.swipe_maths.model.levels.ILevels
 import pt.isec.swipe_maths.model.levels.Levels
-import java.lang.reflect.Type
 
 class Game {
     @Transient
-    var level : MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
+    var level: MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
-    var levelData : Levels = Levels.Easy
-        set(value){
+    var levelData: Levels = Levels.Easy
+        set(value) {
             field = value
             level.postValue(value)
         }
 
     @Transient
-    var board : MutableLiveData<Board> = MutableLiveData(level.value?.let { Board(it) })
+    var board: MutableLiveData<Board> = MutableLiveData(level.value?.let { Board(it) })
 
-    var boardData : Board = Board()
+    var boardData: Board = Board()
         set(value) {
             field = value
             board.postValue(value)
         }
 
     @Transient
-    var remainingTime : MutableLiveData<Int> = MutableLiveData(level.value!!.timer)
+    var remainingTime: MutableLiveData<Int> = MutableLiveData(level.value!!.timer)
 
-    var remainingTimeData : Int = level.value!!.timer
+    var remainingTimeData: Int = level.value!!.timer
         set(value) {
             field = value
             remainingTime.postValue(value)
         }
 
     @Transient
-    var correctAnswers : MutableLiveData<Int> = MutableLiveData(0)
+    var correctAnswers: MutableLiveData<Int> = MutableLiveData(0)
 
-    var correctAnswersData : Int = 0
+    var correctAnswersData: Int = 0
         set(value) {
             field = value
             correctAnswers.postValue(value)
         }
 
     @Transient
-    var gameState : MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
-        set(value){
+    var gameState: MutableLiveData<GameStates> = MutableLiveData(GameStates.WAITING_FOR_START)
+        set(value) {
             field = value
             gameStateData = value.value!!
         }
 
-    var gameStateData : GameStates = GameStates.WAITING_FOR_START
+    var gameStateData: GameStates = GameStates.WAITING_FOR_START
         set(value) {
             field = value
             gameState.postValue(value)
         }
 
     @Transient
-    var nextLevelProgress : MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
+    var nextLevelProgress: MutableLiveData<Int> = MutableLiveData(level.value?.correctAnswers)
 
-    var nextLevelProgressData : Int = level.value!!.correctAnswers
+    var nextLevelProgressData: Int = level.value!!.correctAnswers
         set(value) {
             field = value
             nextLevelProgress.postValue(value)
         }
 
     @Transient
-    var points : MutableLiveData<Int> = MutableLiveData(0)
+    var points: MutableLiveData<Int> = MutableLiveData(0)
 
-    var pointsData : Int = 0
+    var pointsData: Int = 0
         set(value) {
             field = value
             points.postValue(value)
@@ -85,21 +79,45 @@ class Game {
     @Transient
     private var timer: CountDownTimer? = null
 
-    var totalTime : Int = 0
+    var totalTime: Int = 0
 
-    var plays : Int = 0
+    var plays: Int = 0
 
-    private fun startTimer(){
+    private fun startTimer() {
+
+//        Handler(Looper.getMainLooper()).post(Runnable() {
+//            @Override
+//            fun run()
+//        })
+        Handler(Looper.getMainLooper()).post {
+            timer = object : CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    totalTime++
+                    remainingTimeData = (millisUntilFinished / 1000).toInt()
+                }
+
+                override fun onFinish() {
+                    gameOver()
+                }
+            }.start()
+        }
+
 //        println(remainingTime.value!!)
-        timer = object: CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                totalTime++
-                remainingTimeData = (millisUntilFinished/1000).toInt()
-            }
-            override fun onFinish() {
-                gameOver()
-            }
-        }.start()
+//        try {
+//            timer = object : CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
+//                override fun onTick(millisUntilFinished: Long) {
+//                    totalTime++
+//                    remainingTimeData = (millisUntilFinished / 1000).toInt()
+//                }
+//
+//                override fun onFinish() {
+//                    gameOver()
+//                }
+//            }.start()
+//
+//        } catch(e: Exception){
+//            println("Timer ${e.message}")
+//        }
     }
 
     init {
@@ -112,69 +130,76 @@ class Game {
         points.postValue(pointsData)
     }
 
-    fun startTime(){
+    fun startTime() {
 //        gameState.value = GameStates.PLAYING
         gameStateData = GameStates.PLAYING
         startTimer()
     }
 
-    fun isCorrectLine(line: Int, fromServer: Boolean = false, nextBoard: Board = Board(levelData)): Boolean{
+    fun isCorrectLine(
+        line: Int,
+        fromServer: Boolean = false,
+        nextBoard: Board = Board(levelData)
+    ): Boolean {
         if (boardData.lines[line].lineValue == boardData.maxValue) {
-            if(!fromServer) {
+            if (!fromServer) {
                 correctPlay()
             } else {
                 correctPlay()
             }
             return true
-        } else if(boardData.lines[line].lineValue == boardData.secMaxValue){
+        } else if (boardData.lines[line].lineValue == boardData.secMaxValue) {
             pointsData = (pointsData + 1)
         }
         nextBoard(nextBoard)
         return false
     }
 
-    fun isCorrectColumn(col: Int, fromServer: Boolean = false, nextBoard: Board = Board(levelData)): Boolean{
-        if(boardData.cols[col].colValue == boardData.maxValue) {
-            if(!fromServer) {
+    fun isCorrectColumn(
+        col: Int,
+        fromServer: Boolean = false,
+        nextBoard: Board = Board(levelData)
+    ): Boolean {
+        if (boardData.cols[col].colValue == boardData.maxValue) {
+            if (!fromServer) {
                 correctPlay()
             } else {
                 correctPlay()
             }
             nextBoard(nextBoard)
             return true
-        } else if(boardData.cols[col].colValue == boardData.secMaxValue){
+        } else if (boardData.cols[col].colValue == boardData.secMaxValue) {
             pointsData = (pointsData + 1)
         }
         nextBoard(nextBoard)
         return false
     }
 
-    private fun addTime(){
-        if(remainingTimeData > levelData.timer - levelData.bonusTime){
+    private fun addTime() {
+        if (remainingTimeData > levelData.timer - levelData.bonusTime) {
             remainingTimeData = (levelData.timer)
         } else {
             remainingTimeData = (remainingTimeData + levelData.bonusTime)
         }
     }
 
-    private fun addTimeServer(){
-        if(GameManager.game.remainingTimeData > levelData.timer - levelData.bonusTime){
+    private fun addTimeServer() {
+        if (GameManager.game.remainingTimeData > levelData.timer - levelData.bonusTime) {
             remainingTimeData = (levelData.timer)
         } else {
             remainingTimeData = (remainingTimeData + levelData.bonusTime)
         }
     }
 
-    private fun correctPlay(){
+    private fun correctPlay() {
         pointsData = points.value!! + 2
         correctAnswersData = (correctAnswers.value!! + 1)
         nextLevelProgressData = (level.value!!.correctAnswers - correctAnswers.value!!)
-        if(correctAnswersData == levelData.correctAnswers){
+        if (correctAnswersData == levelData.correctAnswers) {
             gameStateData = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
             println("totalTime: $totalTime")
-        }
-        else {
+        } else {
             addTime()
             timer!!.cancel()
             startTimer()
@@ -182,24 +207,12 @@ class Game {
         }
     }
 
-    private fun correctPlayServer(){
-        pointsData = points.value!! + 2
-        correctAnswersData = (correctAnswers.value!! + 1)
-        nextLevelProgressData = (level.value!!.correctAnswers - correctAnswers.value!!)
-        if(correctAnswersData == levelData.correctAnswers){
-            gameStateData = GameStates.WAITING_FOR_LEVEL
-        }
-        else {
-            addTimeServer()
-            //nextBoard()
-        }
-    }
 
-    private fun nextBoard(board: Board){
+    private fun nextBoard(board: Board) {
         boardData = board
     }
 
-    fun newLevel(){
+    fun newLevel() {
         levelData = levelData.nextLevel
         correctAnswersData = 0
         nextLevelProgressData = levelData.correctAnswers
@@ -208,7 +221,7 @@ class Game {
         gameStateData = GameStates.PLAYING
     }
 
-    fun gameOver(){
+    fun gameOver() {
         gameStateData = GameStates.GAME_OVER
     }
 
