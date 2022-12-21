@@ -8,7 +8,7 @@ import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.levels.Levels
 
-class Game {
+class Game(val player: Player = Player.mySelf) {
     @Transient
     var level: MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
@@ -84,11 +84,6 @@ class Game {
     var plays: Int = 0
 
     private fun startTimer() {
-
-//        Handler(Looper.getMainLooper()).post(Runnable() {
-//            @Override
-//            fun run()
-//        })
         Handler(Looper.getMainLooper()).post {
             timer = object : CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -101,23 +96,6 @@ class Game {
                 }
             }.start()
         }
-
-//        println(remainingTime.value!!)
-//        try {
-//            timer = object : CountDownTimer((remainingTimeData * 1000).toLong(), 1000) {
-//                override fun onTick(millisUntilFinished: Long) {
-//                    totalTime++
-//                    remainingTimeData = (millisUntilFinished / 1000).toInt()
-//                }
-//
-//                override fun onFinish() {
-//                    gameOver()
-//                }
-//            }.start()
-//
-//        } catch(e: Exception){
-//            println("Timer ${e.message}")
-//        }
     }
 
     init {
@@ -131,7 +109,6 @@ class Game {
     }
 
     fun startTime() {
-//        gameState.value = GameStates.PLAYING
         gameStateData = GameStates.PLAYING
         startTimer()
     }
@@ -232,6 +209,7 @@ class Game {
         string += "Points: ${points.value}\n PointsData: $pointsData"
         string += "Remaining Time: ${remainingTime.value} Remaining Time Data: $remainingTimeData\n"
         string += "Correct answers: ${correctAnswers.value} Correct Answers Data: $correctAnswersData\n"
+        string += "Player: $player"
         return string
     }
 }
