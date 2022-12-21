@@ -8,6 +8,7 @@ import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.model.GameManagerClient
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.views.GameViewModel
 import java.io.InputStream
@@ -164,18 +165,23 @@ object Client : Serializable {
     private fun parseRequest(json: JSONObject) {
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
-                updatePlayersList(json.getJSONArray("players"))
+                updatePlayersList(json)
             Requests.START_GAME.toString() -> {
-                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
-                    board.postValue(boardData)
-                    gameState.postValue(gameStateData)
-                    level.postValue(levelData)
-                    remainingTime.postValue(remainingTimeData)
-                    nextLevelProgress.postValue(nextLevelProgressData)
-                    points.postValue(pointsData)
-                }
+                updateViews(json)
+//                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
+//                    board.postValue(boardData)
+//                    gameState.postValue(gameStateData)
+//                    level.postValue(levelData)
+//                    remainingTime.postValue(remainingTimeData)
+//                    nextLevelProgress.postValue(nextLevelProgressData)
+//                    points.postValue(pointsData)
+//                }
                 requestState.postValue(Requests.START_GAME)
                 state.postValue(ConnectionStates.START_GAME)
+            }
+            Requests.UPDATE_VIEWS.toString() -> {
+                updateViews(json)
+                requestState.postValue(Requests.UPDATE_VIEWS)
             }
             Requests.ROW_PLAYED.toString() -> {
                 GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
@@ -240,15 +246,24 @@ object Client : Serializable {
         sendToServer(json)
     }
 
-    private fun updatePlayersList(jsonArray: JSONArray) {
-        try {
-            val newPlayers = players.value!!
-            for (i in 0 until jsonArray.length()) {
-                newPlayers.add(Player.fromJson(jsonArray.getJSONObject(i)))
-            }
-            players.postValue(newPlayers)
-        } catch (e: Exception) {
-            println(e.message)
+    private fun updatePlayersList(json: JSONObject) {
+        val games = json.getJSONArray("games")
+        val newPlayers : MutableList<Player> = players.value!!
+        for(i in 0 until games.length()){
+            val game = gson.fromJson(games.get(i).toString(), Game::class.java)
+            GameManagerClient.newPlayer(game)
+            newPlayers.add(game.player)
         }
+        players.postValue(newPlayers)
+    }
+
+    private fun updateViews(json: JSONObject){
+        val games = json.getJSONArray("games")
+        for(i in 0 until games.length()){
+            val game = gson.fromJson(games.get(i).toString(), Game::class.java)
+            GameManagerClient.updatePlayer(game)
+            println("Game $i $game")
+        }
+        println("GameManagerClient ${GameManager.game}")
     }
 }

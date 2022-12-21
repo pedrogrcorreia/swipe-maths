@@ -8,7 +8,7 @@ import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.model.levels.Levels
 
-class Game(val player: Player = Player.mySelf) {
+class Game(var player: Player = Player.mySelf) {
     @Transient
     var level: MutableLiveData<Levels> = MutableLiveData(Levels.Easy)
 
@@ -205,11 +205,22 @@ class Game(val player: Player = Player.mySelf) {
     override fun toString(): String {
         var string = ""
         string += "Board: ${board.value?.printBoard()} BoardData: ${boardData.printBoard()}\n "
+        string += "GameState: ${gameState.value!!} GameStateData: $gameStateData\n"
         string += "Level: ${level.value}\n LevelData: $levelData"
         string += "Points: ${points.value}\n PointsData: $pointsData"
         string += "Remaining Time: ${remainingTime.value} Remaining Time Data: $remainingTimeData\n"
         string += "Correct answers: ${correctAnswers.value} Correct Answers Data: $correctAnswersData\n"
         string += "Player: $player"
         return string
+    }
+
+    fun applyGameChanges(game: Game){
+        board.postValue(game.boardData)
+        gameState.postValue(game.gameStateData)
+        level.postValue(game.levelData)
+        remainingTime.postValue(game.remainingTimeData)
+        nextLevelProgress.postValue(game.nextLevelProgressData)
+        points.postValue(game.pointsData)
+        correctAnswers.postValue(game.correctAnswersData)
     }
 }

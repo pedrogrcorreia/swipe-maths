@@ -10,6 +10,7 @@ enum class Requests {
 
 
     NONE,
+    UPDATE_VIEWS,
 
 
 

@@ -7,10 +7,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.model.GameManagerServer
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.views.GameViewModel
@@ -54,7 +56,9 @@ object Server {
 
         println("Server is starting...")
 
-        println(GameManager.games)
+        println(GameManagerServer.games)
+
+        GameManagerServer.newBoard(GameManager.game.boardData)
 
         players.value!!.clear()
 
@@ -63,7 +67,7 @@ object Server {
         newPlayers.add(
             Player(
                 Firebase.auth.currentUser?.displayName!!,
-                Firebase.auth.currentUser?.photoUrl!!
+                Firebase.auth.currentUser?.photoUrl!!.toString()
             )
         )
         players.postValue(newPlayers)
@@ -152,22 +156,22 @@ object Server {
         }
     }
 
-    fun addPlayer(json: JSONObject, socket: Socket) {
+    private fun addPlayer(json: JSONObject, socket: Socket) {
         try {
             val playerJSON = json.getJSONObject("player")
             println(playerJSON)
             val name = playerJSON.getString("name")
-            val photo = Uri.parse(playerJSON.getString("photoUrl"))
+            val photo = playerJSON.getString("photoUrl")
             val newPlayers = players.value!!
             newPlayers.add(Player(name, photo, socket))
-            GameManager.addNewPlayer(Player(name, photo))
+            GameManagerServer.addNewPlayer(Player(name, photo))
             players.postValue(newPlayers)
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
-    fun removeClient(clientSocket: Socket) {
+    private fun removeClient(clientSocket: Socket) {
         clients.remove(clientSocket)
         val newPlayers = players.value!!
         val playerToRemove = newPlayers.find { it.socket == clientSocket }
@@ -175,7 +179,7 @@ object Server {
         players.postValue(newPlayers)
     }
 
-    fun sendToClients(json: JSONObject) {
+    private fun sendToClients(json: JSONObject) {
         thread {
             for (i in clients.indices) {
                 socket = clients[i]
@@ -223,32 +227,24 @@ object Server {
         }
     }
 
+    private fun updateViews(json: JSONObject){
+        json.apply {
+            put("games", JSONArray().apply {
+                for(game in GameManagerServer.games){
+                    put(gson.toJson(game, Game::class.java))
+                }
+            })
+        }
+        println("Request: " + json.getString("request"))
+//        println(GameManagerServer.games)
+        sendToClients(json)
+    }
+
     private fun parseRequest(json: JSONObject, socket: Socket) {
         when (json.getString("request")) {
             Requests.NEW_PLAYER.toString() -> {
                 addPlayer(json, socket)
                 broadcastPlayers()
-            }
-            Requests.ROW_PLAY.toString() -> {
-                val selectedRow = json.getInt("rowNumber")
-                val result = GameManager.rowPlay(selectedRow, Player.fromJson(json.getJSONObject("player")))
-                val jsonToSend = JSONObject().apply {
-                    put("request", Requests.ROW_PLAYED)
-                    put("game", gson.toJson(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))), Game::class.java))
-                    put("result", result)
-                }
-                println("Game sent after row play: " + GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))))
-                sendToClients(jsonToSend)
-            }
-            Requests.COL_PLAY.toString() -> {
-                val selectedCol = json.getInt("colNumber")
-                val result = GameManager.colPlay(selectedCol, Player.fromJson(json.getJSONObject("player")))
-                val jsonToSend = JSONObject().apply {
-                    put("request", Requests.ROW_PLAYED)
-                    put("game", gson.toJson(GameManager.games.getValue(Player.fromJson(json.getJSONObject("player"))), Game::class.java))
-                    put("result", result)
-                }
-                sendToClients(jsonToSend)
             }
         }
     }
@@ -256,46 +252,36 @@ object Server {
     private fun broadcastPlayers() {
         val json = JSONObject().apply {
             put("request", Requests.UPDATE_PLAYERS_LIST)
-            put("players", Player.playersToJson(players.value!!))
         }
-        sendToClients(json)
+        updateViews(json)
     }
 
     fun startGame() {
-        for(player in GameManager.games){
-            player.value.startTime()
-        }
-        GameManager.watchTimers()
-        GameManager.newBoard(GameManager.game.boardData)
+        GameManagerServer.watchTimers()
         GameManager.game.startTime()
-        try {
-            val json = JSONObject().apply {
-                put("request", Requests.START_GAME)
-                put("game", gson.toJson(GameManager.game, Game::class.java))
-            }
-            sendToClients(json)
-        } catch (e: Exception) {
-            println(e.message)
+        for(game in GameManagerServer.games){
+            game.startTime()
         }
+        val json = JSONObject().apply {
+            put("request", Requests.START_GAME)
+        }
+        updateViews(json)
     }
 
-    fun updateTime(player: Player, remainingTime: Int){
-        println("$player $remainingTime")
-        val json = JSONObject().apply{
-            put("request", Requests.UPDATE_TIMER)
-            put("time", remainingTime)
+    fun updateTime(player: Player, game: Game){
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_VIEWS)
         }
-        println("update time ${players.value}")
-        sendToClient(json, players.value?.find{ it.name == player.name }!!.socket!!)
+        updateViews(json)
     }
 
     // GAME FUNCTIONS
 
     fun rowPlay(row: Int){
-        GameManager.rowPlayServer(row, Player.mySelf)
+        GameManagerServer.rowPlayServer(row, Player.mySelf)
     }
 
     fun colPlay(col: Int){
-        GameManager.colPlayServer(col, Player.mySelf)
+        GameManagerServer.colPlayServer(col, Player.mySelf)
     }
 }

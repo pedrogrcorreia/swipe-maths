@@ -19,6 +19,7 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.model.GameManagerClient
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.utils.FirestoreUtils
@@ -91,7 +92,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 client.requestState.observe(this){
                     when(it){
                         Requests.START_GAME -> viewModel.updateGame(GameManager.game)
-                        Requests.ROW_PLAYED, Requests.COL_PLAYED -> viewModel.updateGame(GameManager.game)
+                        Requests.ROW_PLAYED, Requests.COL_PLAYED, Requests.UPDATE_VIEWS -> viewModel.updateGame(GameManager.game)
                         Requests.UPDATE_TIMER -> {
                             viewModel.updateTime(GameManager.game.remainingTimeData)
                             println(GameManager.game.remainingTimeData)
