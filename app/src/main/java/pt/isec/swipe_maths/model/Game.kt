@@ -188,6 +188,7 @@ class Game(var player: Player = Player.mySelf) {
         remainingTimeData = levelData.timer
         nextBoard(Board(levelData))
         gameStateData = GameStates.PLAYING
+        startTimer()
     }
 
     fun gameOver() {

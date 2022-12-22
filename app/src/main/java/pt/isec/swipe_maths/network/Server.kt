@@ -290,7 +290,6 @@ object Server {
         }
         for(game in GameManagerServer.games){
             game.newLevel()
-            game.startTime()
             game.apply {
                 plays = 0
             }
