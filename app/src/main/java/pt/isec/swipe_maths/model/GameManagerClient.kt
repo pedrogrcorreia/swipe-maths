@@ -18,5 +18,6 @@ object GameManagerClient {
                 applyGameChanges(game)
             }
         }
+        GameManager.games.postValue(games)
     }
 }
