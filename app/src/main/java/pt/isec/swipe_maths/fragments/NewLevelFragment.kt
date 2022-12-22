@@ -12,10 +12,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentNewLevelBinding
+import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
 interface INewLevelFragment{
@@ -78,9 +81,25 @@ class NewLevelFragment : Fragment() {
 
             binding.nextLevelTimer.text = "Waiting for other players to finish..."
 
-            viewModel.state.observe(viewLifecycleOwner){
+            Client.state.observe(viewLifecycleOwner){
                 when(it){
-                    GameStates.PLAYING -> findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
+                    ConnectionStates.ALL_PLAYERS_FINISHED -> {
+                        startTimer()
+                    }
+                }
+            }
+        } else if(GameScreenActivity.mode == GameScreenActivity.SERVER_MODE){
+            binding.nextLevelLabel.text =
+                getString(R.string.nextLevel, viewModel.level.value!!.nextLevel)
+
+            binding.nextLevelTimer.text = "Waiting for other players to finish..."
+
+            Server.state.observe(viewLifecycleOwner){
+                when(it){
+                    ConnectionStates.ALL_PLAYERS_FINISHED -> {
+                        Server.startNewLevelTimers()
+                        startTimer()
+                    }
                 }
             }
         }

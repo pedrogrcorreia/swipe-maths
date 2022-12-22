@@ -276,9 +276,14 @@ object Server {
         updateViews(json)
     }
 
+    fun startNewLevelTimers(){
+        val json = JSONObject().apply {
+            put("request", Requests.NEW_LEVEL_STARTING)
+        }
+        updateViews(json)
+    }
+
     fun startNewLevel(){
-//        GameManagerServer.boardsList.clear()
-//        GameManager.game.newLevel()
         for(game in GameManagerServer.games){
             game.newLevel()
             game.startTime()

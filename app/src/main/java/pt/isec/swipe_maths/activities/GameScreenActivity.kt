@@ -212,7 +212,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
     }
 
     override fun timesUp(){
-        viewModel.nextLevelTimerUp()
+        if(GameScreenActivity.mode == SERVER_MODE){
+            Server.startNewLevel()
+        }
+        else {
+            viewModel.nextLevelTimerUp()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

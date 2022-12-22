@@ -15,4 +15,5 @@ enum class Requests {
     NEW_PLAYER,
     ROW_PLAY,
     COL_PLAY,
+    NEW_LEVEL_STARTING,
 }

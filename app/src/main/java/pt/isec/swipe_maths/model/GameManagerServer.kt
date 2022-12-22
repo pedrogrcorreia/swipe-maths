@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.model
 
 import org.json.JSONObject
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.network.Requests
@@ -98,8 +99,7 @@ object GameManagerServer {
                 return
             }
         }
-        println("All have finished!")
-        Server.startNewLevel()
+        Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
     }
 
     fun watchTimers(){
