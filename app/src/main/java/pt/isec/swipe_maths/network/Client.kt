@@ -88,6 +88,7 @@ object Client : Serializable {
                         parseRequest(json)
                     }
                     if(message == null){
+                        state.postValue(ConnectionStates.SERVER_ERROR)
                         break
                     }
                 }

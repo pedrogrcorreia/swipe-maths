@@ -20,6 +20,7 @@ import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
 import pt.isec.swipe_maths.fragments.INewLevelFragment
+import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.GameManagerClient
 import pt.isec.swipe_maths.network.Client
@@ -60,6 +61,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         fun getSingleModeIntentError(context: Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply{
                 putExtra("mode", ERROR_MODE)
+                mode = ERROR_MODE
             }
         }
     }
@@ -105,6 +107,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                                 Toast.LENGTH_LONG
                             ).show()
                             finish()
+                            GameManager.game = Game()
                             startActivity(GameScreenActivity.getSingleModeIntentError(this))
                         }
                     }
@@ -157,7 +160,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {
-        if(mode == SINGLE_MODE) {
+        if(mode == SINGLE_MODE || mode == ERROR_MODE) {
             if (viewModel.columnPlay(selectedColumn)) {
                 Snackbar.make(
                     binding.root,
@@ -235,6 +238,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
 
     override fun onDestroy() {
         super.onDestroy()
+        if(mode == SERVER_MODE){
+            Server.closeServer()
+        }
+        if(mode == CLIENT_MODE){
+            Client.closeClient()
+        }
     }
 
 }
