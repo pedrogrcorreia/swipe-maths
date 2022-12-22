@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_margin="10dp"
             android:gravity="center"
             tools:srcCompat="@drawable/teste"
@@ -25,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
             app:autoSizeTextType="uniform"
             app:autoSizeMaxTextSize="24sp"
             app:autoSizeMinTextSize="12sp"
@@ -37,6 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
             app:autoSizeTextType="uniform"
             app:autoSizeMaxTextSize="24sp"
             app:autoSizeMinTextSize="12sp"
@@ -49,6 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
             app:autoSizeTextType="uniform"
             app:autoSizeMaxTextSize="24sp"
             app:autoSizeMinTextSize="12sp"
@@ -58,5 +61,4 @@
             android:text="timeLeft"
             android:id="@+id/timeLeft" />
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

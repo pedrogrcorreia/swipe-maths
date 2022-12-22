@@ -7,5 +7,5 @@ import pt.isec.swipe_maths.network.Server
 object GameManager {
     var game = Game()
 
-    var games : MutableLiveData<MutableList<Game>> = MutableLiveData()
+    var games : MutableLiveData<MutableList<Game>> = MutableLiveData(mutableListOf(game))
 }

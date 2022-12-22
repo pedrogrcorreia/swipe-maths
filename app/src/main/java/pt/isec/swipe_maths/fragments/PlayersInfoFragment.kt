@@ -44,6 +44,7 @@ class PlayersInfoFragment : Fragment() {
         gamesList.adapter = listAdapter
 
         GameManager.games.observe(viewLifecycleOwner){
+            println("Update list!")
             listAdapter.notifyDataSetChanged()
         }
 
@@ -55,18 +56,17 @@ class PlayersInfoFragment : Fragment() {
         RecyclerView.Adapter<PlayerInfoListAdapter.MyViewHolder>() {
         class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             var name: TextView = view.findViewById(R.id.playerName)
-            var score: TextView = view.findViewById(R.id.score)
+            var points: TextView = view.findViewById(R.id.points)
             var timeLeft: TextView = view.findViewById(R.id.timeLeft)
             var photo: ImageView = view.findViewById(R.id.playerPhoto)
             fun update(data: Game, context: Context) {
                 name.text = data.player.name
-                score.text = data.pointsData.toString()
-                timeLeft.text = data.remainingTimeData.toString()
                 Glide.with(context)
                     .load(data.player.photoUrl)
                     .apply(RequestOptions().circleCrop())
                     .into(photo)
-
+                points.text = context.getString(R.string.points_list, data.points.value)
+                timeLeft.text = context.getString(R.string.time_left_list, data.remainingTime.value)
             }
         }
 

@@ -7,6 +7,14 @@
     tools:context=".activities.GameScreenActivity"
     android:orientation="vertical"
     android:id="@+id/lLayout">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/points"
+        android:textSize="20sp"
+        android:id="@+id/lblPoints"/>
     <fragment
         tools:layout="@layout/fragment_level_info"
         android:id="@+id/fragmentLvlInfo"
@@ -20,12 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <fragment
+        tools:layout="@layout/fragment_players_info"
+        android:id="@+id/fragmentPlayersInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:text="@string/points"
-        android:textSize="20sp"
-        android:id="@+id/lblPoints"/>
+        android:name="pt.isec.swipe_maths.fragments.PlayersInfoFragment" />
+
+
 
 </LinearLayout>

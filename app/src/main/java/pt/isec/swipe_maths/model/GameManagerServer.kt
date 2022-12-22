@@ -93,6 +93,7 @@ object GameManagerServer {
 
     // TODO add five points to first
     fun verifyLevelFinish(){
+        GameManager.games.postValue(games)
         for(game in games){
             println("${game.player.name} ${game.gameStateData}")
             if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
@@ -113,6 +114,7 @@ object GameManagerServer {
             game.remainingTime.observeForever{
                 if(game.player != Player.mySelf) {
                     Server.updateTime()
+                    GameManager.games.postValue(games)
                 }
             }
         }
