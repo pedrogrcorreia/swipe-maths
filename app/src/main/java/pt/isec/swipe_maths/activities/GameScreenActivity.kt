@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
@@ -91,11 +93,19 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 client = Client
                 client.requestState.observe(this){
                     when(it){
-                        Requests.START_GAME -> viewModel.updateGame(GameManager.game)
-                        Requests.ROW_PLAYED, Requests.COL_PLAYED, Requests.UPDATE_VIEWS -> viewModel.updateGame(GameManager.game)
-                        Requests.UPDATE_TIMER -> {
-                            viewModel.updateTime(GameManager.game.remainingTimeData)
-                            println(GameManager.game.remainingTimeData)
+                        Requests.START_GAME, Requests.UPDATE_VIEWS -> viewModel.updateGame(GameManager.game)
+                    }
+                }
+                client.state.observe(this){
+                    when(it) {
+                        ConnectionStates.SERVER_ERROR -> {
+                            Toast.makeText(
+                                this,
+                                "Server error!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            finish()
+                            startActivity(GameScreenActivity.getSingleModeIntentError(this))
                         }
                     }
                 }

@@ -160,15 +160,7 @@ class Game(var player: Player = Player.mySelf) {
         }
     }
 
-    private fun addTimeServer() {
-        if (GameManager.game.remainingTimeData > levelData.timer - levelData.bonusTime) {
-            remainingTimeData = (levelData.timer)
-        } else {
-            remainingTimeData = (remainingTimeData + levelData.bonusTime)
-        }
-    }
-
-    private fun correctPlay() {
+    private fun correctPlay(nextBoard: Board = Board(levelData)) {
         pointsData = points.value!! + 2
         correctAnswersData = (correctAnswers.value!! + 1)
         nextLevelProgressData = (level.value!!.correctAnswers - correctAnswers.value!!)
@@ -180,7 +172,7 @@ class Game(var player: Player = Player.mySelf) {
             addTime()
             timer!!.cancel()
             startTimer()
-//            nextBoard()
+            nextBoard(nextBoard)
         }
     }
 

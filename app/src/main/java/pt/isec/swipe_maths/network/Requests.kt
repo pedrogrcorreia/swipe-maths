@@ -4,14 +4,10 @@ enum class Requests {
     // Server Request
     UPDATE_PLAYERS_LIST,
     START_GAME,
-    ROW_PLAYED,
-    COL_PLAYED,
-    UPDATE_TIMER,
 
 
     NONE,
     UPDATE_VIEWS,
-
 
 
     // Client Requests

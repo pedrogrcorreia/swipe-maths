@@ -1,6 +1,8 @@
 package pt.isec.swipe_maths.model
 
+import org.json.JSONObject
 import pt.isec.swipe_maths.model.board.Board
+import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.network.Server
 
 object GameManagerServer {
@@ -13,7 +15,6 @@ object GameManagerServer {
         games.last().apply {
             this.boardData = boardsList.last()
         }
-        println(games.last())
     }
 
     fun newBoard(board: Board){
@@ -30,14 +31,15 @@ object GameManagerServer {
         } else{
             result = playerGame.isCorrectLine(row, true, boardsList[playerGame.plays])
         }
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_VIEWS)
+        }
+        Server.updateViews(json)
         return result
     }
 
     fun colPlay(col: Int, player: Player): Boolean{
-        val playerGame = games.find { it.player == player }
-        if(playerGame == null){
-            return false
-        }
+        val playerGame = games.find { it.player == player } ?: return false
         var result : Boolean
         playerGame.apply { plays++ }
         if(playerGame.plays == boardsList.size){
@@ -46,6 +48,10 @@ object GameManagerServer {
         } else{
             result = playerGame.isCorrectColumn(col, true, boardsList[playerGame.plays])
         }
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_VIEWS)
+        }
+        Server.updateViews(json)
         return result
     }
 
@@ -55,6 +61,7 @@ object GameManagerServer {
         GameManager.game.apply {
             plays++
         }
+        println("Server played a row!")
         if(GameManager.game.plays == boardsList.size){
             newBoard(Board(GameManager.game.levelData))
             result = GameManager.game.isCorrectLine(row, true, boardsList.last())
@@ -82,7 +89,7 @@ object GameManagerServer {
         for(game in games){
             game.remainingTime.observeForever{
                 if(game.player != Player.mySelf) {
-                    Server.updateTime(game.player, game)
+                    Server.updateTime()
                 }
             }
         }

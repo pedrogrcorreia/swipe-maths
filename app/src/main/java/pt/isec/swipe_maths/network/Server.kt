@@ -227,7 +227,7 @@ object Server {
         }
     }
 
-    private fun updateViews(json: JSONObject){
+    fun updateViews(json: JSONObject){
         json.apply {
             put("games", JSONArray().apply {
                 for(game in GameManagerServer.games){
@@ -235,8 +235,6 @@ object Server {
                 }
             })
         }
-        println("Request: " + json.getString("request"))
-//        println(GameManagerServer.games)
         sendToClients(json)
     }
 
@@ -245,6 +243,16 @@ object Server {
             Requests.NEW_PLAYER.toString() -> {
                 addPlayer(json, socket)
                 broadcastPlayers()
+            }
+            Requests.ROW_PLAY.toString() -> {
+                val selectedRow = json.getInt("rowNumber")
+                val player = Player.fromJson(json.getJSONObject("player"))
+                GameManagerServer.rowPlay(selectedRow, player)
+            }
+            Requests.COL_PLAY.toString() -> {
+                val selectedCol = json.getInt("colNumber")
+                val player = Player.fromJson(json.getJSONObject("player"))
+                GameManagerServer.colPlay(selectedCol, player)
             }
         }
     }
@@ -268,7 +276,7 @@ object Server {
         updateViews(json)
     }
 
-    fun updateTime(player: Player, game: Game){
+    fun updateTime(){
         val json = JSONObject().apply {
             put("request", Requests.UPDATE_VIEWS)
         }

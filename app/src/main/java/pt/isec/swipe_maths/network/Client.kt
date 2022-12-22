@@ -83,7 +83,7 @@ object Client : Serializable {
                 val bufI = socketI!!.bufferedReader()
                 while (state.value != ConnectionStates.CONNECTION_ENDED) {
                     val message = bufI.readLine()
-                    if(message != null) {
+                    if(message != null && message.isNotEmpty()) {
                         val json = JSONObject(message)
                         parseRequest(json)
                     }
@@ -98,7 +98,6 @@ object Client : Serializable {
             } catch (e: SocketException) {
                 // TODO Exception here, client closed
                 state.postValue(ConnectionStates.NO_CONNECTION)
-
                 println("Thread " + e.message)
             } finally {
                 println("Closing from server socket!")
@@ -156,7 +155,7 @@ object Client : Serializable {
                     printStream.println(json)
                     printStream.flush()
                 } catch (_: Exception) {
-                    // TODO this exception
+                    state.postValue(ConnectionStates.SERVER_ERROR)
                 }
             }
         }
@@ -168,52 +167,12 @@ object Client : Serializable {
                 updatePlayersList(json)
             Requests.START_GAME.toString() -> {
                 updateViews(json)
-//                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
-//                    board.postValue(boardData)
-//                    gameState.postValue(gameStateData)
-//                    level.postValue(levelData)
-//                    remainingTime.postValue(remainingTimeData)
-//                    nextLevelProgress.postValue(nextLevelProgressData)
-//                    points.postValue(pointsData)
-//                }
                 requestState.postValue(Requests.START_GAME)
                 state.postValue(ConnectionStates.START_GAME)
             }
             Requests.UPDATE_VIEWS.toString() -> {
                 updateViews(json)
                 requestState.postValue(Requests.UPDATE_VIEWS)
-            }
-            Requests.ROW_PLAYED.toString() -> {
-                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
-                    board.postValue(boardData)
-                    gameState.postValue(gameStateData)
-                    level.postValue(levelData)
-                    remainingTime.postValue(remainingTimeData)
-                    nextLevelProgress.postValue(nextLevelProgressData)
-                    points.postValue(pointsData)
-                    correctAnswers.postValue(correctAnswersData)
-                }
-                println("Game received on row played: " + GameManager.game)
-                requestState.postValue(Requests.ROW_PLAYED)
-            }
-            Requests.COL_PLAYED.toString() -> {
-                GameManager.game = gson.fromJson(json.getString("game"), Game::class.java).apply{
-                    board.postValue(boardData)
-                    gameState.postValue(gameStateData)
-                    level.postValue(levelData)
-                    remainingTime.postValue(remainingTimeData)
-                    nextLevelProgress.postValue(nextLevelProgressData)
-                    points.postValue(pointsData)
-                    correctAnswers.postValue(correctAnswersData)
-                }
-                requestState.postValue(Requests.COL_PLAYED)
-            }
-            Requests.UPDATE_TIMER.toString() -> {
-                val timeLeft = json.getInt("time")
-                GameManager.game.apply {
-                    remainingTimeData = timeLeft
-                }
-                requestState.postValue(Requests.UPDATE_TIMER)
             }
         }
     }
@@ -231,7 +190,6 @@ object Client : Serializable {
             put("request", Requests.ROW_PLAY)
             put("rowNumber", selectedRow)
             put("player", Player.mySelf.toJson())
-            //put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)
     }
@@ -241,7 +199,6 @@ object Client : Serializable {
             put("request", Requests.COL_PLAY)
             put("colNumber", selectedCol)
             put("player", Player.mySelf.toJson())
-            //put("game", gson.toJson(GameManager.game, Game::class.java))
         }
         sendToServer(json)
     }
@@ -249,6 +206,7 @@ object Client : Serializable {
     private fun updatePlayersList(json: JSONObject) {
         val games = json.getJSONArray("games")
         val newPlayers : MutableList<Player> = players.value!!
+        newPlayers.clear()
         for(i in 0 until games.length()){
             val game = gson.fromJson(games.get(i).toString(), Game::class.java)
             GameManagerClient.newPlayer(game)
@@ -262,8 +220,6 @@ object Client : Serializable {
         for(i in 0 until games.length()){
             val game = gson.fromJson(games.get(i).toString(), Game::class.java)
             GameManagerClient.updatePlayer(game)
-            println("Game $i $game")
         }
-        println("GameManagerClient ${GameManager.game}")
     }
 }
