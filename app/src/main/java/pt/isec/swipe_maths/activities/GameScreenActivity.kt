@@ -113,6 +113,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                     }
                 }
             }
+            SINGLE_MODE, ERROR_MODE -> {
+                val fr = supportFragmentManager.findFragmentById(R.id.fragmentPlayersInfo)
+                if (fr != null) {
+                    supportFragmentManager.beginTransaction().hide(fr).commit()
+                }
+            }
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
