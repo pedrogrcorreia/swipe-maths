@@ -102,6 +102,12 @@ object GameManagerServer {
         Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
     }
 
+    fun resetNewLevelBoards(){
+        for(game in games){
+            game.boardData = boardsList.last()
+        }
+    }
+
     fun watchTimers(){
         for(game in games){
             game.remainingTime.observeForever{

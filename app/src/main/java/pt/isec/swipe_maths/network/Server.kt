@@ -284,10 +284,19 @@ object Server {
     }
 
     fun startNewLevel(){
+        GameManagerServer.boardsList.run {
+            clear()
+            add(Board(GameManager.game.levelData.nextLevel))
+        }
         for(game in GameManagerServer.games){
             game.newLevel()
             game.startTime()
+            game.apply {
+                plays = 0
+            }
         }
+        GameManagerServer.resetNewLevelBoards()
+
         val json = JSONObject().apply{
             put("request", Requests.NEW_LEVEL)
         }
