@@ -10,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentNewLevelBinding
 import pt.isec.swipe_maths.views.GameViewModel
 
@@ -25,7 +28,9 @@ class NewLevelFragment : Fragment() {
 
     lateinit var binding: FragmentNewLevelBinding
 
-    private val viewModel : GameViewModel by activityViewModels()
+    private val viewModel by lazy{
+        ViewModelProvider(requireActivity())[GameViewModel::class.java]
+    }
 
     private var countTime : Long = 5000
 
@@ -51,19 +56,33 @@ class NewLevelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.nextLevelLabel.text = getString(R.string.nextLevel, viewModel.level.value!!.nextLevel)
+        if(GameScreenActivity.mode == GameScreenActivity.SINGLE_MODE) {
+            binding.nextLevelLabel.text =
+                getString(R.string.nextLevel, viewModel.level.value!!.nextLevel)
 
-        startTimer()
+            startTimer()
 
-        binding.btnPause.setOnClickListener {
-            timer!!.cancel()
-            AlertDialog.Builder(this.requireContext())
-                .setTitle("Pause")
-                .setMessage("Game is paused.")
-                .setPositiveButton("Resume"){ _: DialogInterface, _: Int ->
-                    startTimer()
+            binding.btnPause.setOnClickListener {
+                timer!!.cancel()
+                AlertDialog.Builder(this.requireContext())
+                    .setTitle("Pause")
+                    .setMessage("Game is paused.")
+                    .setPositiveButton("Resume") { _: DialogInterface, _: Int ->
+                        startTimer()
+                    }
+                    .show()
+            }
+        } else if(GameScreenActivity.mode == GameScreenActivity.CLIENT_MODE){
+            binding.nextLevelLabel.text =
+                getString(R.string.nextLevel, viewModel.level.value!!.nextLevel)
+
+            binding.nextLevelTimer.text = "Waiting for other players to finish..."
+
+            viewModel.state.observe(viewLifecycleOwner){
+                when(it){
+                    GameStates.PLAYING -> findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
                 }
-                .show()
+            }
         }
     }
 

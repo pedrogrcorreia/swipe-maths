@@ -30,11 +30,11 @@ import pt.isec.swipe_maths.views.GameViewModel
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
-        private const val SINGLE_MODE = 0
-        private const val ERROR_MODE = 400
-        private const val SERVER_MODE = 1
-        private const val CLIENT_MODE = 2
-        private var mode = 0
+        const val SINGLE_MODE = 0
+        const val ERROR_MODE = 400
+        const val SERVER_MODE = 1
+        const val CLIENT_MODE = 2
+        var mode = 0
 
         fun getSingleModeIntent(context: Context) : Intent {
             return Intent(context, GameScreenActivity::class.java).apply {

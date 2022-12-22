@@ -170,7 +170,7 @@ object Client : Serializable {
                 requestState.postValue(Requests.START_GAME)
                 state.postValue(ConnectionStates.START_GAME)
             }
-            Requests.UPDATE_VIEWS.toString() -> {
+            Requests.UPDATE_VIEWS.toString(), Requests.NEW_LEVEL.toString() -> {
                 updateViews(json)
                 requestState.postValue(Requests.UPDATE_VIEWS)
             }

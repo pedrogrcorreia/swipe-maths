@@ -1,6 +1,7 @@
 package pt.isec.swipe_maths.model
 
 import org.json.JSONObject
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.board.Board
 import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.network.Server
@@ -35,6 +36,7 @@ object GameManagerServer {
             put("request", Requests.UPDATE_VIEWS)
         }
         Server.updateViews(json)
+        verifyLevelFinish()
         return result
     }
 
@@ -52,6 +54,7 @@ object GameManagerServer {
             put("request", Requests.UPDATE_VIEWS)
         }
         Server.updateViews(json)
+        verifyLevelFinish()
         return result
     }
 
@@ -68,6 +71,7 @@ object GameManagerServer {
         }else{
             result = GameManager.game.isCorrectLine(row, true, boardsList[GameManager.game.plays])
         }
+        verifyLevelFinish()
         return result
     }
 
@@ -82,7 +86,20 @@ object GameManagerServer {
         }else{
             result = GameManager.game.isCorrectColumn(col, true, boardsList[GameManager.game.plays])
         }
+        verifyLevelFinish()
         return result
+    }
+
+    // TODO add five points to first
+    fun verifyLevelFinish(){
+        for(game in games){
+            println("${game.player.name} ${game.gameStateData}")
+            if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
+                return
+            }
+        }
+        println("All have finished!")
+        Server.startNewLevel()
     }
 
     fun watchTimers(){

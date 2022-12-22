@@ -266,12 +266,25 @@ object Server {
 
     fun startGame() {
         GameManagerServer.watchTimers()
-        GameManager.game.startTime()
+//        GameManager.game.startTime()
         for(game in GameManagerServer.games){
             game.startTime()
         }
         val json = JSONObject().apply {
             put("request", Requests.START_GAME)
+        }
+        updateViews(json)
+    }
+
+    fun startNewLevel(){
+//        GameManagerServer.boardsList.clear()
+//        GameManager.game.newLevel()
+        for(game in GameManagerServer.games){
+            game.newLevel()
+            game.startTime()
+        }
+        val json = JSONObject().apply{
+            put("request", Requests.NEW_LEVEL)
         }
         updateViews(json)
     }
