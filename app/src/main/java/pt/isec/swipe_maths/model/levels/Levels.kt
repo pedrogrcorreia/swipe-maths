@@ -11,7 +11,7 @@ enum class Levels : ILevels {
         override val timer: Int
             get() = 60
         override val correctAnswers: Int
-            get() = 1
+            get() = 5
         override val bonusTime: Int
             get() = 5
         override val nextLevel: Levels
