@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_gameBoardFragment_to_newLevelFragment"
             app:destination="@id/newLevelFragment" />
+        <action
+            android:id="@+id/action_gameBoardFragment_to_gameOverFragment"
+            app:destination="@id/gameOverFragment" />
     </fragment>
     <fragment
         android:id="@+id/startGameFragment"
@@ -34,4 +37,9 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/gameOverFragment"
+        android:name="pt.isec.swipe_maths.fragments.GameOverFragment"
+        android:label="fragment_game_over"
+        tools:layout="@layout/fragment_game_over" />
 </navigation>
