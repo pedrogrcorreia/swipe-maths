@@ -138,7 +138,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         viewModel.state.observe(this){
             when(it){
                 GameStates.GAME_OVER -> {
-                    if(mode != ERROR_MODE) {
+                    if(mode == SINGLE_MODE) {
                         FirestoreUtils.addGame(
                             viewModel.points.value!!,
                             viewModel.totalTime,
