@@ -2,6 +2,7 @@ package pt.isec.swipe_maths.network
 
 import android.net.Uri
 import android.os.Looper
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -25,7 +26,15 @@ import kotlin.concurrent.thread
 
 object Server {
 
-    val state: MutableLiveData<ConnectionStates> = MutableLiveData()
+    private val _state: MutableLiveData<ConnectionStates> = MutableLiveData()
+
+    val state: LiveData<ConnectionStates>
+        get() = _state
+
+    private val _onlineState: MutableLiveData<OnlineGameStates> = MutableLiveData()
+
+    val onlineState: LiveData<OnlineGameStates>
+        get() = _onlineState
 
     val clients: MutableList<Socket> = mutableListOf()
 
@@ -63,7 +72,7 @@ object Server {
 
         players.value!!.clear()
 
-        state.value = ConnectionStates.SERVER_CONNECTING
+        _state.value = ConnectionStates.SERVER_CONNECTING
         val newPlayers = players.value!!
         newPlayers.add(
             Player(
@@ -78,7 +87,7 @@ object Server {
         thread {
             try {
                 serverSocket = ServerSocket(SERVER_PORT)
-                state.postValue(ConnectionStates.SERVER_CONNECTED)
+                _state.postValue(ConnectionStates.SERVER_CONNECTED)
                 serverSocket.run {
                     while (true) {
                         println("Waiting for clients...")
@@ -95,7 +104,7 @@ object Server {
                 }
             } catch (e: Exception) {
                 println("Thread: " + e.message)
-                state.postValue(ConnectionStates.SERVER_ERROR)
+                _state.postValue(ConnectionStates.SERVER_ERROR)
             }
         }
     }
@@ -306,6 +315,22 @@ object Server {
     }
 
     fun updateTime(){
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_VIEWS)
+        }
+        updateViews(json)
+    }
+
+    fun levelFinished(){
+        _onlineState.postValue(OnlineGameStates.ALL_FINISHED_LEVEL)
+        val json = JSONObject().apply {
+            put("request", Requests.UPDATE_VIEWS)
+        }
+        updateViews(json)
+    }
+
+    fun gameOver(){
+        _onlineState.postValue(OnlineGameStates.ALL_GAME_OVER)
         val json = JSONObject().apply {
             put("request", Requests.UPDATE_VIEWS)
         }

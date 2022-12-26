@@ -18,6 +18,7 @@ import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentNewLevelBinding
 import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
@@ -81,9 +82,9 @@ class NewLevelFragment : Fragment() {
 
             binding.nextLevelTimer.text = "Waiting for other players to finish..."
 
-            Client.state.observe(viewLifecycleOwner){
+            Client.onlineState.observe(viewLifecycleOwner){
                 when(it){
-                    ConnectionStates.ALL_PLAYERS_FINISHED -> {
+                    OnlineGameStates.ALL_FINISHED_LEVEL -> {
                         startTimer()
                     }
                 }
@@ -94,9 +95,9 @@ class NewLevelFragment : Fragment() {
 
             binding.nextLevelTimer.text = "Waiting for other players to finish..."
 
-            Server.state.observe(viewLifecycleOwner){
+            Server.onlineState.observe(viewLifecycleOwner){
                 when(it){
-                    ConnectionStates.ALL_PLAYERS_FINISHED -> {
+                    OnlineGameStates.ALL_FINISHED_LEVEL  -> {
                         Server.startNewLevelTimers()
                         startTimer()
                     }

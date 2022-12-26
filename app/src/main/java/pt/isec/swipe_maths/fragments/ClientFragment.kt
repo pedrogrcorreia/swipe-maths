@@ -28,6 +28,7 @@ import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentClientBinding
 import pt.isec.swipe_maths.model.Player
 import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.utils.NetworkFragment
 import kotlin.concurrent.thread
 
@@ -78,7 +79,12 @@ class ClientFragment : Fragment() {
                     ).show()
                     startActivity(GameScreenActivity.getSingleModeIntentError(requireContext()))
                 }
-                ConnectionStates.START_GAME -> {
+            }
+        }
+
+        client.onlineState.observe(viewLifecycleOwner) {
+            when (it) {
+                OnlineGameStates.START_GAME -> {
                     startActivity(GameScreenActivity.getClientModeIntent(requireContext()))
                     activity?.finish()
                 }

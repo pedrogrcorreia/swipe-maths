@@ -87,28 +87,30 @@ object GameManagerServer {
     }
 
     // TODO add five points to first
-    fun verifyLevelFinish(){
+    private fun verifyLevelFinish() : Boolean {
         GameManager.games.postValue(games)
         for(game in games){
             if(game.gameStateData == GameStates.GAME_OVER){
                 continue
             }
             if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
-                return
+                return false
             }
         }
-        Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
-        verifyGameOver()
+//        Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
+//        verifyGameOver()
+        return true
     }
 
-    fun verifyGameOver(){
+    private fun verifyGameOver() : Boolean {
         GameManager.games.postValue(games)
         for(game in games){
             if(game.gameStateData != GameStates.GAME_OVER){
-                return
+                return false
             }
         }
-        Server.state.postValue(ConnectionStates.ALL_GAME_OVER)
+//        Server.state.postValue(ConnectionStates.ALL_GAME_OVER)
+        return true
     }
 
     fun resetNewLevelBoards(){
@@ -127,17 +129,28 @@ object GameManagerServer {
             }
 
             game.gameState.observeForever {
-                if(it == GameStates.GAME_OVER){
-                    verifyGameOver()
-                    // Warn players that a player lost
-                    val json = JSONObject().apply {
-                        put("request", Requests.UPDATE_VIEWS)
-                    }
-                    Server.updateViews(json)
-                    verifyLevelFinish()
-                }
                 if(it == GameStates.WAITING_FOR_LEVEL){
-                    verifyLevelFinish()
+                    if(verifyLevelFinish()){
+                        if(!verifyGameOver()){
+                            Server.levelFinished()
+                        }
+                    }
+                }
+                if(it == GameStates.GAME_OVER){
+                    if(verifyGameOver()){
+                       Server.gameOver()
+                    } else {
+                        if(verifyLevelFinish()){
+                            Server.levelFinished()
+                        }
+                    }
+//                    verifyGameOver()
+//                    // Warn players that a player lost
+//                    val json = JSONObject().apply {
+//                        put("request", Requests.UPDATE_VIEWS)
+//                    }
+//                    Server.updateViews(json)
+//                    verifyLevelFinish()
                 }
             }
         }

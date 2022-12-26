@@ -1,5 +1,6 @@
 package pt.isec.swipe_maths.network
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -20,14 +21,25 @@ import java.net.*
 import kotlin.concurrent.thread
 
 object Client : Serializable {
-    val state: MutableLiveData<ConnectionStates> = MutableLiveData(ConnectionStates.NO_CONNECTION)
+    private val _state: MutableLiveData<ConnectionStates> = MutableLiveData(ConnectionStates.NO_CONNECTION)
+
+    val state : LiveData<ConnectionStates>
+        get() = _state
 
     val players: MutableLiveData<MutableList<Player>> = MutableLiveData(mutableListOf())
 
-    val requestState: MutableLiveData<Requests> = MutableLiveData(Requests.NONE)
+    private val _requestState: MutableLiveData<Requests> = MutableLiveData(Requests.NONE)
 
-    val SERVER_PORT = 9999
-    val SERVER_PORT_EMULATOR = 9998
+    val requestState : LiveData<Requests>
+        get() = _requestState
+
+    private val _onlineState: MutableLiveData<OnlineGameStates> = MutableLiveData()
+
+    val onlineState: LiveData<OnlineGameStates>
+        get() = _onlineState
+
+    private const val SERVER_PORT = 9999
+    const val SERVER_PORT_EMULATOR = 9998
     val IP_ADDRESS = "10.0.2.2"
 
     private var socket: Socket? = null
@@ -53,7 +65,7 @@ object Client : Serializable {
 
         players.value!!.clear()
 
-        state.postValue(ConnectionStates.CLIENT_CONNECTING)
+        _state.postValue(ConnectionStates.CLIENT_CONNECTING)
 
         thread {
             try {
@@ -61,10 +73,10 @@ object Client : Serializable {
                 val serverSocket = Socket()
                 serverSocket.connect(InetSocketAddress(serverIP, serverPort), 5000)
                 serverThread(serverSocket)
-                state.postValue(ConnectionStates.CONNECTION_ESTABLISHED)
+                _state.postValue(ConnectionStates.CONNECTION_ESTABLISHED)
             } catch (e: Exception) {
                 println("Start Client Thread: " + e.message)
-                state.postValue(ConnectionStates.CONNECTION_ERROR)
+                _state.postValue(ConnectionStates.CONNECTION_ERROR)
             }
         }
     }
@@ -87,18 +99,18 @@ object Client : Serializable {
                         val json = JSONObject(message)
                         parseRequest(json)
                     }
-                    if(message == null){
-                        state.postValue(ConnectionStates.SERVER_ERROR)
-                        break
-                    }
+//                    if(message == null){
+//                        _state.postValue(ConnectionStates.SERVER_ERROR)
+//                        break
+//                    }
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
                 println("Thread: " + e.message)
-                state.postValue(ConnectionStates.SERVER_ERROR)
+                _state.postValue(ConnectionStates.SERVER_ERROR)
             } catch (e: SocketException) {
                 // TODO Exception here, client closed
-                state.postValue(ConnectionStates.NO_CONNECTION)
+                _state.postValue(ConnectionStates.SERVER_ERROR)
                 println("Thread " + e.message)
             } finally {
                 println("Closing from server socket!")
@@ -137,7 +149,7 @@ object Client : Serializable {
             str
         } catch (e: SocketTimeoutException) {
             e.message!!
-            state.postValue(ConnectionStates.NO_CONNECTION)
+            _state.postValue(ConnectionStates.NO_CONNECTION)
             return null
         }
     }
@@ -156,7 +168,7 @@ object Client : Serializable {
                     printStream.println(json)
                     printStream.flush()
                 } catch (_: Exception) {
-                    state.postValue(ConnectionStates.SERVER_ERROR)
+                    _state.postValue(ConnectionStates.SERVER_ERROR)
                 }
             }
         }
@@ -169,15 +181,15 @@ object Client : Serializable {
                 updatePlayersList(json)
             Requests.START_GAME.toString() -> {
                 updateViews(json)
-                requestState.postValue(Requests.START_GAME)
-                state.postValue(ConnectionStates.START_GAME)
+                _requestState.postValue(Requests.START_GAME)
+                _onlineState.postValue(OnlineGameStates.START_GAME)
             }
             Requests.NEW_LEVEL_STARTING.toString() -> {
-                state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
+                _onlineState.postValue(OnlineGameStates.ALL_FINISHED_LEVEL)
             }
             Requests.UPDATE_VIEWS.toString(), Requests.NEW_LEVEL.toString() -> {
                 updateViews(json)
-                requestState.postValue(Requests.UPDATE_VIEWS)
+                _requestState.postValue(Requests.UPDATE_VIEWS)
             }
         }
     }

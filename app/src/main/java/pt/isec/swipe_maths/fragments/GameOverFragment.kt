@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Server
 
 class GameOverFragment : Fragment() {
@@ -35,13 +36,13 @@ class GameOverFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        Server.state.observe(viewLifecycleOwner){
+        Server.onlineState.observe(viewLifecycleOwner){
             when(it){
-                ConnectionStates.ALL_PLAYERS_FINISHED -> {
+                OnlineGameStates.ALL_FINISHED_LEVEL -> {
                     Server.startNewLevelTimers()
                     startTimer()
                 }
-                ConnectionStates.ALL_GAME_OVER -> {
+                OnlineGameStates.ALL_GAME_OVER -> {
                     println("EVERYONE LOST!!!!")
                 }
             }

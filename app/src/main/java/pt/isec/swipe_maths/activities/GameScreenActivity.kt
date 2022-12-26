@@ -24,6 +24,7 @@ import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.network.Client
+import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.utils.FirestoreUtils
@@ -97,6 +98,14 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 client.requestState.observe(this){
                     when(it){
                         Requests.START_GAME, Requests.UPDATE_VIEWS -> viewModel.updateGame(GameManager.game)
+                    }
+                }
+                client.onlineState.observe(this){
+                    when(it){
+                        OnlineGameStates.START_GAME -> viewModel.updateGame(GameManager.game)
+//                        OnlineGameStates.PLAYING -> TODO()
+//                        OnlineGameStates.ALL_FINISHED_LEVEL -> TODO()
+//                        OnlineGameStates.ALL_GAME_OVER -> TODO()
                     }
                 }
                 client.state.observe(this){
