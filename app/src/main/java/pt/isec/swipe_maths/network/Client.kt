@@ -180,7 +180,7 @@ object Client : Serializable {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json)
             Requests.START_GAME.toString() -> {
-                _requestState.postValue(Requests.START_GAME)
+//                _requestState.postValue(Requests.START_GAME)
                 _onlineState.postValue(OnlineGameStates.START_GAME)
                 updateViews(json)
             }
@@ -188,12 +188,13 @@ object Client : Serializable {
                 _onlineState.postValue(OnlineGameStates.ALL_FINISHED_LEVEL)
             }
             Requests.UPDATE_VIEWS.toString() -> {
-                _requestState.postValue(Requests.UPDATE_VIEWS)
+//                _requestState.postValue(Requests.UPDATE_VIEWS)
+                _onlineState.postValue(OnlineGameStates.PLAYING)
                 updateViews(json)
             }
             Requests.NEW_LEVEL.toString() -> {
                 _onlineState.postValue(OnlineGameStates.PLAYING)
-                _requestState.postValue(Requests.UPDATE_VIEWS)
+//                _requestState.postValue(Requests.UPDATE_VIEWS)
                 updateViews(json)
             }
         }
@@ -243,5 +244,6 @@ object Client : Serializable {
             val game = gson.fromJson(games.get(i).toString(), Game::class.java)
             GameManagerClient.updatePlayer(game)
         }
+        _requestState.postValue(Requests.UPDATE_VIEWS)
     }
 }

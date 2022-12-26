@@ -97,12 +97,14 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 client = Client
                 client.requestState.observe(this){
                     when(it){
-                        Requests.START_GAME, Requests.UPDATE_VIEWS -> viewModel.updateGame(GameManager.game)
+                        Requests.START_GAME, Requests.UPDATE_VIEWS ->
+                            viewModel.updateGame(GameManager.game)
                     }
                 }
                 client.onlineState.observe(this){
                     when(it){
-                        OnlineGameStates.START_GAME -> viewModel.updateGame(GameManager.game)
+                        OnlineGameStates.START_GAME, OnlineGameStates.PLAYING ->
+                            viewModel.updateGame(GameManager.game)
 //                        OnlineGameStates.PLAYING -> TODO()
 //                        OnlineGameStates.ALL_FINISHED_LEVEL -> TODO()
 //                        OnlineGameStates.ALL_GAME_OVER -> TODO()

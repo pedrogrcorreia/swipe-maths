@@ -86,8 +86,15 @@ class NewLevelFragment : Fragment() {
             Client.onlineState.observe(viewLifecycleOwner){
                 when(it){
                     OnlineGameStates.ALL_FINISHED_LEVEL -> {
+                        binding.nextLevelTimer.text = "All finished, game is starting soon."
                         startTimer()
                     }
+                }
+            }
+            viewModel.state.observe(viewLifecycleOwner){
+                when(it){
+                    GameStates.PLAYING -> findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
+//                    GameStates.GAME_OVER -> findNavController().navigate(R.id.action_gameBoardFragment_to_gameOverFragment)
                 }
             }
         } else if(GameScreenActivity.mode == GameScreenActivity.SERVER_MODE){
@@ -117,8 +124,8 @@ class NewLevelFragment : Fragment() {
                 context.let {
                     if(GameScreenActivity.mode != GameScreenActivity.CLIENT_MODE) {
                         actBase!!.timesUp()
+                        findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
                     }
-                    findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
                 }
             }
         }.start()
