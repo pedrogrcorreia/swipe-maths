@@ -152,9 +152,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 GameStates.GAME_OVER -> {
                     if(mode == SINGLE_MODE) {
                         FirestoreUtils.addGame(
-                            viewModel.points.value!!,
-                            viewModel.totalTime,
-                            auth.currentUser!!.email!!
+                            GameManager.game
                         )
                         AlertDialog.Builder(this)
                             .setTitle("Game over")
