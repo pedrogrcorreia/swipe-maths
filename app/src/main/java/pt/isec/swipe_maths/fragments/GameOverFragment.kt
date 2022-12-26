@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Server
+import pt.isec.swipe_maths.utils.FirestoreUtils
 
 class GameOverFragment : Fragment() {
 
@@ -43,7 +45,9 @@ class GameOverFragment : Fragment() {
                     startTimer()
                 }
                 OnlineGameStates.ALL_GAME_OVER -> {
-                    println("EVERYONE LOST!!!!")
+                    FirestoreUtils.addGames(
+                        GameManager.games.value!!
+                    )
                 }
             }
         }
