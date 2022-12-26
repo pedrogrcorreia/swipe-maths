@@ -163,6 +163,7 @@ object Client : Serializable {
     }
 
     private fun parseRequest(json: JSONObject) {
+        println(json.getString("request"))
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json)
@@ -223,6 +224,7 @@ object Client : Serializable {
         val games = json.getJSONArray("games")
         for(i in 0 until games.length()){
             val game = gson.fromJson(games.get(i).toString(), Game::class.java)
+            println(game)
             GameManagerClient.updatePlayer(game)
         }
     }

@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder
 import org.json.JSONArray
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
+import pt.isec.swipe_maths.GameStates
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
 import pt.isec.swipe_maths.model.GameManagerServer
@@ -289,9 +290,11 @@ object Server {
             add(Board(GameManager.game.levelData.nextLevel))
         }
         for(game in GameManagerServer.games){
-            game.newLevel()
-            game.apply {
-                plays = 0
+            if(game.gameStateData != GameStates.GAME_OVER) {
+                game.newLevel()
+                game.apply {
+                    plays = 0
+                }
             }
         }
         GameManagerServer.resetNewLevelBoards()

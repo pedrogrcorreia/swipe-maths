@@ -4,30 +4,31 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
-import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.databinding.ActivityGameScreenBinding
+import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
-import pt.isec.swipe_maths.model.GameManagerClient
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.Requests
-import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.network.Server
+import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.views.GameViewModel
+
 
 class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFragment {
     companion object {
@@ -144,18 +145,18 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                             viewModel.totalTime,
                             auth.currentUser!!.email!!
                         )
+                        AlertDialog.Builder(this)
+                            .setTitle("Game over")
+                            .setMessage("You ran out of time!")
+                            .setPositiveButton("Play Again") { _: DialogInterface, _: Int ->
+                                finish()
+                                startActivity(this.intent)
+                            }
+                            .setNegativeButton("Exit") { _: DialogInterface, _: Int ->
+                                finish()
+                            }
+                            .show()
                     }
-                    AlertDialog.Builder(this)
-                        .setTitle("Game over")
-                        .setMessage("You ran out of time!")
-                        .setPositiveButton("Play Again"){ _: DialogInterface, _: Int ->
-                            finish()
-                            startActivity(this.intent)
-                        }
-                        .setNegativeButton("Exit"){ _: DialogInterface, _: Int ->
-                            finish()
-                        }
-                        .show()
                 }
             }
         }

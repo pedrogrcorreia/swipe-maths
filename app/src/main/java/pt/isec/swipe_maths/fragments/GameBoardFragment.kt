@@ -73,13 +73,10 @@ private val viewModel by lazy{
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.state.observe(viewLifecycleOwner){
-            if(it == GameStates.WAITING_FOR_LEVEL){
-                findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
+            when(it){
+                GameStates.WAITING_FOR_LEVEL -> findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
+                GameStates.GAME_OVER -> findNavController().navigate(R.id.action_gameBoardFragment_to_gameOverFragment)
             }
-        }
-
-        viewModel.board.observe(viewLifecycleOwner){
-            binding.sq00.text = viewModel.board.value?.lines?.get(0)?.numbers?.get(0).toString()
         }
 
         fillSquares()

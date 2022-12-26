@@ -37,7 +37,6 @@ object GameManagerServer {
             put("request", Requests.UPDATE_VIEWS)
         }
         Server.updateViews(json)
-        verifyLevelFinish()
         return result
     }
 
@@ -55,7 +54,6 @@ object GameManagerServer {
             put("request", Requests.UPDATE_VIEWS)
         }
         Server.updateViews(json)
-        verifyLevelFinish()
         return result
     }
 
@@ -65,14 +63,12 @@ object GameManagerServer {
         GameManager.game.apply {
             plays++
         }
-        println("Server played a row!")
         if(GameManager.game.plays == boardsList.size){
             newBoard(Board(GameManager.game.levelData))
             result = GameManager.game.isCorrectLine(row, true, boardsList.last())
         }else{
             result = GameManager.game.isCorrectLine(row, true, boardsList[GameManager.game.plays])
         }
-        verifyLevelFinish()
         return result
     }
 
@@ -87,7 +83,6 @@ object GameManagerServer {
         }else{
             result = GameManager.game.isCorrectColumn(col, true, boardsList[GameManager.game.plays])
         }
-        verifyLevelFinish()
         return result
     }
 
@@ -95,12 +90,25 @@ object GameManagerServer {
     fun verifyLevelFinish(){
         GameManager.games.postValue(games)
         for(game in games){
-            println("${game.player.name} ${game.gameStateData}")
+            if(game.gameStateData == GameStates.GAME_OVER){
+                continue
+            }
             if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
                 return
             }
         }
         Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
+        verifyGameOver()
+    }
+
+    fun verifyGameOver(){
+        GameManager.games.postValue(games)
+        for(game in games){
+            if(game.gameStateData != GameStates.GAME_OVER){
+                return
+            }
+        }
+        Server.state.postValue(ConnectionStates.ALL_GAME_OVER)
     }
 
     fun resetNewLevelBoards(){
@@ -115,6 +123,21 @@ object GameManagerServer {
                 if(game.player != Player.mySelf) {
                     Server.updateTime()
                     GameManager.games.postValue(games)
+                }
+            }
+
+            game.gameState.observeForever {
+                if(it == GameStates.GAME_OVER){
+                    verifyGameOver()
+                    // Warn players that a player lost
+                    val json = JSONObject().apply {
+                        put("request", Requests.UPDATE_VIEWS)
+                    }
+                    Server.updateViews(json)
+                    verifyLevelFinish()
+                }
+                if(it == GameStates.WAITING_FOR_LEVEL){
+                    verifyLevelFinish()
                 }
             }
         }

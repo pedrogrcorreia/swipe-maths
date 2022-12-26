@@ -14,5 +14,6 @@ enum class ConnectionStates {
     START_GAME,
     WAITING_FOR_ALL_PLAYERS,
     ALL_PLAYERS_FINISHED,
+    ALL_GAME_OVER,
     UPDATE_PLAYERS_LIST
 }
