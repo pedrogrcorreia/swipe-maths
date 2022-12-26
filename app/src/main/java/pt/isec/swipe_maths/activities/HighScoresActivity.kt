@@ -44,7 +44,7 @@ class HighScoresActivity : AppCompatActivity() {
         super.onStart()
         scope.launch {
             val job = launch {
-                highscores = ArrayList(FirestoreUtils.highscoresSinglePlayer())
+                highscores = ArrayList(FirestoreUtils.highscoresMultiPlayer())
             }
             if(job.isActive){
                 runOnUiThread {
