@@ -234,7 +234,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         if(GameScreenActivity.mode == SERVER_MODE){
             Server.startNewLevel()
         }
-        else {
+        else if(GameScreenActivity.mode != CLIENT_MODE) {
             viewModel.nextLevelTimerUp()
         }
     }

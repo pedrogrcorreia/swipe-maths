@@ -19,6 +19,7 @@ import pt.isec.swipe_maths.activities.GameScreenActivity
 import pt.isec.swipe_maths.databinding.FragmentNewLevelBinding
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.OnlineGameStates
+import pt.isec.swipe_maths.network.Requests
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.views.GameViewModel
 
@@ -114,7 +115,9 @@ class NewLevelFragment : Fragment() {
             }
             override fun onFinish() {
                 context.let {
-                    actBase!!.timesUp()
+                    if(GameScreenActivity.mode != GameScreenActivity.CLIENT_MODE) {
+                        actBase!!.timesUp()
+                    }
                     findNavController().navigate(R.id.action_newLevelFragment_to_gameBoardFragment)
                 }
             }

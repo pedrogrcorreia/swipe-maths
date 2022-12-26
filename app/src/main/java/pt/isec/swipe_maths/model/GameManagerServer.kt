@@ -12,6 +12,8 @@ object GameManagerServer {
     var games : MutableList<Game> = mutableListOf(GameManager.game)
     var boardsList = mutableListOf<Board>()
 
+    var currentLevel = GameManager.game.levelData
+
     fun addNewPlayer(player: Player){
         games.add(Game(player))
         games.last().apply {
@@ -28,7 +30,7 @@ object GameManagerServer {
         var result : Boolean
         playerGame.apply { plays++ }
         if(playerGame.plays == boardsList.size){
-            newBoard(Board(GameManager.game.levelData))
+            newBoard(Board(playerGame.levelData))
             result = playerGame.isCorrectLine(row, true, boardsList.last())
         } else{
             result = playerGame.isCorrectLine(row, true, boardsList[playerGame.plays])
@@ -45,7 +47,7 @@ object GameManagerServer {
         var result : Boolean
         playerGame.apply { plays++ }
         if(playerGame.plays == boardsList.size){
-            newBoard(Board(GameManager.game.levelData))
+            newBoard(Board(playerGame.levelData))
             result = playerGame.isCorrectColumn(col, true, boardsList.last())
         } else{
             result = playerGame.isCorrectColumn(col, true, boardsList[playerGame.plays])
@@ -96,6 +98,7 @@ object GameManagerServer {
             if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
                 return false
             }
+            currentLevel = game.levelData
         }
 //        Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
 //        verifyGameOver()
@@ -122,10 +125,10 @@ object GameManagerServer {
     fun watchTimers(){
         for(game in games){
             game.remainingTime.observeForever{
-                if(game.player != Player.mySelf) {
+//                if(game.player != Player.mySelf) {
                     Server.updateTime()
                     GameManager.games.postValue(games)
-                }
+//                }
             }
 
             game.gameState.observeForever {
@@ -144,13 +147,6 @@ object GameManagerServer {
                             Server.levelFinished()
                         }
                     }
-//                    verifyGameOver()
-//                    // Warn players that a player lost
-//                    val json = JSONObject().apply {
-//                        put("request", Requests.UPDATE_VIEWS)
-//                    }
-//                    Server.updateViews(json)
-//                    verifyLevelFinish()
                 }
             }
         }

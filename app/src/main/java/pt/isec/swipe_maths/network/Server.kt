@@ -296,7 +296,7 @@ object Server {
     fun startNewLevel(){
         GameManagerServer.boardsList.run {
             clear()
-            add(Board(GameManager.game.levelData.nextLevel))
+            add(Board(GameManagerServer.currentLevel.nextLevel))
         }
         for(game in GameManagerServer.games){
             if(game.gameStateData != GameStates.GAME_OVER) {

@@ -31,7 +31,6 @@ class PlayersInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPlayersInfoBinding.inflate(inflater, container, false)
-        // Inflate the layout for this fragment
 
         var gamesList = binding.playerInfoList
 
@@ -44,7 +43,6 @@ class PlayersInfoFragment : Fragment() {
         gamesList.adapter = listAdapter
 
         GameManager.games.observe(viewLifecycleOwner){
-            println("Update list!")
             listAdapter.notifyDataSetChanged()
         }
 
