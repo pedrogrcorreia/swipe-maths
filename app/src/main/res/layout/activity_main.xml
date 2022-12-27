@@ -7,18 +7,80 @@
     tools:context=".activities.MainActivity"
     android:id="@+id/frLayout">
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/settings"
+        android:background="null"
+        android:textSize="24sp"
+        android:padding="16dp"
+        android:layout_margin="8dp"
+        android:layout_gravity="top|end"
+        android:id="@+id/userProfile"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:weightSum="4"
         android:orientation="vertical">
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="32dp"
-            android:textSize="32sp"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/welcome"
-            android:id="@+id/welcomeTxt"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginVertical="30dp"
+            android:layout_gravity="center_horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"
+                    android:fontFamily="@font/reach_story"
+                    android:text="@string/swipe"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"
+                    android:fontFamily="@font/reach_story"
+                    android:text="@string/maths"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal">
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/teste"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="32dp"
+                app:autoSizeMaxTextSize="56dp"
+                app:autoSizeMinTextSize="16dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/coolvetica_condensed_rg"
+                android:text="@string/welcome"
+                android:id="@+id/welcomeTxt"/>
+        </LinearLayout>
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_button"
             android:layout_width="wrap_content"
@@ -78,14 +140,6 @@
             android:padding="16dp"
             android:layout_margin="8dp"
             android:id="@+id/multiPlayer"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/profile"
-            android:textSize="24sp"
-            android:padding="16dp"
-            android:layout_margin="8dp"
-            android:id="@+id/userProfile"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

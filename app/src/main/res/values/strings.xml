@@ -53,4 +53,6 @@
     <string name="btn_cancel">Cancel</string>
     <string name="points_list">%d pts</string>
     <string name="time_left_list">%d s</string>
+    <string name="swipe">Swipe</string>
+    <string name="maths">Maths</string>
 </resources>
