@@ -18,7 +18,7 @@
     <string name="levelProgress">%d of %d</string>
     <string name="levelProgressInfo">Correct answers to next level</string>
     <string name="points">Points: %d</string>
-    <string name="welcome">Welcome, %s</string>
+    <string name="welcome">%s</string>
     <string name="high_scores">High Scores</string>
     <string name="sign_in_with_email">Sign in with email</string>
     <string name="logout">Logout</string>

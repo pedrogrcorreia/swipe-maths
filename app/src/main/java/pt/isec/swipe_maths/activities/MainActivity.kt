@@ -13,6 +13,8 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -281,12 +283,18 @@ class MainActivity : AppCompatActivity() {
             binding.logoutBtn.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.VISIBLE
             binding.welcomeTxt.text = getString(R.string.welcome, auth.currentUser!!.displayName)
+            Glide.with(this)
+                .load(auth.currentUser!!.photoUrl)
+                .apply(RequestOptions().circleCrop())
+                .into(binding.userPhoto)
+
         } else {
             binding.emailButton.visibility = View.VISIBLE
             binding.googleButton.visibility = View.VISIBLE
             binding.signUpButton.visibility = View.VISIBLE
             binding.welcomeTxt.visibility = View.GONE
             binding.logoutBtn.visibility = View.GONE
+            binding.userPhoto.visibility = View.GONE
         }
     }
 
