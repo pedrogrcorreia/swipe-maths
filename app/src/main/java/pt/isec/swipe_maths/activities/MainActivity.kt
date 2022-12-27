@@ -145,24 +145,6 @@ class MainActivity : AppCompatActivity() {
 //            signInWithGoogle.launch(googleSignInClient.signInIntent)
 //        }
 
-//        binding.logoutBtn.setOnClickListener {
-//            scope.launch {
-//                val job = launch {
-//                    val token = auth.currentUser?.getIdToken(false)?.await()
-//                    if(token?.signInProvider == GoogleAuthProvider.PROVIDER_ID){
-//                        googleSignInClient.signOut().await()
-//                    }
-//                    auth.signOut()
-//                    loadingDialog.dismiss()
-//                }
-//
-//                if (job.isActive) {
-//                    runOnUiThread {
-//                        loadingDialog.show()
-//                    }
-//                }
-//            }
-//        }
 
         binding.highScores.setOnClickListener {
             startActivity(HighScoresActivity.getIntent(this))
@@ -284,6 +266,7 @@ class MainActivity : AppCompatActivity() {
                 .into(binding.userPhoto)
             binding.loginLayout.visibility = View.GONE
             binding.cardViewUser.visibility = View.VISIBLE
+            binding.userProfile.visibility = View.VISIBLE
         } else {
             binding.loginLayout.visibility = View.VISIBLE
             binding.cardViewUser.visibility = View.GONE

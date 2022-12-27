@@ -47,6 +47,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private var newPhotoUrl : Uri? = null
 
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         storage = Firebase.storage
@@ -84,6 +86,23 @@ class ProfileActivity : AppCompatActivity() {
                 checkNewInfo()
             }
 
+        }
+
+        binding.logoutBtn.setOnClickListener {
+            val auth = Firebase.auth
+            scope.launch {
+                val job = launch {
+                    auth.signOut()
+                    loadingDialog.dismiss()
+                }
+
+                if (job.isActive) {
+                    runOnUiThread {
+                        loadingDialog.show()
+                        finish()
+                    }
+                }
+            }
         }
 
         verifyPermissions()
