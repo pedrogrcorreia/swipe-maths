@@ -20,7 +20,7 @@
     <string name="points">Points: %d</string>
     <string name="welcome">%s</string>
     <string name="high_scores">High Scores</string>
-    <string name="sign_in_with_email">Sign in with email</string>
+    <string name="sign_in_with_email">Login</string>
     <string name="logout">Logout</string>
     <string name="sign_up">Sign up</string>
     <string name="first_name">First name:</string>

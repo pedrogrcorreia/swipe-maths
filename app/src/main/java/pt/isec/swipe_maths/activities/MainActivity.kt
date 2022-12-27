@@ -141,28 +141,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.googleButton.setOnClickListener {
-            signInWithGoogle.launch(googleSignInClient.signInIntent)
-        }
+//        binding.googleButton.setOnClickListener {
+//            signInWithGoogle.launch(googleSignInClient.signInIntent)
+//        }
 
-        binding.logoutBtn.setOnClickListener {
-            scope.launch {
-                val job = launch {
-                    val token = auth.currentUser?.getIdToken(false)?.await()
-                    if(token?.signInProvider == GoogleAuthProvider.PROVIDER_ID){
-                        googleSignInClient.signOut().await()
-                    }
-                    auth.signOut()
-                    loadingDialog.dismiss()
-                }
-
-                if (job.isActive) {
-                    runOnUiThread {
-                        loadingDialog.show()
-                    }
-                }
-            }
-        }
+//        binding.logoutBtn.setOnClickListener {
+//            scope.launch {
+//                val job = launch {
+//                    val token = auth.currentUser?.getIdToken(false)?.await()
+//                    if(token?.signInProvider == GoogleAuthProvider.PROVIDER_ID){
+//                        googleSignInClient.signOut().await()
+//                    }
+//                    auth.signOut()
+//                    loadingDialog.dismiss()
+//                }
+//
+//                if (job.isActive) {
+//                    runOnUiThread {
+//                        loadingDialog.show()
+//                    }
+//                }
+//            }
+//        }
 
         binding.highScores.setOnClickListener {
             startActivity(HighScoresActivity.getIntent(this))
@@ -277,24 +277,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(){
         if(auth.currentUser != null){
-            binding.emailButton.visibility = View.GONE
-            binding.googleButton.visibility = View.GONE
-            binding.signUpButton.visibility = View.GONE
-            binding.logoutBtn.visibility = View.VISIBLE
-            binding.welcomeTxt.visibility = View.VISIBLE
             binding.welcomeTxt.text = getString(R.string.welcome, auth.currentUser!!.displayName)
             Glide.with(this)
                 .load(auth.currentUser!!.photoUrl)
                 .apply(RequestOptions().circleCrop())
                 .into(binding.userPhoto)
-
+            binding.loginLayout.visibility = View.GONE
+            binding.cardViewUser.visibility = View.VISIBLE
         } else {
-            binding.emailButton.visibility = View.VISIBLE
-            binding.googleButton.visibility = View.VISIBLE
-            binding.signUpButton.visibility = View.VISIBLE
-            binding.welcomeTxt.visibility = View.GONE
-            binding.logoutBtn.visibility = View.GONE
-            binding.userPhoto.visibility = View.GONE
+            binding.loginLayout.visibility = View.VISIBLE
+            binding.cardViewUser.visibility = View.GONE
+            binding.userProfile.visibility = View.INVISIBLE
         }
     }
 
