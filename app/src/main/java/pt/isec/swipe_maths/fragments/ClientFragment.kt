@@ -3,6 +3,7 @@ package pt.isec.swipe_maths.fragments
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -158,6 +159,15 @@ class ClientFragment : Fragment() {
 
         binding.btnEmulator.setOnClickListener {
             client.startClient(serverPort = client.SERVER_PORT_EMULATOR)
+        }
+
+        binding.btnConnect.setOnClickListener {
+            val strIP = binding.edtIpAddress.text.toString()
+            if (strIP.isEmpty() || !Patterns.IP_ADDRESS.matcher(strIP).matches()) {
+                Toast.makeText(requireContext(), R.string.error_message, Toast.LENGTH_LONG).show()
+            } else {
+                Client.startClient(strIP)
+            }
         }
 
 
