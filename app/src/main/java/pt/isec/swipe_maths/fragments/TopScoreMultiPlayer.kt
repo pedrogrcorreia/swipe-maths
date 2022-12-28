@@ -37,18 +37,89 @@ class TopScoreMultiPlayer : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+    private var pointsOrder = true
+        set(value) {
+            field = value
+            if(value){
+                binding.points.setBackgroundResource(R.color.selected_text)
+                binding.timeLeft.setBackgroundResource(R.color.white)
+            } else{
+                binding.points.setBackgroundResource(R.color.white)
+                binding.timeLeft.setBackgroundResource(R.color.selected_text)
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTopScoreMultiPlayerBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-        scope.launch {
-            val job = launch {
-                FirestoreUtils.getMultiplayerGame("awyUc47o72XDsBv7jyp5")
+        pointsOrder = true
+        binding.points.setOnClickListener {
+            if(pointsOrder){
+                return@setOnClickListener
+            } else{
+                scope.launch {
+                    val job = launch {
+                        highscores = ArrayList(FirestoreUtils.highscoresMultiPlayer())
+                    }
+                    if (job.isActive) {
+                        requireActivity().runOnUiThread {
+                            loadingDialog.show()
+                        }
+                    }
+                }.invokeOnCompletion {
+                    requireActivity().runOnUiThread {
+                        var highScoresList = binding.rvSinglePlayer
+                        highScoresList.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.VERTICAL,
+                            false
+                        )
+                        highScoresList.adapter =
+                            HighScoresListAdapter(highscores, requireContext()){
+                                gameId -> createRecyclerDialog(gameId)
+                            }
+                        loadingDialog.dismiss()
+                        pointsOrder = true
+                    }
+                }
             }
-        }.invokeOnCompletion {
         }
+
+        binding.timeLeft.setOnClickListener {
+            if(!pointsOrder){
+                return@setOnClickListener
+            } else{
+                scope.launch {
+                    val job = launch {
+                        highscores = ArrayList(FirestoreUtils.highscoresMultiPlayerTimeOrder())
+                    }
+                    if (job.isActive) {
+                        requireActivity().runOnUiThread {
+                            loadingDialog.show()
+                        }
+                    }
+                }.invokeOnCompletion {
+                    requireActivity().runOnUiThread {
+                        var highScoresList = binding.rvSinglePlayer
+                        highScoresList.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.VERTICAL,
+                            false
+                        )
+                        highScoresList.adapter =
+                            HighScoresListAdapter(highscores, requireContext()){
+                                gameId -> createRecyclerDialog(gameId)
+                            }
+                        loadingDialog.dismiss()
+                        pointsOrder = false
+                    }
+                }
+            }
+        }
+        return binding.root
 
         return binding.root
     }

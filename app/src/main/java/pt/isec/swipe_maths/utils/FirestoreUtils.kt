@@ -79,55 +79,6 @@ class FirestoreUtils {
             return gamesList
         }
 
-        suspend fun highscoresMultiPlayer(): List<OnlineGame> {
-            val db = Firebase.firestore
-
-            val gamesList = mutableListOf<OnlineGame>()
-
-            val querySnapshot = db.collection("highscores-multiplayer")
-                .orderBy("score", Query.Direction.DESCENDING)
-                .limit(5)
-                .get().await()
-
-            for (doc in querySnapshot) {
-                gamesList.add(
-                    OnlineGame(
-                        doc.id,
-                        doc.get("score").toString().toInt(),
-                        doc.get("time").toString().toInt()
-                    )
-                )
-            }
-
-            return gamesList
-        }
-
-        suspend fun getMultiplayerGame(gameId : String) : List<SinglePlayerGame> {
-            val db = Firebase.firestore
-
-            val playersList = mutableListOf<SinglePlayerGame>()
-
-            val docRef = db.collection("highscores-multiplayer")
-                .document(gameId)
-
-            val doc = docRef.get().await()
-
-            val players = doc.get("players") as ArrayList<Map<*, *>>
-
-            for(player in players){
-               playersList.add(
-                   SinglePlayerGame(
-                       player["username"].toString(),
-                       player["score"].toString().toInt(),
-                       player["time"].toString().toInt(),
-                       player["photoUrl"].toString()
-                   )
-               )
-            }
-
-            return playersList
-        }
-
         suspend fun highscoresSinglePlayerTimeOrder(): List<SinglePlayerGame> {
             val db = Firebase.firestore
             val gamesList = mutableListOf<SinglePlayerGame>()
@@ -153,7 +104,81 @@ class FirestoreUtils {
             }
             return gamesList
         }
+
+        suspend fun highscoresMultiPlayer(): List<OnlineGame> {
+            val db = Firebase.firestore
+
+            val gamesList = mutableListOf<OnlineGame>()
+
+            val querySnapshot = db.collection("highscores-multiplayer")
+                .orderBy("score", Query.Direction.DESCENDING)
+                .limit(5)
+                .get().await()
+
+            for (doc in querySnapshot) {
+                gamesList.add(
+                    OnlineGame(
+                        doc.id,
+                        doc.get("time").toString().toInt(),
+                        doc.get("score").toString().toInt()
+                    )
+                )
+            }
+
+            return gamesList
+        }
+
+        suspend fun highscoresMultiPlayerTimeOrder(): List<OnlineGame> {
+            val db = Firebase.firestore
+
+            val gamesList = mutableListOf<OnlineGame>()
+
+            val querySnapshot = db.collection("highscores-multiplayer")
+                .orderBy("time", Query.Direction.DESCENDING)
+                .limit(5)
+                .get().await()
+
+            for (doc in querySnapshot) {
+                gamesList.add(
+                    OnlineGame(
+                        doc.id,
+                        doc.get("time").toString().toInt(),
+                        doc.get("score").toString().toInt()
+                    )
+                )
+            }
+
+            return gamesList
+        }
+
+        suspend fun getMultiplayerGame(gameId: String): List<SinglePlayerGame> {
+            val db = Firebase.firestore
+
+            val playersList = mutableListOf<SinglePlayerGame>()
+
+            val docRef = db.collection("highscores-multiplayer")
+                .document(gameId)
+
+            val doc = docRef.get().await()
+
+            val players = doc.get("players") as ArrayList<Map<*, *>>
+
+            for (player in players) {
+                playersList.add(
+                    SinglePlayerGame(
+                        player["username"].toString(),
+                        player["score"].toString().toInt(),
+                        player["time"].toString().toInt(),
+                        player["photoUrl"].toString()
+                    )
+                )
+            }
+
+            return playersList
+        }
     }
+
+
 }
 
 data class OnlineGame(val gameId: String?, val totalTime: Int, val totalScore: Int) : Parcelable {
