@@ -53,32 +53,6 @@ class FirestoreUtils {
             db.collection("highscores-multiplayer").document().set(onlineGame)
         }
 
-        suspend fun highscoresMultiPlayer(): List<SinglePlayerGame> {
-            val db = Firebase.firestore
-
-            val gamesList = mutableListOf<SinglePlayerGame>()
-
-            val querySnapshot = db.collection("highscores-multiplayer")
-                .orderBy("score", Query.Direction.DESCENDING)
-                .limit(5)
-                .get().await()
-
-            for (doc in querySnapshot) {
-                gamesList.add(
-                    SinglePlayerGame(
-                        "Multiplayer Game",
-                        doc.get("time").toString().toInt(),
-                        doc.get("score").toString().toInt(),
-                        if (doc.get("photoUrl")
-                                .toString() == "null"
-                        ) Resources.getSystem().getString(R.string.default_pic_uri) else doc.get("photoUrl").toString()
-                    )
-                )
-            }
-
-            return gamesList
-        }
-
         suspend fun highscoresSinglePlayer(): List<SinglePlayerGame> {
             val db = Firebase.firestore
             val gamesList = mutableListOf<SinglePlayerGame>()
@@ -103,6 +77,55 @@ class FirestoreUtils {
                 )
             }
             return gamesList
+        }
+
+        suspend fun highscoresMultiPlayer(): List<OnlineGame> {
+            val db = Firebase.firestore
+
+            val gamesList = mutableListOf<OnlineGame>()
+
+            val querySnapshot = db.collection("highscores-multiplayer")
+                .orderBy("score", Query.Direction.DESCENDING)
+                .limit(5)
+                .get().await()
+
+            for (doc in querySnapshot) {
+                gamesList.add(
+                    OnlineGame(
+                        doc.id,
+                        doc.get("score").toString().toInt(),
+                        doc.get("time").toString().toInt()
+                    )
+                )
+            }
+
+            return gamesList
+        }
+
+        suspend fun getMultiplayerGame(gameId : String) : List<SinglePlayerGame> {
+            val db = Firebase.firestore
+
+            val playersList = mutableListOf<SinglePlayerGame>()
+
+            val docRef = db.collection("highscores-multiplayer")
+                .document(gameId)
+
+            val doc = docRef.get().await()
+
+            val players = doc.get("players") as ArrayList<Map<*, *>>
+
+            for(player in players){
+               playersList.add(
+                   SinglePlayerGame(
+                       player["username"].toString(),
+                       player["score"].toString().toInt(),
+                       player["time"].toString().toInt(),
+                       player["photoUrl"].toString()
+                   )
+               )
+            }
+
+            return playersList
         }
 
         suspend fun highscoresSinglePlayerTimeOrder(): List<SinglePlayerGame> {
@@ -133,14 +156,16 @@ class FirestoreUtils {
     }
 }
 
-data class OnlineGame(val totalTime: Int, val totalScore: Int) : Parcelable {
+data class OnlineGame(val gameId: String?, val totalTime: Int, val totalScore: Int) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
         parcel.readInt(),
         parcel.readInt()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(gameId)
         parcel.writeInt(totalTime)
         parcel.writeInt(totalScore)
     }

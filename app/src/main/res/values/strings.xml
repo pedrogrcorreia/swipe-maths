@@ -50,6 +50,7 @@
     <string name="update_profile">Update profile</string>
     <string name="changes_warning">You have unsaved changes!</string>
     <string name="default_pic_uri"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fdefault_pic.jpeg?alt=media&token=86be326f-53dd-4d5e-b281-f906abd7c26d]]></string>
+    <string name="default_online_uri"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fonline_game.png?alt=media&token=5afe8d98-45fc-40a7-b606-bd1e93150eb1]]></string>
     <string name="btn_cancel">Cancel</string>
     <string name="points_list">%d pts</string>
     <string name="time_left_list">%d s</string>
