@@ -1,16 +1,18 @@
 package pt.isec.swipe_maths.utils
 
+import android.content.res.Resources
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.model.Game
 
 class FirestoreUtils {
     companion object {
-        fun addGame(game: Game){
+        fun addGame(game: Game) {
 
             val db = Firebase.firestore
             val highscore = hashMapOf(
@@ -23,14 +25,14 @@ class FirestoreUtils {
             db.collection("highscores-singleplayer").document().set(highscore)
         }
 
-        fun addGames(games: List<Game>){
+        fun addGames(games: List<Game>) {
             val db = Firebase.firestore
 
             val highscores: MutableList<HashMap<String, Any?>> = mutableListOf()
 
             var allPoints = 0
             var allTime = 0
-            for(game in games){
+            for (game in games) {
                 val highscore = hashMapOf<String, Any?>(
                     "score" to game.pointsData,
                     "time" to game.totalTime,
@@ -51,7 +53,7 @@ class FirestoreUtils {
             db.collection("highscores-multiplayer").document().set(onlineGame)
         }
 
-        suspend fun highscoresMultiPlayer() : List<SinglePlayerGame>{
+        suspend fun highscoresMultiPlayer(): List<SinglePlayerGame> {
             val db = Firebase.firestore
 
             val gamesList = mutableListOf<SinglePlayerGame>()
@@ -61,12 +63,15 @@ class FirestoreUtils {
                 .limit(5)
                 .get().await()
 
-            for(doc in querySnapshot){
+            for (doc in querySnapshot) {
                 gamesList.add(
                     SinglePlayerGame(
                         "Multiplayer Game",
                         doc.get("time").toString().toInt(),
-                        doc.get("score").toString().toInt()
+                        doc.get("score").toString().toInt(),
+                        if (doc.get("photoUrl")
+                                .toString() == "null"
+                        ) Resources.getSystem().getString(R.string.default_pic_uri) else doc.get("photoUrl").toString()
                     )
                 )
             }
@@ -74,7 +79,7 @@ class FirestoreUtils {
             return gamesList
         }
 
-        suspend fun highscoresSinglePlayer() : List<SinglePlayerGame>{
+        suspend fun highscoresSinglePlayer(): List<SinglePlayerGame> {
             val db = Firebase.firestore
             val gamesList = mutableListOf<SinglePlayerGame>()
             val querySnapshot = db.collection("highscores-singleplayer")
@@ -87,12 +92,39 @@ class FirestoreUtils {
 //                    gamesList.add(SinglePlayerGame(doc.get("username").toString(), doc.get("score").toString().toInt(), doc.get("time").toString().toInt()))
 //                }
 //            }
-            for(doc in querySnapshot) {
+            for (doc in querySnapshot) {
                 gamesList.add(
                     SinglePlayerGame(
                         doc.get("username").toString(),
                         doc.get("score").toString().toInt(),
-                        doc.get("time").toString().toInt()
+                        doc.get("time").toString().toInt(),
+                        doc.get("photoUrl").toString()
+                    )
+                )
+            }
+            return gamesList
+        }
+
+        suspend fun highscoresSinglePlayerTimeOrder(): List<SinglePlayerGame> {
+            val db = Firebase.firestore
+            val gamesList = mutableListOf<SinglePlayerGame>()
+            val querySnapshot = db.collection("highscores-singleplayer")
+                .orderBy("time", Query.Direction.DESCENDING)
+                .limit(5)
+                .get().await()
+//                .addOnSuccessListener { docs ->
+//
+//                for(doc in docs){
+//                    gamesList.add(SinglePlayerGame(doc.get("username").toString(), doc.get("score").toString().toInt(), doc.get("time").toString().toInt()))
+//                }
+//            }
+            for (doc in querySnapshot) {
+                gamesList.add(
+                    SinglePlayerGame(
+                        doc.get("username").toString(),
+                        doc.get("score").toString().toInt(),
+                        doc.get("time").toString().toInt(),
+                        doc.get("photoUrl").toString()
                     )
                 )
             }
@@ -129,11 +161,17 @@ data class OnlineGame(val totalTime: Int, val totalScore: Int) : Parcelable {
 
 }
 
-data class SinglePlayerGame(val username: String?, val score: Int, val time: Int) : Parcelable {
+data class SinglePlayerGame(
+    val username: String?,
+    val score: Int,
+    val time: Int,
+    val photoUrl: String?
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readInt(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readString()
     ) {
     }
 
@@ -141,6 +179,7 @@ data class SinglePlayerGame(val username: String?, val score: Int, val time: Int
         parcel.writeString(username)
         parcel.writeInt(score)
         parcel.writeInt(time)
+        parcel.writeString(photoUrl)
     }
 
     override fun describeContents(): Int {

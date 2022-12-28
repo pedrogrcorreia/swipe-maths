@@ -3,11 +3,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.TopScoreSinglePlayer">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            tools:srcCompat="@drawable/teste"
+            android:id="@+id/playerPhoto"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="24sp"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeStepGranularity="2sp"
+            android:lines="1"
+            android:gravity="center_vertical"
+            android:text="Player name"
+            android:id="@+id/playerName" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="24sp"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeStepGranularity="2sp"
+            android:lines="1"
+            android:gravity="center_vertical"
+            android:text="Points"
+            android:id="@+id/points" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:layout_marginHorizontal="5dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="24sp"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeStepGranularity="2sp"
+            android:lines="1"
+            android:gravity="center_vertical"
+            android:text="timeLeft"
+            android:id="@+id/timeLeft" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rvSinglePlayer"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/rvSinglePlayer"
+        tools:listitem="@layout/player_info_list_1"
+        app:spanCount="5"/>
+    </LinearLayout>
 
 </FrameLayout>
