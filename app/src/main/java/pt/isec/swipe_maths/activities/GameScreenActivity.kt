@@ -170,10 +170,6 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 }
             }
         }
-
-        viewModel.points.observe(this){
-            binding.lblPoints.text = getString(R.string.points, it)
-        }
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {

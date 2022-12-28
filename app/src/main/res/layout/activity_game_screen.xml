@@ -8,13 +8,6 @@
     android:orientation="vertical"
     android:id="@+id/lLayout">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/points"
-        android:textSize="20sp"
-        android:id="@+id/lblPoints"/>
     <fragment
         tools:layout="@layout/fragment_level_info"
         android:id="@+id/fragmentLvlInfo"

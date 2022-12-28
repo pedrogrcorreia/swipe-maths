@@ -43,6 +43,10 @@ class LevelInfoFragment : Fragment() {
             binding.timerPB.progress = it
         }
 
+        viewModel.points.observe(viewLifecycleOwner){
+            binding.lblPoints.text = getString(R.string.points, it)
+        }
+
         viewModel.level.observe(viewLifecycleOwner){
             binding.lblLevel.text = getString(R.string.level, it)
             binding.correctAnswersPB.max = viewModel.level.value!!.correctAnswers
