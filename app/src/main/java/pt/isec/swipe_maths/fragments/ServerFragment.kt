@@ -66,6 +66,7 @@ class ServerFragment : Fragment() {
 
         binding.btnStartGame.setOnClickListener {
             if(server.players.value?.size!! >= 1 /*TODO 2*/){
+                requireActivity().finish()
                 startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
                 server.startGame()
             } else {

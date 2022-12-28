@@ -86,8 +86,8 @@ class ClientFragment : Fragment() {
         client.onlineState.observe(viewLifecycleOwner) {
             when (it) {
                 OnlineGameStates.START_GAME -> {
+                    requireActivity().finish()
                     startActivity(GameScreenActivity.getClientModeIntent(requireContext()))
-                    activity?.finish()
                 }
             }
         }
