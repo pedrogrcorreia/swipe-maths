@@ -186,6 +186,7 @@ object Server {
         val newPlayers = players.value!!
         val playerToRemove = newPlayers.find { it.socket == clientSocket }
         newPlayers.remove(playerToRemove)
+        GameManagerServer.removePlayer(playerToRemove?.name)
         players.postValue(newPlayers)
     }
 

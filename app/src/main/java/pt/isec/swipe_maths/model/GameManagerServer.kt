@@ -21,6 +21,11 @@ object GameManagerServer {
         }
     }
 
+    fun removePlayer(playerName: String?){
+        val playerGame = games.find { it.player.name == playerName }
+        games.remove(playerGame)
+    }
+
     fun newBoard(board: Board){
         boardsList.add(board)
     }

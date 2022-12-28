@@ -176,9 +176,9 @@ class ClientFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-//        if(client.isConnected) {
-//            client.closeClient()
-//        }
+        if(client.isConnected) {
+            client.closeClient()
+        }
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) :

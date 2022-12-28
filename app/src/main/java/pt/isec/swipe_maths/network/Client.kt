@@ -157,6 +157,7 @@ object Client : Serializable {
     fun closeClient() {
         socket?.close()
         players.value!!.clear()
+        _state.postValue(ConnectionStates.NO_CONNECTION)
         socket = null
     }
 
