@@ -104,9 +104,13 @@ class ServerFragment : Fragment() {
         class MyViewHolder(val view : View) : RecyclerView.ViewHolder(view){
             var name : TextView = view.findViewById(R.id.playerName)
             var photo : ImageView = view.findViewById(R.id.playerPhoto)
+            var time : TextView = view.findViewById(R.id.timeLeft)
+            var points : TextView = view.findViewById(R.id.points)
 
             fun update(data : Player, context: Context){
                 name.text = data.name
+                time.text = ""
+                points.text = ""
                 Glide.with(context)
                     .load(data.photoUrl)
                     .apply(RequestOptions().circleCrop())
@@ -117,10 +121,10 @@ class ServerFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListAdapter.MyViewHolder {
             val view = when(viewType) {
                 1 -> {
-                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list, parent, false)
+                    LayoutInflater.from(parent.context).inflate(R.layout.player_info_list_1, parent, false)
                 }
                 else -> {
-                    LayoutInflater.from(parent.context).inflate(R.layout.connected_player_list_2, parent, false)
+                    LayoutInflater.from(parent.context).inflate(R.layout.player_info_list_2, parent, false)
                 }
             }
             return MyViewHolder(view)
