@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -156,10 +157,15 @@ class TopScoreMultiPlayer : Fragment() {
                 )
                 highScoresList.adapter =
                     TopScoreSinglePlayer.HighScoresListAdapter(highscoresSingle, requireContext())
-                AlertDialog.Builder(this@TopScoreMultiPlayer.requireContext())
+                val alertDialog = AlertDialog.Builder(this@TopScoreMultiPlayer.requireContext())
                     .setTitle("Online Game")
                     .setView(dialog)
-                    .show()
+                    .setCancelable(true)
+                    .create()
+
+                alertDialog.show()
+
+                alertDialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
 
                 loadingDialog.dismiss()
             }
