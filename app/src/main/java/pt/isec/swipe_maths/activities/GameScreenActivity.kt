@@ -159,6 +159,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                             .setMessage("You ran out of time!")
                             .setPositiveButton("Play Again") { _: DialogInterface, _: Int ->
                                 finish()
+                                GameManager.newGame()
                                 startActivity(this.intent)
                             }
                             .setNegativeButton("Exit") { _: DialogInterface, _: Int ->

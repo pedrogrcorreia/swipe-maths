@@ -8,4 +8,8 @@ object GameManager {
     var game = Game()
 
     var games : MutableLiveData<MutableList<Game>> = MutableLiveData(mutableListOf(game))
+
+    fun newGame(){
+        game = Game()
+    }
 }
