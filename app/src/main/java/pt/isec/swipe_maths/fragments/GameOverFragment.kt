@@ -57,6 +57,7 @@ class GameOverFragment : Fragment() {
                 }
                 OnlineGameStates.ALL_GAME_OVER -> {
                     binding.btnExit.isEnabled = true
+                    binding.txtGameOver.visibility = View.VISIBLE
                     FirestoreUtils.addGames(
                         GameManager.games.value!!
                     )
@@ -66,7 +67,10 @@ class GameOverFragment : Fragment() {
 
         Client.onlineState.observe(viewLifecycleOwner){
             when(it){
-                OnlineGameStates.ALL_GAME_OVER -> binding.btnExit.isEnabled = true
+                OnlineGameStates.ALL_GAME_OVER -> {
+                    binding.btnExit.isEnabled = true
+                    binding.txtGameOver.visibility = View.VISIBLE
+                }
             }
         }
 

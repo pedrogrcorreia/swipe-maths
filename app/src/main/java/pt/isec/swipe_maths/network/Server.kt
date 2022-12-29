@@ -334,7 +334,8 @@ object Server {
     fun gameOver(){
         _onlineState.postValue(OnlineGameStates.ALL_GAME_OVER)
         val json = JSONObject().apply {
-            put("request", Requests.UPDATE_VIEWS)
+            put("request", Requests.GAME_OVER
+            )
         }
         updateViews(json)
     }

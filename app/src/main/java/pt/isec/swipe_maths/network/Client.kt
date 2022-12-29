@@ -197,6 +197,10 @@ object Client : Serializable {
 //                _requestState.postValue(Requests.UPDATE_VIEWS)
                 updateViews(json)
             }
+            Requests.GAME_OVER.toString() -> {
+                _onlineState.postValue(OnlineGameStates.ALL_GAME_OVER)
+                updateViews(json)
+            }
         }
     }
 

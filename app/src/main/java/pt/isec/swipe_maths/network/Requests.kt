@@ -5,6 +5,7 @@ enum class Requests {
     UPDATE_PLAYERS_LIST,
     START_GAME,
     NEW_LEVEL,
+    GAME_OVER,
 
 
     NONE,
