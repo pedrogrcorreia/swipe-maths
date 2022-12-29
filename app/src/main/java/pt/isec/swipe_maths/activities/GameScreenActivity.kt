@@ -147,29 +147,29 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
             }
         })
 
-        viewModel.state.observe(this){
-            when(it){
-                GameStates.GAME_OVER -> {
-                    if(mode == SINGLE_MODE) {
-                        FirestoreUtils.addGame(
-                            GameManager.game
-                        )
-                        AlertDialog.Builder(this)
-                            .setTitle("Game over")
-                            .setMessage("You ran out of time!")
-                            .setPositiveButton("Play Again") { _: DialogInterface, _: Int ->
-                                finish()
-                                GameManager.newGame()
-                                startActivity(this.intent)
-                            }
-                            .setNegativeButton("Exit") { _: DialogInterface, _: Int ->
-                                finish()
-                            }
-                            .show()
-                    }
-                }
-            }
-        }
+//        viewModel.state.observe(this){
+//            when(it){
+//                GameStates.GAME_OVER -> {
+//                    if(mode == SINGLE_MODE) {
+//                        FirestoreUtils.addGame(
+//                            GameManager.game
+//                        )
+//                        AlertDialog.Builder(this)
+//                            .setTitle("Game over")
+//                            .setMessage("You ran out of time!")
+//                            .setPositiveButton("Play Again") { _: DialogInterface, _: Int ->
+//                                finish()
+//                                GameManager.newGame()
+//                                startActivity(this.intent)
+//                            }
+//                            .setNegativeButton("Exit") { _: DialogInterface, _: Int ->
+//                                finish()
+//                            }
+//                            .show()
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun swipeVertical(selectedColumn: Int): Boolean {

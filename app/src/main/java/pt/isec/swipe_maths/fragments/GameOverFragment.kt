@@ -22,13 +22,13 @@ import pt.isec.swipe_maths.utils.FirestoreUtils
 
 class GameOverFragment : Fragment() {
 
-    var actBase : INewLevelFragment? = null
+    var actBase: INewLevelFragment? = null
 
-    private var countTime : Long = 5000
+    private var countTime: Long = 5000
 
-    private var timer : CountDownTimer? = null
+    private var timer: CountDownTimer? = null
 
-    private lateinit var binding : FragmentGameOverBinding
+    private lateinit var binding: FragmentGameOverBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -45,12 +45,15 @@ class GameOverFragment : Fragment() {
     ): View? {
         binding = FragmentGameOverBinding.inflate(inflater, container, false)
 
-        if(GameScreenActivity.mode == SERVER_MODE || GameScreenActivity.mode == CLIENT_MODE){
+        if (GameScreenActivity.mode == SERVER_MODE || GameScreenActivity.mode == CLIENT_MODE) {
             binding.btnPlayAgain.visibility = View.GONE
+        } else {
+            binding.btnExit.isEnabled = true
+            binding.btnPlayAgain.isEnabled = true
         }
 
-        Server.onlineState.observe(viewLifecycleOwner){
-            when(it){
+        Server.onlineState.observe(viewLifecycleOwner) {
+            when (it) {
                 OnlineGameStates.ALL_FINISHED_LEVEL -> {
                     Server.startNewLevelTimers()
                     startTimer()
@@ -65,8 +68,8 @@ class GameOverFragment : Fragment() {
             }
         }
 
-        Client.onlineState.observe(viewLifecycleOwner){
-            when(it){
+        Client.onlineState.observe(viewLifecycleOwner) {
+            when (it) {
                 OnlineGameStates.ALL_GAME_OVER -> {
                     binding.btnExit.isEnabled = true
                     binding.txtGameOver.visibility = View.VISIBLE
@@ -76,16 +79,23 @@ class GameOverFragment : Fragment() {
 
         binding.btnExit.setOnClickListener {
             requireActivity().finish()
+            GameManager.newGame()
         }
 
+        binding.btnPlayAgain.setOnClickListener {
+            requireActivity().finish()
+            GameManager.newGame()
+            startActivity(requireActivity().intent)
+        }
         return binding.root
     }
 
-    private fun startTimer(){
-        timer = object: CountDownTimer(countTime, 1000) {
+    private fun startTimer() {
+        timer = object : CountDownTimer(countTime, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 countTime = millisUntilFinished
             }
+
             override fun onFinish() {
                 context.let {
                     actBase!!.timesUp()
