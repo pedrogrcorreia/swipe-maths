@@ -15,6 +15,8 @@ import pt.isec.swipe_maths.activities.GameScreenActivity.Companion.CLIENT_MODE
 import pt.isec.swipe_maths.activities.GameScreenActivity.Companion.SERVER_MODE
 import pt.isec.swipe_maths.databinding.FragmentGameOverBinding
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.model.GameManagerClient
+import pt.isec.swipe_maths.model.GameManagerServer
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Server
@@ -80,6 +82,8 @@ class GameOverFragment : Fragment() {
         binding.btnExit.setOnClickListener {
             requireActivity().finish()
             GameManager.newGame()
+            GameManagerServer.finishGame()
+            GameManagerClient.finishGame()
         }
 
         binding.btnPlayAgain.setOnClickListener {

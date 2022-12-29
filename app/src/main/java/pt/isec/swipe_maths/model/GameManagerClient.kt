@@ -21,4 +21,8 @@ object GameManagerClient {
         }
         GameManager.games.postValue(games)
     }
+
+    fun finishGame(){
+        games.clear()
+    }
 }

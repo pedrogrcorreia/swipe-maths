@@ -20,7 +20,9 @@ class StartGameFragment : Fragment() {
 
     lateinit var binding: FragmentStartGameBinding
 
-    private val viewModel : GameViewModel by activityViewModels()
+    private val viewModel by lazy{
+        ViewModelProvider(requireActivity())[GameViewModel::class.java]
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

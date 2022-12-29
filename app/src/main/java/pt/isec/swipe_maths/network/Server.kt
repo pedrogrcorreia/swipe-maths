@@ -42,8 +42,6 @@ object Server {
 
     val SERVER_PORT = 9999
 
-    val game = GameManager.game
-
     val gson = GsonBuilder()
 //            .registerTypeAdapter(Game::class.java, GameSerializer())
         .create()
@@ -230,6 +228,7 @@ object Server {
         serverSocket?.close()
         multiSocket = MulticastSocket(9996)
         serverSocket = null
+        socket = null
         for (client in clients) {
             try {
                 client.close()
@@ -237,6 +236,7 @@ object Server {
                 println(e.message)
             }
         }
+        clients.clear()
     }
 
     fun updateViews(json: JSONObject){

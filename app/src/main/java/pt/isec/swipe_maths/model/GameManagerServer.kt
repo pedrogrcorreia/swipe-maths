@@ -156,4 +156,11 @@ object GameManagerServer {
             }
         }
     }
+
+    fun finishGame(){
+        games = mutableListOf(GameManager.game)
+        GameManager.games.postValue(games)
+        boardsList.clear()
+        currentLevel = GameManager.game.levelData
+    }
 }
