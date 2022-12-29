@@ -9,7 +9,7 @@ enum class Levels : ILevels {
         override val max: Int
             get() = 9
         override val timer: Int
-            get() = 60
+            get() = 5
         override val correctAnswers: Int
             get() = 5
         override val bonusTime: Int

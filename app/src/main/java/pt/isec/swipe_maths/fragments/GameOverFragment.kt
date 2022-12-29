@@ -10,7 +10,12 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.R
+import pt.isec.swipe_maths.activities.GameScreenActivity
+import pt.isec.swipe_maths.activities.GameScreenActivity.Companion.CLIENT_MODE
+import pt.isec.swipe_maths.activities.GameScreenActivity.Companion.SERVER_MODE
+import pt.isec.swipe_maths.databinding.FragmentGameOverBinding
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Server
 import pt.isec.swipe_maths.utils.FirestoreUtils
@@ -22,6 +27,8 @@ class GameOverFragment : Fragment() {
     private var countTime : Long = 5000
 
     private var timer : CountDownTimer? = null
+
+    private lateinit var binding : FragmentGameOverBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,7 +43,11 @@ class GameOverFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        binding = FragmentGameOverBinding.inflate(inflater, container, false)
+
+        if(GameScreenActivity.mode == SERVER_MODE || GameScreenActivity.mode == CLIENT_MODE){
+            binding.btnPlayAgain.visibility = View.GONE
+        }
 
         Server.onlineState.observe(viewLifecycleOwner){
             when(it){
@@ -45,6 +56,7 @@ class GameOverFragment : Fragment() {
                     startTimer()
                 }
                 OnlineGameStates.ALL_GAME_OVER -> {
+                    binding.btnExit.isEnabled = true
                     FirestoreUtils.addGames(
                         GameManager.games.value!!
                     )
@@ -52,7 +64,17 @@ class GameOverFragment : Fragment() {
             }
         }
 
-        return inflater.inflate(R.layout.fragment_game_over, container, false)
+        Client.onlineState.observe(viewLifecycleOwner){
+            when(it){
+                OnlineGameStates.ALL_GAME_OVER -> binding.btnExit.isEnabled = true
+            }
+        }
+
+        binding.btnExit.setOnClickListener {
+            requireActivity().finish()
+        }
+
+        return binding.root
     }
 
     private fun startTimer(){
