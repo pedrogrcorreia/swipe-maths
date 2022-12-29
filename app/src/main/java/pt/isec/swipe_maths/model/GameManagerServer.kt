@@ -14,6 +14,8 @@ object GameManagerServer {
 
     var currentLevel = GameManager.game.levelData
 
+    private var levelFinished = false
+
     fun addNewPlayer(player: Player){
         games.add(Game(player))
         games.last().apply {
@@ -93,21 +95,29 @@ object GameManagerServer {
         return result
     }
 
-    // TODO add five points to first
     private fun verifyLevelFinish() : Boolean {
+        var over = true
         GameManager.games.postValue(games)
         for(game in games){
+            if(game.gameStateData == GameStates.WAITING_FOR_LEVEL){
+                if(!levelFinished){
+                    game.apply {
+                        pointsData += 5
+                    }
+                    levelFinished = true
+                }
+            }
             if(game.gameStateData == GameStates.GAME_OVER){
                 continue
             }
             if(game.gameStateData != GameStates.WAITING_FOR_LEVEL){
-                return false
+                over = false
             }
             currentLevel = game.levelData
         }
 //        Server.state.postValue(ConnectionStates.ALL_PLAYERS_FINISHED)
 //        verifyGameOver()
-        return true
+        return over
     }
 
     private fun verifyGameOver() : Boolean {
@@ -125,6 +135,7 @@ object GameManagerServer {
         for(game in games){
             game.boardData = boardsList.last()
         }
+        levelFinished = false
     }
 
     fun watchTimers(){
