@@ -161,16 +161,26 @@ object Client : Serializable {
     }
 
     fun sendToServer(json: JSONObject) {
-        thread {
-            socketO!!.run {
+        println("sending message to server...")
+        try {
+            thread {
                 try {
-                    val printStream = PrintStream(this)
-                    printStream.println(json)
-                    printStream.flush()
-                } catch (_: Exception) {
-                    _state.postValue(ConnectionStates.SERVER_ERROR)
+                    socketO!!.run {
+                        try {
+                            val printStream = PrintStream(this)
+                            printStream.println(json)
+                            printStream.flush()
+                        } catch (e: Exception) {
+                            _state.postValue(ConnectionStates.SERVER_ERROR)
+                            println("error sending message to server!!!")
+                        }
+                    }
+                } catch (e: Exception) {
+                    println("ERROR!!!! sending message")
                 }
             }
+        }catch(e: Exception){
+            println("error thread")
         }
     }
 
@@ -234,6 +244,7 @@ object Client : Serializable {
         val games = json.getJSONArray("games")
         val newPlayers : MutableList<Player> = players.value!!
         newPlayers.clear()
+        GameManagerClient.games.clear()
         for(i in 0 until games.length()){
             val game = gson.fromJson(games.get(i).toString(), Game::class.java)
             GameManagerClient.newPlayer(game)
