@@ -132,7 +132,7 @@ class ClientFragment : Fragment() {
                                     ).show()
                                 }
                             } else {
-                                if (client.state.value == ConnectionStates.NO_CONNECTION) {
+                                if (client.state.value == ConnectionStates.NO_CONNECTION || Client.state.value == ConnectionStates.CONNECTION_ERROR) {
                                     val ipAndPort = ipAddress.split(" ")
                                     println(ipAndPort)
                                     client.startClient(ipAndPort[0], ipAndPort[1].toInt())
@@ -176,9 +176,6 @@ class ClientFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(client.isConnected) {
-            client.closeClient()
-        }
     }
 
     class PlayerListAdapter(val data: List<Player>, val context: Context) :

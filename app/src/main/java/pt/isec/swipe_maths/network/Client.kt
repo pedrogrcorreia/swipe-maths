@@ -91,14 +91,13 @@ object Client : Serializable {
                 if (socketI == null) {
                     return@thread
                 }
-
                 val bufI = socketI!!.bufferedReader()
-                while (state.value != ConnectionStates.CONNECTION_ENDED) {
-                    val message = bufI.readLine()
-                    if(message != null && message.isNotEmpty()) {
-                        val json = JSONObject(message)
-                        parseRequest(json)
-                    }
+                while (state.value != ConnectionStates.NO_CONNECTION) {
+                        val message = bufI.readLine()
+                        if (message != null && message.isNotEmpty()) {
+                            val json = JSONObject(message)
+                            parseRequest(json)
+                        }
 //                    if(message == null){
 //                        _state.postValue(ConnectionStates.SERVER_ERROR)
 //                        break

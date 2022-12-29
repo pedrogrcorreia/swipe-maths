@@ -143,14 +143,15 @@ object Server {
                 if (socketI == null) {
                     return@thread
                 }
+
                 while (true) {
                     println("Waiting for messages from client...")
                     val bufI = socketI!!.bufferedReader()
-                    val message = bufI.readLine()
-                    if (message != null) {
-                        val json = JSONObject(message)
-                        parseRequest(json, thisClient)
-                    }
+                        val message = bufI.readLine()
+                        if (message != null && message.isNotEmpty()) {
+                            val json = JSONObject(message)
+                            parseRequest(json, thisClient)
+                        }
                     if(message == null){
                         break
                     }
