@@ -144,7 +144,7 @@ object Server {
 
                 while (true) {
                     println("Waiting for messages from client...")
-                    val bufI = socketI!!.bufferedReader()
+                    val bufI = thisClient.getInputStream()!!.bufferedReader()
                         val message = bufI.readLine()
                         if (message != null && message.isNotEmpty()) {
                             val json = JSONObject(message)
