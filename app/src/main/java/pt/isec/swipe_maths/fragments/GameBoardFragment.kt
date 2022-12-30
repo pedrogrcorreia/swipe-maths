@@ -75,7 +75,11 @@ private val viewModel by lazy{
         viewModel.state.observe(viewLifecycleOwner){
             when(it){
                 GameStates.WAITING_FOR_LEVEL -> findNavController().navigate(R.id.action_gameBoardFragment_to_newLevelFragment)
-                GameStates.GAME_OVER -> findNavController().navigate(R.id.action_gameBoardFragment_to_gameOverFragment)
+                GameStates.GAME_OVER -> {
+                    if(findNavController().currentDestination?.id == R.id.gameOverFragment) {
+                        findNavController().navigate(R.id.action_gameBoardFragment_to_gameOverFragment)
+                    }
+                }
             }
         }
 
