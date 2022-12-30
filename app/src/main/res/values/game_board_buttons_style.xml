@@ -13,6 +13,21 @@
         <item name="android:maxLines">1</item>
 <!--        <item name="android:text">123</item>-->
     </style>
+
+    <style name="cellTextLand" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="autoSizeMaxTextSize">15sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">13sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
     <style name="numberText" parent="cellText">
         <item name="android:background">@drawable/number_square</item>
     </style>
@@ -20,6 +35,18 @@
         <item name="android:background">@drawable/operation_square</item>
     </style>
     <style name="emptyText" parent="cellText">
+        <item name="android:background">@drawable/empty_square</item>
+    </style>
+
+    <style name="numberTextLand" parent="cellTextLand">
+        <item name="android:background">@drawable/number_square</item>
+    </style>
+
+    <style name="operationTextLand" parent="cellTextLand">
+        <item name="android:background">@drawable/operation_square</item>
+    </style>
+
+    <style name="emptyTextLand" parent="cellTextLand">
         <item name="android:background">@drawable/empty_square</item>
     </style>
 
