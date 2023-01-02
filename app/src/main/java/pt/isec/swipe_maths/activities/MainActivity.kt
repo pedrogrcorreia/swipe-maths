@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -76,6 +77,10 @@ class MainActivity : AppCompatActivity() {
                 intent = Intent(this, MultiplayerActivity::class.java)
                 startActivity(intent)
             }
+        }
+
+        binding.btnCredits.setOnClickListener {
+            showCreditsDialog();
         }
 
         binding.userProfile.setOnClickListener{
@@ -301,6 +306,19 @@ class MainActivity : AppCompatActivity() {
             showSnackbarError("You must be logged in to play!")
             false
         }
+    }
+
+    private fun showCreditsDialog() {
+        val dialog : View = layoutInflater.inflate(R.layout.dialog_credits, null)
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Credits")
+            .setView(dialog)
+            .setCancelable(true)
+            .create()
+
+        alertDialog.show()
+
+        alertDialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
     }
 
     /**

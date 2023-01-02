@@ -16,6 +16,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/credits"
+        android:id="@+id/btnCredits"
         android:layout_gravity="top|end"/>
 
     <ImageButton
