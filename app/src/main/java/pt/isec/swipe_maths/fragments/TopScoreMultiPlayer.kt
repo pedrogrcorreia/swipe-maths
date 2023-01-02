@@ -23,6 +23,9 @@ import pt.isec.swipe_maths.databinding.FragmentTopScoreMultiPlayerBinding
 import pt.isec.swipe_maths.utils.FirestoreUtils
 import pt.isec.swipe_maths.utils.OnlineGame
 import pt.isec.swipe_maths.utils.SinglePlayerGame
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TopScoreMultiPlayer : Fragment() {
 
@@ -120,8 +123,6 @@ class TopScoreMultiPlayer : Fragment() {
             }
         }
         return binding.root
-
-        return binding.root
     }
 
     override fun onStart() {
@@ -162,7 +163,10 @@ class TopScoreMultiPlayer : Fragment() {
             var profilePic: ImageView = view.findViewById(R.id.playerPhoto)
 
             fun update(data: OnlineGame, context: Context) {
-                username.text = data.gameId
+                val milliseconds = data.gameId!!.seconds * 1000 + data.gameId.nanoseconds / 1000000
+                val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK)
+                val netDate = Date(milliseconds)
+                username.text = sdf.format(netDate)
                 score.text = context.resources.getString(R.string.points_list, data.totalScore)
                 totalTime.text = context.resources.getString(R.string.time_left_list, data.totalTime)
                 Glide.with(context)
@@ -181,7 +185,7 @@ class TopScoreMultiPlayer : Fragment() {
 
             }
             view.setOnClickListener {
-                listener(data[viewType].gameId!!)
+                listener(data[viewType].gameId!!.toString())
             }
             return MyViewHolder(view)
         }

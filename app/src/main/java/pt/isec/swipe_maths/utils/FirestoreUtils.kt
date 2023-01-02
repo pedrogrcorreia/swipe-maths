@@ -3,12 +3,17 @@ package pt.isec.swipe_maths.utils
 import android.content.res.Resources
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import pt.isec.swipe_maths.R
 import pt.isec.swipe_maths.model.Game
+import com.google.firebase.Timestamp
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FirestoreUtils {
     companion object {
@@ -46,6 +51,7 @@ class FirestoreUtils {
 
             val onlineGame = hashMapOf(
                 "players" to highscores,
+                "date" to FieldValue.serverTimestamp(),
                 "time" to allTime,
                 "score" to allPoints
             )
@@ -60,12 +66,6 @@ class FirestoreUtils {
                 .orderBy("score", Query.Direction.DESCENDING)
                 .limit(5)
                 .get().await()
-//                .addOnSuccessListener { docs ->
-//
-//                for(doc in docs){
-//                    gamesList.add(SinglePlayerGame(doc.get("username").toString(), doc.get("score").toString().toInt(), doc.get("time").toString().toInt()))
-//                }
-//            }
             for (doc in querySnapshot) {
                 gamesList.add(
                     SinglePlayerGame(
@@ -86,12 +86,6 @@ class FirestoreUtils {
                 .orderBy("time", Query.Direction.DESCENDING)
                 .limit(5)
                 .get().await()
-//                .addOnSuccessListener { docs ->
-//
-//                for(doc in docs){
-//                    gamesList.add(SinglePlayerGame(doc.get("username").toString(), doc.get("score").toString().toInt(), doc.get("time").toString().toInt()))
-//                }
-//            }
             for (doc in querySnapshot) {
                 gamesList.add(
                     SinglePlayerGame(
@@ -118,7 +112,7 @@ class FirestoreUtils {
             for (doc in querySnapshot) {
                 gamesList.add(
                     OnlineGame(
-                        doc.id,
+                        doc.get("date") as Timestamp,
                         doc.get("time").toString().toInt(),
                         doc.get("score").toString().toInt()
                     )
@@ -141,7 +135,7 @@ class FirestoreUtils {
             for (doc in querySnapshot) {
                 gamesList.add(
                     OnlineGame(
-                        doc.id,
+                        doc.get("date") as Timestamp,
                         doc.get("time").toString().toInt(),
                         doc.get("score").toString().toInt()
                     )
@@ -181,16 +175,16 @@ class FirestoreUtils {
 
 }
 
-data class OnlineGame(val gameId: String?, val totalTime: Int, val totalScore: Int) : Parcelable {
+data class OnlineGame(val gameId: Timestamp?, val totalTime: Int, val totalScore: Int) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
+        Timestamp(Date(parcel.readString())),
         parcel.readInt(),
         parcel.readInt()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(gameId)
+        parcel.writeString(gameId.toString())
         parcel.writeInt(totalTime)
         parcel.writeInt(totalScore)
     }
