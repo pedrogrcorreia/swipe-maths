@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">SwipeMaths</string>
+    <string name="app_name" translatable="false">SwipeMaths</string>
     <string name="single">Single Player</string>
     <string name="multi">Multiplayer</string>
     <string name="profile">User Profile</string>
     <string name="level">Level: %s</string>
-    <string name="timer">%d</string>
+    <string name="timer" translatable="false">%d</string>
     <string name="timerInfo">Time left to complete the level</string>
     <string name="correct_col">✅ Column %d is right!</string>
     <string name="incorrect_col">❌ Column %d is wrong!</string>
@@ -18,15 +18,15 @@
     <string name="levelProgress">%d of %d</string>
     <string name="levelProgressInfo">Correct answers to next level</string>
     <string name="points">Points: %d</string>
-    <string name="welcome">%s</string>
+    <string name="welcome" translatable="false">%s</string>
     <string name="high_scores">High Scores</string>
-    <string name="sign_in_with_email">Login</string>
-    <string name="logout">Logout</string>
+    <string name="sign_in_with_email" translatable="false">Login</string>
+    <string name="logout" translatable="false">Logout</string>
     <string name="sign_up">Sign up</string>
     <string name="first_name">First name:</string>
     <string name="last_name">Last name:</string>
-    <string name="email">Email:</string>
-    <string name="password">Password:</string>
+    <string name="email" translatable="false">Email:</string>
+    <string name="password" translatable="false">Password:</string>
     <string name="confirm_password">Confirm password:</string>
     <string name="upload_photo">Upload photo!</string>
     <string name="multiplayer">Multiplayer</string>
@@ -34,31 +34,36 @@
     <string name="server_btn">Server</string>
     <string name="client_btn">Client</string>
     <string name="sign_in">Sign in</string>
-    <string name="login">Login</string>
+    <string name="login" translatable="false">Login</string>
     <string name="loading_title">Loading</string>
     <string name="loading_message">Wait a moment…</string>
-    <string name="error_message">❌ %s</string>
+    <string name="error_message" translatable="false">❌ %s</string>
     <string name="error_timeout">Couldn\'t find servers on your network</string>
     <string name="server_started">Server started…</string>
     <string name="ip_address">IP Address: %s</string>
     <string name="client_started">Client started</string>
     <string name="search_servers">Search Servers</string>
-    <string name="ipAddressString">0.0.0.0</string>
+    <string name="ipAddressString" translatable="false">0.0.0.0</string>
     <string name="connect">Connect</string>
     <string name="connect_emulator">Connect to emulator</string>
     <string name="error_already_connected">You\'re already connected!</string>
     <string name="update_profile">Update profile</string>
     <string name="changes_warning">You have unsaved changes!</string>
-    <string name="default_pic_uri"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fdefault_pic.jpeg?alt=media&token=86be326f-53dd-4d5e-b281-f906abd7c26d]]></string>
-    <string name="default_online_uri"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fonline_game.png?alt=media&token=5afe8d98-45fc-40a7-b606-bd1e93150eb1]]></string>
+    <string name="default_pic_uri" translatable="false"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fdefault_pic.jpeg?alt=media&token=86be326f-53dd-4d5e-b281-f906abd7c26d]]></string>
+    <string name="default_online_uri" translatable="false"><![CDATA[https://firebasestorage.googleapis.com/v0/b/swipe-maths.appspot.com/o/file%2Fonline_game.png?alt=media&token=5afe8d98-45fc-40a7-b606-bd1e93150eb1]]></string>
     <string name="btn_cancel">Cancel</string>
-    <string name="points_list">%d pts</string>
-    <string name="time_left_list">%d s</string>
-    <string name="swipe">Swipe</string>
-    <string name="maths">Maths</string>
-    <string name="subject">Arquiteturas Móveis 2022/2023</string>
-    <string name="diogo">Diogo Oliveira Braz Monteiro - 2017016078</string>
-    <string name="pedro">Pedro Gonçalo dos Reis Correia - 2018020558</string>
-    <string name="tom">Tomé Hugo Maltez Madaíl - 2018013568</string>
+    <string name="points_list" translatable="false">%d pts</string>
+    <string name="time_left_list" translatable="false">%d s</string>
+    <string name="swipe" translatable="false">Swipe</string>
+    <string name="maths" translatable="false">Maths</string>
+    <string name="subject">Mobile Arquitectures 2022/2023</string>
+    <string name="diogo" translatable="false">Diogo Oliveira Braz Monteiro - 2017016078</string>
+    <string name="pedro" translatable="false">Pedro Gonçalo dos Reis Correia - 2018020558</string>
+    <string name="tom" translatable="false">Tomé Hugo Maltez Madaíl - 2018013568</string>
     <string name="credits_title">Credits</string>
+    <string name="error_not_logged_in">You must be logged in to play!</string>
+    <string name="player_name">Player name</string>
+    <string name="points_lbl">Points</string>
+    <string name="time_lbl">time</string>
+    <string name="game_date">Date</string>
 </resources>

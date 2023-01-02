@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity() {
         return if(auth.currentUser != null){
             true
         } else {
-            showSnackbarError("You must be logged in to play!")
+            showSnackbarError(getString(R.string.error_not_logged_in))
             false
         }
     }
