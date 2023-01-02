@@ -146,18 +146,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        binding.googleButton.setOnClickListener {
-//            signInWithGoogle.launch(googleSignInClient.signInIntent)
-//        }
-
-
         binding.highScores.setOnClickListener {
             startActivity(HighScoresActivity.getIntent(this))
         }
-
-//        auth.addAuthStateListener{
-//            updateUI()
-//        }
 
         auth.addIdTokenListener(tokenListener)
     }
@@ -311,7 +302,7 @@ class MainActivity : AppCompatActivity() {
     private fun showCreditsDialog() {
         val dialog : View = layoutInflater.inflate(R.layout.dialog_credits, null)
         val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Credits")
+            .setTitle(getString(R.string.credits_title))
             .setView(dialog)
             .setCancelable(true)
             .create()
@@ -319,13 +310,5 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
 
         alertDialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
-    }
-
-    /**
-     * Makes a snackbar displaying that the pressed button is
-     * not implemented yet.
-     */
-    private val makeSnackbar = View.OnClickListener {
-        Snackbar.make(it, "${(it as Button).text}: ${getString(R.string.todo)}", Snackbar.LENGTH_LONG).show()
     }
 }

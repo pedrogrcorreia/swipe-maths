@@ -56,4 +56,9 @@
     <string name="time_left_list">%d s</string>
     <string name="swipe">Swipe</string>
     <string name="maths">Maths</string>
+    <string name="subject">Arquiteturas Móveis 2022/2023</string>
+    <string name="diogo">Diogo Oliveira Braz Monteiro - 2017016078</string>
+    <string name="pedro">Pedro Gonçalo dos Reis Correia - 2018020558</string>
+    <string name="tom">Tomé Hugo Maltez Madaíl - 2018013568</string>
+    <string name="credits_title">Credits</string>
 </resources>
