@@ -163,7 +163,7 @@ class TopScoreMultiPlayer : Fragment() {
             var profilePic: ImageView = view.findViewById(R.id.playerPhoto)
 
             fun update(data: OnlineGame, context: Context) {
-                val milliseconds = data.gameId!!.seconds * 1000 + data.gameId.nanoseconds / 1000000
+                val milliseconds = data.gameDate!!.seconds * 1000 + data.gameDate.nanoseconds / 1000000
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK)
                 val netDate = Date(milliseconds)
                 username.text = sdf.format(netDate)
@@ -233,7 +233,7 @@ class TopScoreMultiPlayer : Fragment() {
                 highScoresList.adapter =
                     TopScoreSinglePlayer.HighScoresListAdapter(highscoresSingle, requireContext())
                 val alertDialog = AlertDialog.Builder(this@TopScoreMultiPlayer.requireContext())
-                    .setTitle("Online Game")
+                    .setTitle(getString(R.string.dialog_title_online_game))
                     .setView(dialog)
                     .setCancelable(true)
                     .create()

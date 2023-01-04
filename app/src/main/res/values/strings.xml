@@ -67,4 +67,5 @@
     <string name="time_lbl">time</string>
     <string name="game_date">Date</string>
     <string name="multiplayer_mode">Multiplayer Mode</string>
+    <string name="dialog_title_online_game">Online Game</string>
 </resources>

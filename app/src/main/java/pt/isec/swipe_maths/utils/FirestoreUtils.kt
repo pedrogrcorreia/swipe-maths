@@ -114,7 +114,8 @@ class FirestoreUtils {
                     OnlineGame(
                         doc.get("date") as Timestamp,
                         doc.get("time").toString().toInt(),
-                        doc.get("score").toString().toInt()
+                        doc.get("score").toString().toInt(),
+                        doc.id
                     )
                 )
             }
@@ -137,7 +138,8 @@ class FirestoreUtils {
                     OnlineGame(
                         doc.get("date") as Timestamp,
                         doc.get("time").toString().toInt(),
-                        doc.get("score").toString().toInt()
+                        doc.get("score").toString().toInt(),
+                        doc.id
                     )
                 )
             }
@@ -175,18 +177,20 @@ class FirestoreUtils {
 
 }
 
-data class OnlineGame(val gameId: Timestamp?, val totalTime: Int, val totalScore: Int) : Parcelable {
+data class OnlineGame(val gameDate: Timestamp?, val totalTime: Int, val totalScore: Int, val gameId: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
         Timestamp(Date(parcel.readString())),
         parcel.readInt(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readString()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(gameId.toString())
+        parcel.writeString(gameDate.toString())
         parcel.writeInt(totalTime)
         parcel.writeInt(totalScore)
+        parcel.writeString(gameId)
     }
 
     override fun describeContents(): Int {

@@ -49,4 +49,5 @@
     <string name="time_lbl">Tempo</string>
     <string name="game_date">Data</string>
     <string name="multiplayer_mode">Modo Multi Jogador</string>
+    <string name="dialog_title_online_game">Jogo Online</string>
 </resources>
