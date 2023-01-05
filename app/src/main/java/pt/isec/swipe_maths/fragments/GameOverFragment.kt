@@ -79,6 +79,10 @@ class GameOverFragment : Fragment() {
             }
         }
 
+        if(GameScreenActivity.mode == GameScreenActivity.SINGLE_MODE){
+            FirestoreUtils.addGame(GameManager.game)
+        }
+
         binding.btnExit.setOnClickListener {
             requireActivity().finish()
             GameManager.newGame()

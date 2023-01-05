@@ -103,11 +103,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                 }
                 client.onlineState.observe(this){
                     when(it){
-//                        OnlineGameStates.START_GAME, OnlineGameStates.PLAYING ->
-//                            viewModel.updateGame(GameManager.game)
-//                        OnlineGameStates.PLAYING -> TODO()
-//                        OnlineGameStates.ALL_FINISHED_LEVEL -> TODO()
-//                        OnlineGameStates.ALL_GAME_OVER -> TODO()
+                        OnlineGameStates.START_GAME, OnlineGameStates.PLAYING ->
+                            viewModel.updateGame(GameManager.game)
                     }
                 }
                 client.state.observe(this){
@@ -232,6 +229,9 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         }
         if(mode == CLIENT_MODE){
             Client.closeClient()
+        }
+        if(mode == SINGLE_MODE){
+            GameManager.newGame()
         }
     }
 
