@@ -158,6 +158,7 @@ object Client : Serializable {
         players.value!!.clear()
         _state.postValue(ConnectionStates.NO_CONNECTION)
         socket = null
+        GameManager.newGame()
     }
 
     fun sendToServer(json: JSONObject) {

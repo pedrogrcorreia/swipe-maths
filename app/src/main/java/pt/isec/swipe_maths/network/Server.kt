@@ -237,6 +237,7 @@ object Server {
             }
         }
         clients.clear()
+        GameManager.newGame()
     }
 
     fun updateViews(json: JSONObject){
