@@ -157,7 +157,6 @@ object Server {
             } catch (e: Exception) {
                 println("Client thread: " + e.message)
             } finally {
-                // TODO exception here?
                 println("Closing client socket!")
                 removeClient(thisClient)
 //                thisClient.close()
@@ -198,16 +197,17 @@ object Server {
         thread {
             for (i in clients.indices) {
                 socket = clients[i]
-                socketO!!.run {
+
                     try {
-                        val printStream = PrintStream(this)
-                        printStream.println(json)
-                        printStream.flush()
+                        socketO!!.run {
+                            val printStream = PrintStream(this)
+                            printStream.println(json)
+                            printStream.flush()
+                        }
                     } catch (e: Exception) {
-                        // TODO Exception here
+                        closeServer()
                         println(e.message)
                     }
-                }
             }
         }
     }
@@ -226,7 +226,7 @@ object Server {
             }
         }
         clients.clear()
-        GameManager.newGame()
+//        GameManager.newGame()
     }
 
     fun updateViews(json: JSONObject){
@@ -272,15 +272,17 @@ object Server {
 
     fun startGame() {
         _onlineState.postValue(OnlineGameStates.PLAYING)
-        GameManagerServer.watchTimers()
-//        GameManager.game.startTime()
-        for(game in GameManagerServer.games){
-            game.startTime()
-        }
         val json = JSONObject().apply {
             put("request", Requests.START_GAME)
         }
         updateViews(json)
+
+        GameManagerServer.watchTimers()
+
+//        GameManager.game.startTime()
+        for(game in GameManagerServer.games){
+            game.startTime()
+        }
     }
 
     fun startNewLevelTimers(){

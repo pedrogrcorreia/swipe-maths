@@ -23,6 +23,7 @@ import pt.isec.swipe_maths.fragments.IGameBoardFragment
 import pt.isec.swipe_maths.fragments.INewLevelFragment
 import pt.isec.swipe_maths.model.Game
 import pt.isec.swipe_maths.model.GameManager
+import pt.isec.swipe_maths.model.GameManagerServer
 import pt.isec.swipe_maths.network.Client
 import pt.isec.swipe_maths.network.OnlineGameStates
 import pt.isec.swipe_maths.network.Requests
@@ -240,6 +241,8 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         super.onDestroy()
         if(mode == SERVER_MODE){
             Server.closeServer()
+            GameManagerServer.removeObservers()
+            GameManagerServer.finishGame()
         }
         if(mode == CLIENT_MODE){
             Client.closeClient()

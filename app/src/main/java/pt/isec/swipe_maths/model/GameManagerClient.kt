@@ -14,6 +14,7 @@ object GameManagerClient {
             this?.applyGameChanges(game)
         }
         if(newGame?.player == Player.mySelf){
+            print("Encontrei o player!")
             GameManager.game = game.apply {
                 applyGameChanges(game)
             }

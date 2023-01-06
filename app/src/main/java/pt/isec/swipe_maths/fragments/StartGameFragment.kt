@@ -45,7 +45,14 @@ class StartGameFragment : Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner){
             when(it){
-                GameStates.PLAYING -> findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
+                GameStates.PLAYING -> {
+                    val currentDestinationIsStart = this.findNavController().currentDestination == this.findNavController().findDestination(R.id.startGameFragment)
+                    val currentDestinationIsBoard = this.findNavController().currentDestination == this.findNavController().findDestination(R.id.gameBoardFragment)
+
+                    if(currentDestinationIsStart && !currentDestinationIsBoard){
+                        findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
+                    }
+                }
             }
         }
         binding.btnStartGame.setOnClickListener{

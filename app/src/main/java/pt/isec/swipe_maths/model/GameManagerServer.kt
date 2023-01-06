@@ -1,5 +1,7 @@
 package pt.isec.swipe_maths.model
 
+import android.app.Activity
+import androidx.lifecycle.Observer
 import org.json.JSONObject
 import pt.isec.swipe_maths.ConnectionStates
 import pt.isec.swipe_maths.GameStates
@@ -138,37 +140,51 @@ object GameManagerServer {
         levelFinished = false
     }
 
-    fun watchTimers(){
-        for(game in games){
-            game.remainingTime.observeForever{
-//                if(game.player != Player.mySelf) {
-                    Server.updateTime()
-                    GameManager.games.postValue(games)
-//                }
-            }
+    val timeObserver: Observer<Int> = Observer {
+        Server.updateTime()
+        GameManager.games.postValue(games)
+        println("Time update")
+    }
 
-            game.gameState.observeForever {
-                if(it == GameStates.WAITING_FOR_LEVEL){
-                    if(verifyLevelFinish()){
-                        if(!verifyGameOver()){
-                            Server.levelFinished()
-                        }
-                    }
+
+
+    val gameStateObserver : Observer<GameStates> = Observer {
+        if(it == GameStates.WAITING_FOR_LEVEL){
+            if(verifyLevelFinish()){
+                if(!verifyGameOver()){
+                    Server.levelFinished()
                 }
-                if(it == GameStates.GAME_OVER){
-                    if(verifyGameOver()){
-                       Server.gameOver()
-                    } else {
-                        if(verifyLevelFinish()){
-                            Server.levelFinished()
-                        }
-                    }
+            }
+        }
+        if(it == GameStates.GAME_OVER){
+            if(verifyGameOver()){
+                Server.gameOver()
+            } else {
+                if(verifyLevelFinish()){
+                    Server.levelFinished()
                 }
             }
         }
     }
 
+    fun watchTimers(){
+        for(game in games){
+            game.remainingTime.observeForever(timeObserver)
+
+            game.gameState.observeForever(gameStateObserver)
+        }
+    }
+
+    fun removeObservers(){
+        for(game in games){
+            game.remainingTime.removeObserver(timeObserver)
+            game.gameState.removeObserver(gameStateObserver)
+        }
+    }
+
     fun finishGame(){
+        games.clear()
+        GameManager.newGame()
         games = mutableListOf(GameManager.game)
         GameManager.games.postValue(games)
         boardsList.clear()
