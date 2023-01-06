@@ -181,6 +181,11 @@ object Server {
     }
 
     private fun removeClient(clientSocket: Socket) {
+        if(onlineState.value == OnlineGameStates.PLAYING){
+            _state.postValue(ConnectionStates.CONNECTION_ERROR)
+            closeServer()
+            return
+        }
         clients.remove(clientSocket)
         val newPlayers = players.value!!
         val playerToRemove = newPlayers.find { it.socket == clientSocket }
@@ -266,6 +271,7 @@ object Server {
     }
 
     fun startGame() {
+        _onlineState.postValue(OnlineGameStates.PLAYING)
         GameManagerServer.watchTimers()
 //        GameManager.game.startTime()
         for(game in GameManagerServer.games){

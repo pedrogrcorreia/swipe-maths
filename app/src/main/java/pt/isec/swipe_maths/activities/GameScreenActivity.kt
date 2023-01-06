@@ -92,6 +92,20 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         when(mode){
             SERVER_MODE -> {
                 server = Server
+                Server.state.observe(this){
+                    when(it){
+                        ConnectionStates.CONNECTION_ERROR -> {
+                            Toast.makeText(
+                                this,
+                                "Client error!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            finish()
+                            GameManager.game = Game()
+                            startActivity(GameScreenActivity.getSingleModeIntentError(this))
+                        }
+                    }
+                }
             }
             CLIENT_MODE -> {
                 client = Client
