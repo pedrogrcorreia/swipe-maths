@@ -50,4 +50,11 @@
     <string name="game_date">Data</string>
     <string name="multiplayer_mode">Modo Multi Jogador</string>
     <string name="dialog_title_online_game">Jogo Online</string>
+    <string name="success_update">Update efetuado com sucesso</string>
+    <string name="fail_update">Update não foi concluído</string>
+    <string name="error_client">Erro no cliente!</string>
+    <string name="error_server">Erro no servidor!</string>
+    <string name="exit_title_dialog">Sair do jogo</string>
+    <string name="close_game_ask">Fechar o jogo?</string>
+    <string name="exit">Sair</string>
 </resources>

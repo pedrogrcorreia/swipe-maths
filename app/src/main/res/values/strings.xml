@@ -70,4 +70,9 @@
     <string name="dialog_title_online_game">Online Game</string>
     <string name="success_update">Update successfully</string>
     <string name="fail_update">Update failed</string>
+    <string name="error_client">Client error!</string>
+    <string name="error_server">Server error!</string>
+    <string name="exit_title_dialog">Exit game</string>
+    <string name="close_game_ask">Close game?</string>
+    <string name="exit">Exit</string>
 </resources>

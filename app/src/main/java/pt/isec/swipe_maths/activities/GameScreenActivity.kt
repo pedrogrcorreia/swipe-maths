@@ -98,7 +98,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                         ConnectionStates.CONNECTION_ERROR -> {
                             Toast.makeText(
                                 this,
-                                "Client error!",
+                                getString(R.string.error_client),
                                 Toast.LENGTH_LONG
                             ).show()
                             finish()
@@ -127,7 +127,7 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
                         ConnectionStates.SERVER_ERROR -> {
                             Toast.makeText(
                                 this,
-                                "Server error!",
+                                getString(R.string.error_server),
                                 Toast.LENGTH_LONG
                             ).show()
                             finish()
@@ -148,12 +148,12 @@ class GameScreenActivity : AppCompatActivity(), IGameBoardFragment, INewLevelFra
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 AlertDialog.Builder(this@GameScreenActivity)
-                    .setTitle("Exit game")
-                    .setMessage("Close game?")
-                    .setPositiveButton("Cancel"){ d: DialogInterface, _: Int ->
+                    .setTitle(getString(R.string.exit_title_dialog))
+                    .setMessage(getString(R.string.close_game_ask))
+                    .setPositiveButton(getString(R.string.btn_cancel)){ d: DialogInterface, _: Int ->
                         d.dismiss()
                     }
-                    .setNegativeButton("Exit"){_: DialogInterface, _: Int ->
+                    .setNegativeButton(getString(R.string.exit)){ _: DialogInterface, _: Int ->
                         finish()
                     }.show()
             }
