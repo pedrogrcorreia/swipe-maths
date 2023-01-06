@@ -155,12 +155,12 @@ object Server {
                     }
                 }
             } catch (e: Exception) {
-                println("Client thread: " + e.printStackTrace())
+                println("Client thread: " + e.message)
             } finally {
                 // TODO exception here?
                 println("Closing client socket!")
                 removeClient(thisClient)
-                thisClient.close()
+//                thisClient.close()
             }
         }
     }
@@ -207,22 +207,6 @@ object Server {
         }
     }
 
-    fun sendToClient(json: JSONObject, clientSocket: Socket) {
-        thread {
-            socket = clientSocket
-            socketO!!.run {
-                try {
-                    val printStream = PrintStream(this)
-                    printStream.println(json)
-                    printStream.flush()
-                } catch (e: Exception) {
-                    // TODO Exception here
-                    println(e.message)
-                }
-            }
-        }
-    }
-
     fun closeServer() {
         multiSocket.close()
         serverSocket?.close()
@@ -233,7 +217,7 @@ object Server {
             try {
                 client.close()
             } catch (e: Exception) {
-                println(e.message)
+                println("Exception closing client: ${e.message}")
             }
         }
         clients.clear()
@@ -241,14 +225,18 @@ object Server {
     }
 
     fun updateViews(json: JSONObject){
-        json.apply {
-            put("games", JSONArray().apply {
-                for(game in GameManagerServer.games){
-                    put(gson.toJson(game, Game::class.java))
-                }
-            })
+        try {
+            json.apply {
+                put("games", JSONArray().apply {
+                    for (game in GameManagerServer.games) {
+                        put(gson.toJson(game, Game::class.java))
+                    }
+                })
+            }
+            sendToClients(json)
+        } catch(e: Exception){
+            print("${e.message}")
         }
-        sendToClients(json)
     }
 
     private fun parseRequest(json: JSONObject, socket: Socket) {

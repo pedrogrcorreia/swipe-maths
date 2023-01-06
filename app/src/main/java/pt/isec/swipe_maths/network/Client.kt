@@ -98,17 +98,17 @@ object Client : Serializable {
                             val json = JSONObject(message)
                             parseRequest(json)
                         }
-//                    if(message == null){
-//                        _state.postValue(ConnectionStates.SERVER_ERROR)
-//                        break
-//                    }
+                    if(message == null){
+                        _state.postValue(ConnectionStates.SERVER_ERROR)
+                        break
+                    }
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
                 println("Thread: " + e.message)
                 _state.postValue(ConnectionStates.SERVER_ERROR)
             } catch (e: SocketException) {
-                // TODO Exception here, client closed
+                // TODO Exception here, server closed
                 _state.postValue(ConnectionStates.SERVER_ERROR)
                 println("Thread " + e.message)
             } finally {
