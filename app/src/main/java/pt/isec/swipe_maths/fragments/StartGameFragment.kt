@@ -43,10 +43,11 @@ class StartGameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        when(viewModel.state.value){
-            GameStates.PLAYING -> findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
+        viewModel.state.observe(viewLifecycleOwner){
+            when(it){
+                GameStates.PLAYING -> findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
+            }
         }
-
         binding.btnStartGame.setOnClickListener{
             findNavController().navigate(R.id.action_startGameFragment_to_gameBoardFragment)
             viewModel.startGame()
