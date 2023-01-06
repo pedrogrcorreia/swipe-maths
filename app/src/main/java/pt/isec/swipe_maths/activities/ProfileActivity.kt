@@ -77,10 +77,11 @@ class ProfileActivity : AppCompatActivity() {
                 .setPhotoUri(newPhotoUrl ?: currentUser.photoUrl)
                 .build()
             currentUser.updateProfile(profileRequest).addOnSuccessListener {
-                Toast.makeText(applicationContext, "Update successfully", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.success_update), Toast.LENGTH_LONG).show()
                 loadingDialog.dismiss()
+                finish()
             }.addOnFailureListener {
-                Toast.makeText(applicationContext, "Update failed", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.fail_update), Toast.LENGTH_LONG).show()
                 loadingDialog.dismiss()
             }.addOnCompleteListener {
                 checkNewInfo()
@@ -109,10 +110,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun updatePhoto(imagePath: Uri?){
-        println("Image path: $imagePath")
         val requestOptions = RequestOptions().circleCrop().placeholder(R.drawable.circular_progress_bar)
         Glide.with(this)
-            .load(imagePath ?: URL("https://openai.com/content/images/2021/01/2x-no-mark-1.jpg"))
+            .load(imagePath)
             .apply(requestOptions)
             .into(binding.imageView)
     }

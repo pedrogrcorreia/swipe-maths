@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 
+    override fun onResume() {
+        updateUI()
+        super.onResume()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
