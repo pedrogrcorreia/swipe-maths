@@ -75,7 +75,8 @@ object Server {
         newPlayers.add(
             Player(
                 Firebase.auth.currentUser?.displayName!!,
-                Firebase.auth.currentUser?.photoUrl!!.toString()
+                Firebase.auth.currentUser?.photoUrl!!.toString(),
+                Firebase.auth.currentUser?.uid!!
             )
         )
         players.postValue(newPlayers)
@@ -170,9 +171,10 @@ object Server {
             println(playerJSON)
             val name = playerJSON.getString("name")
             val photo = playerJSON.getString("photoUrl")
+            val uid = playerJSON.getString("uid")
             val newPlayers = players.value!!
-            newPlayers.add(Player(name, photo, socket))
-            GameManagerServer.addNewPlayer(Player(name, photo))
+            newPlayers.add(Player(name, photo, uid, socket))
+            GameManagerServer.addNewPlayer(Player(name, photo, uid))
             players.postValue(newPlayers)
         } catch (e: Exception) {
             println(e.message)

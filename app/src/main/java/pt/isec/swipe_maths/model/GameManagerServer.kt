@@ -35,7 +35,7 @@ object GameManagerServer {
     }
 
     fun rowPlay(row: Int, player: Player): Boolean{
-        val playerGame = games.find { it.player == player } ?: return false
+        val playerGame = games.find { it.player.uid == player.uid } ?: return false
         var result : Boolean
         playerGame.apply { plays++ }
         if(playerGame.plays == boardsList.size){
@@ -52,7 +52,7 @@ object GameManagerServer {
     }
 
     fun colPlay(col: Int, player: Player): Boolean{
-        val playerGame = games.find { it.player == player } ?: return false
+        val playerGame = games.find { it.player.uid == player.uid } ?: return false
         var result : Boolean
         playerGame.apply { plays++ }
         if(playerGame.plays == boardsList.size){

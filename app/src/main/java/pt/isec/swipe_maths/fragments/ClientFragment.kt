@@ -66,7 +66,7 @@ class ClientFragment : Fragment() {
         client.state.observe(viewLifecycleOwner) {
             when (it) {
                 ConnectionStates.CONNECTION_ESTABLISHED -> {
-                    client.newPlayer(Player(user?.displayName!!, user.photoUrl!!.toString()))
+                    client.newPlayer(Player(user?.displayName!!, user.photoUrl!!.toString(), user.uid))
                     binding.btnSearch.visibility = View.GONE
                     binding.btnConnect.visibility = View.GONE
                     binding.btnEmulator.visibility = View.GONE

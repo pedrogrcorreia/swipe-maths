@@ -13,8 +13,7 @@ object GameManagerClient {
         val newGame = games.find { it.player == game.player }.apply {
             this?.applyGameChanges(game)
         }
-        if(newGame?.player == Player.mySelf){
-            print("Encontrei o player!")
+        if(newGame?.player?.uid == Player.mySelf.uid){
             GameManager.game = game.apply {
                 applyGameChanges(game)
             }
