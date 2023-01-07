@@ -101,10 +101,8 @@ object Client : Serializable {
                     }
                 }
             } catch (e: NullPointerException) {
-                // TODO Exception here meaning server was closing
                 _state.postValue(ConnectionStates.SERVER_ERROR)
             } catch (e: SocketException) {
-                // TODO Exception here, server closed
                 _state.postValue(ConnectionStates.SERVER_ERROR)
             } finally {
                 closeClient()
