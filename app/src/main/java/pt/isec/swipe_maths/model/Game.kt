@@ -167,7 +167,6 @@ class Game(var player: Player = Player.mySelf) {
         if (correctAnswersData == levelData.correctAnswers) {
             gameStateData = GameStates.WAITING_FOR_LEVEL
             timer!!.cancel()
-            println("totalTime: $totalTime")
         } else {
             addTime()
             timer!!.cancel()

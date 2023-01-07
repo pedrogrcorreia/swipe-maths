@@ -17,7 +17,6 @@ object GameManagerClient {
             GameManager.game = game.apply {
                 applyGameChanges(game)
             }
-//            println(GameManager.game)
         }
         GameManager.games.postValue(games)
     }

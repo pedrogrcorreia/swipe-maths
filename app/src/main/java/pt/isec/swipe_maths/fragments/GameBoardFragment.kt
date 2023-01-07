@@ -39,7 +39,6 @@ private val viewModel by lazy{
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.i("Debug", "onAttach2: ")
         actBase = context as? IGameBoardFragment
     }
 
@@ -205,6 +204,5 @@ private val viewModel by lazy{
 
     override fun onDestroy() {
         super.onDestroy()
-        println("\n\n\n Fragment Game Board is being destroyed \n\n\n")
     }
 }

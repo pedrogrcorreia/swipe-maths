@@ -45,7 +45,6 @@ class ClientFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.i("Debug", "onAttach2: ")
         actBase = context as? NetworkFragment
     }
 
@@ -134,12 +133,10 @@ class ClientFragment : Fragment() {
                             } else {
                                 if (client.state.value == ConnectionStates.NO_CONNECTION || Client.state.value == ConnectionStates.CONNECTION_ERROR) {
                                     val ipAndPort = ipAddress.split(" ")
-                                    println(ipAndPort)
                                     client.startClient(ipAndPort[0], ipAndPort[1].toInt())
                                 }
                             }
                         } catch (e: Exception) {
-                            println(e.message)
                             loadingDialog.dismiss()
                         }
                     }

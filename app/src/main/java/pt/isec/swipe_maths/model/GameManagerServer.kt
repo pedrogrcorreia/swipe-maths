@@ -143,7 +143,6 @@ object GameManagerServer {
     val timeObserver: Observer<Int> = Observer {
         Server.updateTime()
         GameManager.games.postValue(games)
-        println("Time update")
     }
 
 

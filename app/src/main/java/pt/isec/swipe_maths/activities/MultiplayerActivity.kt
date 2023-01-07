@@ -45,9 +45,7 @@ class MultiplayerActivity : AppCompatActivity(), NetworkFragment {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                println("HERE")
                 if(client){
-                    println("Closing client on Activity!")
                     Client.closeClient()
                 } else if(server){
                     Server.closeServer()
@@ -66,9 +64,7 @@ class MultiplayerActivity : AppCompatActivity(), NetworkFragment {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        println("HERE")
         if(client){
-            println("Closing client on Activity!")
             Client.closeClient()
         } else if(server){
             Server.closeServer()

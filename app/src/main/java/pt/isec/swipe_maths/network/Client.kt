@@ -69,13 +69,11 @@ object Client : Serializable {
 
         thread {
             try {
-                println("Contacting server...")
                 val serverSocket = Socket()
                 serverSocket.connect(InetSocketAddress(serverIP, serverPort), 5000)
                 serverThread(serverSocket)
                 _state.postValue(ConnectionStates.CONNECTION_ESTABLISHED)
             } catch (e: Exception) {
-                println("Start Client Thread: " + e.message)
                 _state.postValue(ConnectionStates.CONNECTION_ERROR)
             }
         }
@@ -84,7 +82,6 @@ object Client : Serializable {
     private fun serverThread(serverSocket: Socket) {
         socket = serverSocket
 
-        println("Successfully connected to server!")
 
         thread {
             try {
@@ -105,14 +102,11 @@ object Client : Serializable {
                 }
             } catch (e: NullPointerException) {
                 // TODO Exception here meaning server was closing
-                println("Thread: " + e.message)
                 _state.postValue(ConnectionStates.SERVER_ERROR)
             } catch (e: SocketException) {
                 // TODO Exception here, server closed
                 _state.postValue(ConnectionStates.SERVER_ERROR)
-                println("Thread " + e.message)
             } finally {
-                println("Closing from server socket!")
                 closeClient()
             }
         }
@@ -162,7 +156,6 @@ object Client : Serializable {
     }
 
     fun sendToServer(json: JSONObject) {
-        println("sending message to server...")
         try {
             thread {
                 try {
@@ -173,20 +166,19 @@ object Client : Serializable {
                             printStream.flush()
                         } catch (e: Exception) {
                             _state.postValue(ConnectionStates.SERVER_ERROR)
-                            println("error sending message to server!!!")
+                            closeClient()
                         }
                     }
                 } catch (e: Exception) {
-                    println("ERROR!!!! sending message")
+                    closeClient()
                 }
             }
         }catch(e: Exception){
-            println("error thread")
+            closeClient()
         }
     }
 
     private fun parseRequest(json: JSONObject) {
-        println(json.getString("request"))
         when (json.getString("request")) {
             Requests.UPDATE_PLAYERS_LIST.toString() ->
                 updatePlayersList(json)
