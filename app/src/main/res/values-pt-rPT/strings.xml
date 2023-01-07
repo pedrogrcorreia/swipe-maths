@@ -57,4 +57,5 @@
     <string name="exit_title_dialog">Sair do jogo</string>
     <string name="close_game_ask">Fechar o jogo?</string>
     <string name="exit">Sair</string>
+    <string name="not_enough">Não estão jogadores suficientes conectados!</string>
 </resources>

@@ -70,7 +70,7 @@ class ServerFragment : Fragment() {
                 startActivity(GameScreenActivity.getServerModeIntent(requireContext()))
                 server.startGame()
             } else {
-                Toast.makeText(activity?.applicationContext, "Not enough players", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity?.applicationContext, getString(R.string.not_enough), Toast.LENGTH_LONG).show()
             }
         }
         return binding.root

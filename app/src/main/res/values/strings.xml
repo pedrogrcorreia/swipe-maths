@@ -75,4 +75,5 @@
     <string name="exit_title_dialog">Exit game</string>
     <string name="close_game_ask">Close game?</string>
     <string name="exit">Exit</string>
+    <string name="not_enough">Not enough connected players!</string>
 </resources>
