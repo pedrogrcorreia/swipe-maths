@@ -1,43 +1,20 @@
 # Swipe Maths
 ## Overview
-A mathematical game where the player has to swipe the right column or row with the highest operation result. 
+A mathematical game where the player has to swipe the column or row with the highest operation result. 
 
 Can be played alone or with friends!
 
-## To Do
+## Online functionality
 
-- Game
-    - [x] Main Activity buttons
-    - [ ] Main Activity design
-    - [x] Operation precedence
-    - [x] Two highest values
-    - [x] Point system
-- Single Player
-    - [x] Start game screen
-    - [x] Game Screen 
-    - [x] New level screen
-    - [x] Start timer when starting the game
-    - [x] Stopping timer when entering a new level
-    - [x] Changing all states accordingly
-    - [x] Hide level info on new level state
-    - [x] Lose game on time's up
-    - [x] All with firebase
-- Multiplayer
-    - Server
-        - [x] Server start
-        - [ ] Server start design screen
-        - [ ] Test with various clients
-    - Client
-        - [x] Client start
-        - [ ] Client start design screen
-        - [ ] Wait for game to start from server
-    - [ ] Connection states
-    - [ ] How to deal with multiplayer mode (more than 2 players)
-    - [ ] Firebase integration
-    - [ ] List of lines played on each level
-    - [ ] When all players complete a level, start new level
-    - [ ] Check players losses
-- Application
-    - [ ] Return activity results from GameScreenActivity
-    - [ ] Make snackbars from the results above
+To implement the communication between devices is used a TCP Multithreaded Server. 
+One device is used as a server while the clients connect to its socket.
 
+All the communication is made using JSON messages, where a <i>Request</i> field tells the entity what is asked.
+
+## User registration/login
+
+Registration and login are implemented using Authentication from Firebase.
+
+## Top scores
+
+The highest games are stored in a Cloud Firestore NoSQL database.
